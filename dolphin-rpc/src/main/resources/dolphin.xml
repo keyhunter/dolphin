@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dolphin>
+	<!-- RPC客户端配置  -->
+	<client>
+		<global>
+			<group>${app.env}</group>
+		</global>
+		<selector>
+			<class>com.dolphin.rpc.proxy.ServiceConnectorSelector</class>
+		</selector>
+		<services>
+			<service>
+				<name>orderService</name>
+				<group>test</group>
+			</service>
+		</services>
+	</client>
+
+	<!-- RPC服务配置 -->
+	<service>
+		<!-- RPC服务名 -->
+		<name>tradeService</name>
+		<!-- 主机IP，可不配，程序会自动获取 -->
+		<ip>10.1.1.31</ip>
+		<!-- RPC服务端口 -->
+		<port>8080</port>
+	</service>
+
+	<!-- 注册中心配置 -->
+	<registry>
+		<datasource>
+			<url>jdbc:mysql://localhost:3306/fish?characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round</url>
+			<username>root</username>
+			<password>123456</password>
+		</datasource>
+	</registry>
+
+</dolphin>

@@ -1,0 +1,106 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../config/ehcache.xsd">
+
+	<diskStore path="java.io.tmpdir" />
+
+	<defaultCache maxElementsInMemory="10000"
+		maxElementsOnDisk="10000" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="100" timeToIdleSeconds="120" timeToLiveSeconds="120"
+		memoryStoreEvictionPolicy="LRU" />
+
+	<!-- 用户信息缓存 -->
+	<cache name="userCache" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="30" timeToIdleSeconds="120" timeToLiveSeconds="120" />
+		
+	<!-- CMS信息缓存 -->
+	<cache name="cmsCache" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="30" timeToIdleSeconds="120" timeToLiveSeconds="120" />
+		
+
+	<!-- 话题信息缓存 -->
+	<cache name="bbsCache" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="30" timeToIdleSeconds="120" timeToLiveSeconds="300" />
+
+	<!-- 1212主页商品缓存 -->
+	<cache name="1212MainItems" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="30" timeToIdleSeconds="120" timeToLiveSeconds="200" />
+		
+	<!-- 年终大促主页商品缓存 -->
+	<cache name="yearendRank" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="10" timeToIdleSeconds="120" timeToLiveSeconds="100" />
+
+	<!-- 兑换中心首页商品缓存 -->
+	<cache
+        name="exchangeCenterInfos"       
+        maxElementsInMemory="100"
+        maxElementsOnDisk="200"
+        eternal="false"
+        overflowToDisk="true"
+        diskSpoolBufferSizeMB="30"
+        timeToIdleSeconds="120"
+        timeToLiveSeconds="200"  
+    /> 
+    
+    <!-- 兑换中心首页兑换历史缓存 -->
+    <cache
+        name="exchangeHistoryItems"       
+        maxElementsInMemory="100"
+        maxElementsOnDisk="200"
+        eternal="false"
+        overflowToDisk="true"
+        diskSpoolBufferSizeMB="30"
+        timeToIdleSeconds="120"
+        timeToLiveSeconds="150"  
+    /> 
+
+	<!-- 119主页信息缓存 -->
+	<cache name="119MainCache" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="30" timeToIdleSeconds="120" timeToLiveSeconds="300" />
+
+	<!-- 119热卖信息缓存 -->
+	<cache name="119HotItemCache" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="30" timeToIdleSeconds="120" timeToLiveSeconds="300" />
+
+	<!-- 119买贵包赔信息缓存 -->
+	<cache name="119CompensateCache" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="30" timeToIdleSeconds="120" timeToLiveSeconds="300" />
+
+
+	<!-- 团购信息缓存 -->
+	<cache name="grouponCache" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="30" timeToIdleSeconds="120" timeToLiveSeconds="120" />
+
+	<!-- 商品缓存 -->
+	<cache name="productCache" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="30" timeToIdleSeconds="300" timeToLiveSeconds="300" />
+
+	<!-- 商品图片缓存 -->
+	<cache name="productImageCache" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="30" timeToIdleSeconds="300" timeToLiveSeconds="300" />
+
+
+	<!-- 主页商品缓存 -->
+	<cache name="christmasMainItems" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="30" timeToIdleSeconds="120" timeToLiveSeconds="200" />
+
+
+	<!-- 商品缓存 -->
+	<cache name="christmasMainProductsItems" maxElementsInMemory="100"
+		maxElementsOnDisk="200" eternal="false" overflowToDisk="true"
+		diskSpoolBufferSizeMB="30" timeToIdleSeconds="120" timeToLiveSeconds="200" />
+
+
+
+</ehcache>
