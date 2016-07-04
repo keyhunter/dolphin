@@ -13,7 +13,6 @@ import com.dolphin.rpc.core.config.RegistryConfig;
 import com.dolphin.rpc.core.exception.AddressExitsException;
 import com.dolphin.rpc.core.exception.AddressFormatException;
 import com.dolphin.rpc.core.io.HostAddress;
-import com.dolphin.rpc.registry.server.RegistryAddressContainer;
 
 public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
 

@@ -10,10 +10,10 @@ import com.dolphin.rpc.core.io.request.RequestManager;
 import com.dolphin.rpc.core.io.transport.Header;
 import com.dolphin.rpc.core.io.transport.PacketType;
 import com.dolphin.rpc.registry.MySQLRegistryAddressContainer;
+import com.dolphin.rpc.registry.RegistryAddressContainer;
 import com.dolphin.rpc.registry.ServiceInfo;
-import com.dolphin.rpc.registry.protocle.Commands;
-import com.dolphin.rpc.registry.protocle.RegistryRequest;
-import com.dolphin.rpc.registry.server.RegistryAddressContainer;
+import com.dolphin.rpc.registry.netty.protocle.Commands;
+import com.dolphin.rpc.registry.netty.protocle.RegistryRequest;
 
 public class RegistryConnectorTest {
 

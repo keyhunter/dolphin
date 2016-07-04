@@ -4,16 +4,16 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.dolphin.rpc.core.exception.ServiceInfoFormatException;
 import com.dolphin.rpc.core.io.Connection;
 import com.dolphin.rpc.core.io.ConnectionCloseListenser;
-import com.dolphin.rpc.core.io.HostAddress;
+import com.dolphin.rpc.registry.ServiceChangeListener;
 import com.dolphin.rpc.registry.ServiceInfo;
-import com.dolphin.rpc.registry.ServiceListener;
-import com.dolphin.rpc.registry.consumer.NettyServiceConsumer;
 import com.dolphin.rpc.registry.consumer.ServiceCustomer;
+import com.dolphin.rpc.registry.zookeeper.ZooKeeperServiceConsumer;
 
 /**
  * Service的Client的选择器
@@ -21,7 +21,7 @@ import com.dolphin.rpc.registry.consumer.ServiceCustomer;
  * @version $Id: ServiceClientSelector.java, v 0.1 2016年5月25日 下午10:18:49 jiujie Exp $
  */
 public class ServiceConnectionSelector implements ConnectionSelector, ConnectionCloseListenser,
-                                       ServiceListener {
+                                       ServiceChangeListener {
 
     private static Logger                    logger       = Logger
         .getLogger(ServiceConnectionSelector.class);
@@ -40,7 +40,9 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
     private ServiceConnectionSelector() {
         rpcConnector = new RPCConnector();
         rpcConnector.startup();
-        serviceCustomer = new NettyServiceConsumer();
+        ZooKeeperServiceConsumer zooKeeperServiceConsumer = new ZooKeeperServiceConsumer();
+        zooKeeperServiceConsumer.addServiceListener(this);
+        serviceCustomer = zooKeeperServiceConsumer;
         serviceConnections = new ConcurrentHashMap<>();
     }
 
@@ -99,13 +101,8 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
     }
 
     @Override
-    public void register(ServiceInfo serviceInfo) {
-        resetServiceConnection(serviceInfo);
-    }
-
-    @Override
-    public void unRegister(ServiceInfo serviceInfo) {
-        resetServiceConnection(serviceInfo);
+    public void change(String group, String serviceName) {
+        resetServiceConnection(group, serviceName);
     }
 
     /**
@@ -114,24 +111,23 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
      * 2016年6月6日 下午3:24:54
      * @param serviceInfo
      */
-    private void resetServiceConnection(ServiceInfo serviceInfo) {
-        if (serviceInfo == null || serviceInfo.getHostAddress() == null
-            || HostAddress.verify(serviceInfo.getHostAddress())) {
+    private void resetServiceConnection(String group, String serviceName) {
+        if (StringUtils.isBlank(group) || StringUtils.isBlank(serviceName)) {
             throw new ServiceInfoFormatException();
         }
-        logger.info("ServiceInfo Changed [group:" + serviceInfo.getGroup() + ",name:"
-                    + serviceInfo.getName() + "]");
-        Connection connection = serviceConnections
-            .get(getServiceKey(serviceInfo.getGroup(), serviceInfo.getName()));
+        logger.info("ServiceInfo Changed [group:" + group + ",name:" + serviceName + "]");
+        Connection connection = serviceConnections.get(getServiceKey(group, serviceName));
         if (connection != null) {
             ServiceInfo oldServiceInfo = (ServiceInfo) connection.getAttribute(SERVICE_INFO);
-            ServiceInfo[] serviceInfos = serviceCustomer.getServices(serviceInfo.getGroup(),
-                serviceInfo.getName());
+            ServiceInfo[] serviceInfos = serviceCustomer.getServices(group, serviceName);
+            if (serviceInfos == null) {
+                return;
+            }
             //负载均衡，这里随机一个 TODO 之后可以 写的更复杂一下
             ServiceInfo newServiceInfo = serviceInfos[new Random().nextInt(serviceInfos.length)];
             if (newServiceInfo != null
                 && !newServiceInfo.getHostAddress().equals(oldServiceInfo.getHostAddress()))
-                connection = rpcConnector.connect(serviceInfo.getHostAddress());
+                connection = rpcConnector.connect(newServiceInfo.getHostAddress());
         }
     }
 

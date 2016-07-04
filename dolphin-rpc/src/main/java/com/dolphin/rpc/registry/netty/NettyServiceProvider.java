@@ -1,4 +1,4 @@
-package com.dolphin.rpc.registry.provider;
+package com.dolphin.rpc.registry.netty;
 
 import java.util.List;
 import java.util.Random;
@@ -17,8 +17,9 @@ import com.dolphin.rpc.core.io.transport.PacketType;
 import com.dolphin.rpc.netty.connector.NettyConnector;
 import com.dolphin.rpc.registry.MySQLRegistryAddressContainer;
 import com.dolphin.rpc.registry.ServiceInfo;
-import com.dolphin.rpc.registry.protocle.Commands;
-import com.dolphin.rpc.registry.protocle.RegistryRequest;
+import com.dolphin.rpc.registry.netty.protocle.Commands;
+import com.dolphin.rpc.registry.netty.protocle.RegistryRequest;
+import com.dolphin.rpc.registry.provider.ServiceProvider;
 
 public class NettyServiceProvider extends NettyConnector implements ServiceProvider, Connector {
 

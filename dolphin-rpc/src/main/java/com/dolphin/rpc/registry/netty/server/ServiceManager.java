@@ -1,4 +1,4 @@
-package com.dolphin.rpc.registry.server;
+package com.dolphin.rpc.registry.netty.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,12 +21,13 @@ import com.dolphin.rpc.core.io.transport.Header;
 import com.dolphin.rpc.core.io.transport.Message;
 import com.dolphin.rpc.core.io.transport.PacketType;
 import com.dolphin.rpc.registry.MySQLRegistryAddressContainer;
+import com.dolphin.rpc.registry.RegistryAddressContainer;
 import com.dolphin.rpc.registry.ServiceInfo;
 import com.dolphin.rpc.registry.ServiceInfoContainer;
 import com.dolphin.rpc.registry.ServiceInfoContainer.ServiceInfoSet;
-import com.dolphin.rpc.registry.protocle.Commands;
-import com.dolphin.rpc.registry.protocle.RegistryRequest;
-import com.dolphin.rpc.registry.protocle.RegistryResponse;
+import com.dolphin.rpc.registry.netty.protocle.Commands;
+import com.dolphin.rpc.registry.netty.protocle.RegistryRequest;
+import com.dolphin.rpc.registry.netty.protocle.RegistryResponse;
 
 /**
  * Service的管理器，用于管理服务

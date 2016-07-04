@@ -1,4 +1,4 @@
-package com.dolphin.rpc.registry.server;
+package com.dolphin.rpc.registry.netty.server;
 
 import com.dolphin.rpc.core.ApplicationType;
 import com.dolphin.rpc.registry.ServiceInfo;

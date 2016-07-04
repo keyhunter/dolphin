@@ -1,4 +1,4 @@
-package com.dolphin.rpc.registry.server;
+package com.dolphin.rpc.registry;
 
 import java.util.List;
 
