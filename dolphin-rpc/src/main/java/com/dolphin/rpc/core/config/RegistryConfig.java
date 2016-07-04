@@ -10,12 +10,16 @@ public class RegistryConfig extends DolphinConfig {
     private String dbUrl;
     private String dbUsername;
     private String dbPassword;
+    private String customer;
+    private String provider;
 
     public RegistryConfig() {
         super();
         this.dbUrl = getString("/dolphin/registry/datasource/url");
         this.dbUsername = getString("/dolphin/registry/datasource/username");
         this.dbPassword = getString("/dolphin/registry/datasource/password");
+        this.customer = getString("/dolphin/registry/customer");
+        this.provider = getString("/dolphin/registry/provider");
     }
 
     public String getDbUrl() {
@@ -29,4 +33,13 @@ public class RegistryConfig extends DolphinConfig {
     public String getDbPassword() {
         return dbPassword;
     }
+
+    public String getCustomer() {
+        return customer;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
 }

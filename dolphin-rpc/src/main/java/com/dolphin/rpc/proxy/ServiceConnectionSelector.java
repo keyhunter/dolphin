@@ -7,13 +7,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.dolphin.rpc.core.config.RegistryConfig;
+import com.dolphin.rpc.core.exception.RPCRunTimeException;
 import com.dolphin.rpc.core.exception.ServiceInfoFormatException;
 import com.dolphin.rpc.core.io.Connection;
 import com.dolphin.rpc.core.io.ConnectionCloseListenser;
+import com.dolphin.rpc.registry.AbstractServiceCustomer;
 import com.dolphin.rpc.registry.ServiceChangeListener;
 import com.dolphin.rpc.registry.ServiceInfo;
 import com.dolphin.rpc.registry.consumer.ServiceCustomer;
-import com.dolphin.rpc.registry.zookeeper.ZooKeeperServiceConsumer;
 
 /**
  * Service的Client的选择器
@@ -40,9 +42,20 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
     private ServiceConnectionSelector() {
         rpcConnector = new RPCConnector();
         rpcConnector.startup();
-        ZooKeeperServiceConsumer zooKeeperServiceConsumer = new ZooKeeperServiceConsumer();
-        zooKeeperServiceConsumer.addServiceListener(this);
-        serviceCustomer = zooKeeperServiceConsumer;
+        initCustomer();
+    }
+
+    private void initCustomer() {
+        AbstractServiceCustomer abstractServiceCustomer = null;
+        try {
+            abstractServiceCustomer = (AbstractServiceCustomer) Class
+                .forName(new RegistryConfig().getCustomer()).newInstance();
+        } catch (Exception e) {
+            logger.error("", e);
+            throw new RPCRunTimeException("Init customer failed");
+        }
+        abstractServiceCustomer.addServiceListener(this);
+        serviceCustomer = abstractServiceCustomer;
         serviceConnections = new ConcurrentHashMap<>();
     }
 

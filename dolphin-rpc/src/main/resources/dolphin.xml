@@ -34,6 +34,8 @@
 			<username>root</username>
 			<password>123456</password>
 		</datasource>
+		<customer>com.dolphin.rpc.registry.zookeeper.ZooKeeperServiceConsumer</customer>
+		<provider>com.dolphin.rpc.registry.zookeeper.ZooKeeperServiceProvider</provider>
 	</registry>
 
 </dolphin>
