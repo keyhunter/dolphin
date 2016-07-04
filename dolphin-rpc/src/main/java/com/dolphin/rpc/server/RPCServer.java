@@ -2,7 +2,9 @@ package com.dolphin.rpc.server;
 
 import org.apache.log4j.Logger;
 
+import com.dolphin.rpc.core.config.RegistryConfig;
 import com.dolphin.rpc.core.config.ServiceConfig;
+import com.dolphin.rpc.core.exception.RPCRunTimeException;
 import com.dolphin.rpc.core.io.HostAddress;
 import com.dolphin.rpc.core.io.transport.Header;
 import com.dolphin.rpc.core.io.transport.Message;
@@ -36,7 +38,17 @@ public class RPCServer extends NettyServer {
         super(port);
         registerHandler("rpcInvokeHandler", new RPCInvokeHandler());
         //TODO 从配置文件取出
-        serviceProvider = new ZooKeeperServiceProvider();
+        initProvider(port);
+    }
+
+    private void initProvider(int port) {
+        try {
+            serviceProvider = (ServiceProvider) Class.forName(new RegistryConfig().getProvider())
+                .newInstance();
+        } catch (Exception e) {
+            logger.error("", e);
+            throw new RPCRunTimeException("Init provider failed");
+        }
         ServiceConfig serviceConfig = new ServiceConfig();
         String servicName = serviceConfig.getServiceName();
         logger.info("Register service " + servicName + ".");
