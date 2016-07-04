@@ -8,7 +8,7 @@ public class ProxyTest {
     public static void main(String[] args) {
         OrderService service = RPCFactory.getService(OrderService.class);
         long currentTimeMillis = System.currentTimeMillis();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             service.test();
             int createOrder = service.createOrder("sdfsdf", null);
             System.out.println(i + ":" + createOrder);

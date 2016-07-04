@@ -4,7 +4,7 @@ import com.dolphin.rpc.core.io.MessageReadListener;
 import com.dolphin.rpc.core.io.transport.Message;
 import com.dolphin.rpc.core.io.transport.PacketType;
 import com.dolphin.rpc.core.io.transport.RPCResult;
-import com.dolphin.rpc.registry.protocle.RegistryResponse;
+import com.dolphin.rpc.registry.netty.protocle.RegistryResponse;
 
 /**
  * 请求的返回数据监听器，服务端返回数据则到些Listener中执行

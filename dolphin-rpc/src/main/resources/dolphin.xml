@@ -18,8 +18,9 @@
 
 	<!-- RPC服务配置 -->
 	<service>
+		<group>${app.env}</group>
 		<!-- RPC服务名 -->
-		<name>tradeService</name>
+		<name>orderService</name>
 		<!-- 主机IP，可不配，程序会自动获取 -->
 		<ip>10.1.1.31</ip>
 		<!-- RPC服务端口 -->

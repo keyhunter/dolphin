@@ -26,19 +26,16 @@ import com.dolphin.rpc.core.io.transport.RPCResult;
  */
 public class RPCServiceProxy implements InvocationHandler {
 
-    private static Logger         logger         = Logger.getLogger(RPCServiceProxy.class);
+    private static Logger             logger         = Logger.getLogger(RPCServiceProxy.class);
 
-    private static RequestManager requestManager = RequestManager.getInstance();
+    private static RequestManager     requestManager = RequestManager.getInstance();
 
-    private String                group;
+    private static String             group          = new ServiceConfig().getGroup();
 
     /** 客户端选择器 @author jiujie 2016年5月24日 上午11:33:08 */
-    private ConnectionSelector    clientSelector;
+    private static ConnectionSelector clientSelector = ServiceConnectionSelector.getInstance();
 
     public RPCServiceProxy() {
-        this.clientSelector = ServiceConnectionSelector.getInstance();
-        ServiceConfig serviceConfig = new ServiceConfig();
-        group = serviceConfig.getGroup();
     }
 
     @Override

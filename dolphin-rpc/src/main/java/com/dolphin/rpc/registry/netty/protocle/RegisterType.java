@@ -1,4 +1,4 @@
-package com.dolphin.rpc.registry.protocle;
+package com.dolphin.rpc.registry.netty.protocle;
 
 public enum RegisterType {
 

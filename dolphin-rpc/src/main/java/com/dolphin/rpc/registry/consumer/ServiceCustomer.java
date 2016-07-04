@@ -1,9 +1,8 @@
 package com.dolphin.rpc.registry.consumer;
 
 import com.dolphin.rpc.registry.ServiceInfo;
-import com.dolphin.rpc.registry.ServiceListener;
 
-public interface ServiceCustomer extends ServiceListener {
+public interface ServiceCustomer {
 
     ServiceInfo[] getServices(String group, String serviceName);
 

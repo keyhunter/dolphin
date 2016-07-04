@@ -74,6 +74,22 @@ public class ServiceInfoContainer {
     }
 
     /**
+     * 移除一个分组中的所有service信息
+     * @author jiujie
+     * 2016年5月31日 下午3:13:02
+     * @param group
+     * @param serviceInfo
+     */
+    public void remove(String group, String serviceName) {
+        if (StringUtils.isBlank(group) || StringUtils.isBlank(serviceName)) {
+            return;
+        }
+        ServiceInfoSet serviceInfoSet = get(group, serviceName);
+        serviceInfoSet.clear();
+        //        logger.info("Remove Service [" + serviceInfo.toString() + "] success.");
+    }
+
+    /**
      * 移除一个分组中的ServiceInfo
      * @author jiujie
      * 2016年5月31日 下午3:13:02

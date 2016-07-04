@@ -12,8 +12,9 @@ import com.dolphin.rpc.core.io.transport.RPCResult;
 import com.dolphin.rpc.core.utils.HostUtil;
 import com.dolphin.rpc.netty.server.NettyServer;
 import com.dolphin.rpc.registry.ServiceInfo;
-import com.dolphin.rpc.registry.provider.NettyServiceProvider;
+import com.dolphin.rpc.registry.netty.NettyServiceProvider;
 import com.dolphin.rpc.registry.provider.ServiceProvider;
+import com.dolphin.rpc.registry.zookeeper.ZooKeeperServiceProvider;
 import com.dolphin.rpc.server.invocation.spring.SpringInvoker;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -35,7 +36,7 @@ public class RPCServer extends NettyServer {
         super(port);
         registerHandler("rpcInvokeHandler", new RPCInvokeHandler());
         //TODO 从配置文件取出
-        serviceProvider = new NettyServiceProvider();
+        serviceProvider = new ZooKeeperServiceProvider();
         ServiceConfig serviceConfig = new ServiceConfig();
         String servicName = serviceConfig.getServiceName();
         logger.info("Register service " + servicName + ".");

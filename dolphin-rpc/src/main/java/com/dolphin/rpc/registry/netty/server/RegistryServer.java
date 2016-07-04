@@ -1,4 +1,4 @@
-package com.dolphin.rpc.registry.server;
+package com.dolphin.rpc.registry.netty.server;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,10 +18,11 @@ import com.dolphin.rpc.core.io.transport.RPCResult;
 import com.dolphin.rpc.netty.NettyConnection;
 import com.dolphin.rpc.netty.server.NettyServer;
 import com.dolphin.rpc.registry.MySQLRegistryAddressContainer;
+import com.dolphin.rpc.registry.RegistryAddressContainer;
 import com.dolphin.rpc.registry.ServiceInfo;
-import com.dolphin.rpc.registry.protocle.Commands;
-import com.dolphin.rpc.registry.protocle.RegistryRequest;
-import com.dolphin.rpc.registry.protocle.RegistryResponse;
+import com.dolphin.rpc.registry.netty.protocle.Commands;
+import com.dolphin.rpc.registry.netty.protocle.RegistryRequest;
+import com.dolphin.rpc.registry.netty.protocle.RegistryResponse;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;

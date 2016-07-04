@@ -1,4 +1,4 @@
-package com.dolphin.rpc.registry.server;
+package com.dolphin.rpc.registry.netty.server;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,8 +7,8 @@ import com.dolphin.rpc.core.ApplicationType;
 import com.dolphin.rpc.core.io.transport.Message;
 import com.dolphin.rpc.netty.connector.NettyConnector;
 import com.dolphin.rpc.registry.ServiceInfo;
-import com.dolphin.rpc.registry.protocle.Commands;
-import com.dolphin.rpc.registry.protocle.RegistryResponse;
+import com.dolphin.rpc.registry.netty.protocle.Commands;
+import com.dolphin.rpc.registry.netty.protocle.RegistryResponse;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
