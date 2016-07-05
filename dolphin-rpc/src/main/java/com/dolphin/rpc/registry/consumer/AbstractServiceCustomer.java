@@ -1,4 +1,4 @@
-package com.dolphin.rpc.registry;
+package com.dolphin.rpc.registry.consumer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,10 @@ import org.apache.log4j.Logger;
 
 import com.dolphin.rpc.core.exception.ServiceInfoFormatException;
 import com.dolphin.rpc.core.io.HostAddress;
+import com.dolphin.rpc.registry.ServiceChangeListener;
+import com.dolphin.rpc.registry.ServiceInfo;
+import com.dolphin.rpc.registry.ServiceInfoContainer;
 import com.dolphin.rpc.registry.ServiceInfoContainer.ServiceInfoSet;
-import com.dolphin.rpc.registry.consumer.ServiceCustomer;
 
 public abstract class AbstractServiceCustomer implements ServiceCustomer, ServiceChangeListener {
 

@@ -14,14 +14,13 @@ import com.dolphin.rpc.core.io.transport.RPCResult;
 import com.dolphin.rpc.core.utils.HostUtil;
 import com.dolphin.rpc.netty.server.NettyServer;
 import com.dolphin.rpc.registry.ServiceInfo;
-import com.dolphin.rpc.registry.netty.NettyServiceProvider;
+import com.dolphin.rpc.registry.provider.AbstractServiceProvider;
 import com.dolphin.rpc.registry.provider.ServiceProvider;
-import com.dolphin.rpc.registry.zookeeper.ZooKeeperServiceProvider;
 import com.dolphin.rpc.server.invocation.spring.SpringInvoker;
 
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.ChannelHandler.Sharable;
 
 /**
  * RPC服务器
@@ -42,18 +41,19 @@ public class RPCServer extends NettyServer {
     }
 
     private void initProvider(int port) {
+        ServiceConfig serviceConfig = new ServiceConfig();
+        String servicName = serviceConfig.getServiceName();
+        HostAddress address = new HostAddress(HostUtil.getIp(), port);
+        ServiceInfo serviceInfo = new ServiceInfo(serviceConfig.getGroup(), servicName, address);
         try {
             serviceProvider = (ServiceProvider) Class.forName(new RegistryConfig().getProvider())
-                .newInstance();
+                .getConstructor(ServiceInfo.class).newInstance(serviceInfo);
         } catch (Exception e) {
             logger.error("", e);
             throw new RPCRunTimeException("Init provider failed");
         }
-        ServiceConfig serviceConfig = new ServiceConfig();
-        String servicName = serviceConfig.getServiceName();
         logger.info("Register service " + servicName + ".");
-        HostAddress address = new HostAddress(HostUtil.getIp(), port);
-        serviceProvider.register(new ServiceInfo(serviceConfig.getGroup(), servicName, address));
+        serviceProvider.register(serviceInfo);
     }
 
     public static void main(String[] args) throws Exception {

@@ -1,9 +1,12 @@
 package com.dolphin.rpc.registry.zookeeper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,8 +20,8 @@ import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooKeeper;
 
 import com.dolphin.rpc.core.io.HostAddress;
-import com.dolphin.rpc.registry.AbstractServiceCustomer;
 import com.dolphin.rpc.registry.ServiceInfo;
+import com.dolphin.rpc.registry.consumer.AbstractServiceCustomer;
 
 /**
  * ZooKeeper实现的Service的消费者
@@ -34,6 +37,8 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
 
     private final int            RETRY_TIMES         = 3;
 
+    private final int            SESSION_TIME_OUT    = 300;
+
     private final static String  PARENT_REGEX        = "^/service/([a-zA-Z]+)/([a-zA-Z]+)";
 
     private final static Pattern PARENT_PATH_PATTERN = Pattern.compile(PARENT_REGEX);
@@ -42,14 +47,15 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
 
     private final static Pattern PATH_PATTERN        = Pattern.compile(PATH_REGEX);
 
-    private CountDownLatch       countDownLatch      = new CountDownLatch(1);
+    private CountDownLatch       countDownLatch;
 
     //注册中心的监听器
     private Watcher              nodeWatcher         = new RegistryWatcher();
 
     public ZooKeeperServiceConsumer() {
         try {
-            zooKeeper = new ZooKeeper("10.1.2.85", 5000, nodeWatcher, true);
+            countDownLatch = new CountDownLatch(1);
+            zooKeeper = new ZooKeeper("10.1.2.85", SESSION_TIME_OUT, nodeWatcher, true);
             countDownLatch.await();
         } catch (Exception e) {
             logger.error("", e);
@@ -67,6 +73,21 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
         public void process(WatchedEvent watchedEvent) {
             if (watchedEvent.getState() == KeeperState.SyncConnected) {
                 countDownLatch.countDown();
+            }
+            if (watchedEvent.getState() == KeeperState.Expired) {
+                try {
+                    zooKeeper.close();
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+                try {
+                    logger.info("Reconnect to zookeeper server.");
+                    countDownLatch = new CountDownLatch(1);
+                    zooKeeper = new ZooKeeper("10.1.2.85", SESSION_TIME_OUT, nodeWatcher, true);
+                    countDownLatch.await();
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
             }
             String path = watchedEvent.getPath();
             if (path == null) {
@@ -130,10 +151,10 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i < 10; i++) {
-            ZooKeeperServiceConsumer zs = new ZooKeeperServiceConsumer();
-            ServiceInfo[] services = zs.getServices("test", "cmsService");
-            System.out.println(Arrays.deepToString(services));
+        ZooKeeperServiceConsumer zs = new ZooKeeperServiceConsumer();
+        ServiceInfo[] services = zs.getServices("test", "cmsService");
+        System.out.println(Arrays.deepToString(services));
+        while (true) {
         }
     }
 
