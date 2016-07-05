@@ -15,31 +15,59 @@ import org.apache.zookeeper.ZooKeeper;
 import com.dolphin.rpc.core.exception.RPCRunTimeException;
 import com.dolphin.rpc.core.io.HostAddress;
 import com.dolphin.rpc.registry.ServiceInfo;
+import com.dolphin.rpc.registry.provider.AbstractServiceProvider;
 import com.dolphin.rpc.registry.provider.ServiceProvider;
 
-public class ZooKeeperServiceProvider implements ServiceProvider {
+public class ZooKeeperServiceProvider extends AbstractServiceProvider implements ServiceProvider {
 
-    private static Logger  logger         = Logger.getLogger(ZooKeeperServiceProvider.class);
+    private static Logger  logger           = Logger.getLogger(ZooKeeperServiceProvider.class);
 
     private ZooKeeper      zooKeeper;
 
-    private final int      RETRY_TIMES    = 3;
+    private final int      RETRY_TIMES      = 3;
 
-    private CountDownLatch countDownLatch = new CountDownLatch(1);
+    private final int      SESSION_TIME_OUT = 300;
 
-    public ZooKeeperServiceProvider() {
+    private CountDownLatch countDownLatch   = new CountDownLatch(1);
+
+    private Watcher        nodeWatcher      = new Watcher() {
+                                                @Override
+                                                public void process(WatchedEvent event) {
+                                                    if (event
+                                                        .getState() == KeeperState.SyncConnected) {
+                                                        countDownLatch.countDown();
+                                                    }
+                                                    if (event.getState() == KeeperState.Expired) {
+                                                        try {
+                                                            zooKeeper.close();
+                                                        } catch (Exception e) {
+                                                            logger.error("", e);
+                                                        }
+                                                        try {
+                                                            logger.info(
+                                                                "Reconnect to zookeeper server.");
+                                                            countDownLatch = new CountDownLatch(1);
+                                                            zooKeeper = new ZooKeeper("10.1.2.85",
+                                                                SESSION_TIME_OUT, nodeWatcher,
+                                                                true);
+                                                            countDownLatch.await();
+                                                            registerSelf();
+                                                        } catch (Exception e) {
+                                                            logger.error("", e);
+                                                        }
+                                                    }
+
+                                                    System.out
+                                                        .println("已经触发了" + event.getType() + "事件！");
+                                                }
+                                            };
+
+    public ZooKeeperServiceProvider(ServiceInfo serviceInfo) {
+        super(serviceInfo);
         try {
-            zooKeeper = new ZooKeeper("10.1.2.85", 5000, new Watcher() {
-                @Override
-                public void process(WatchedEvent event) {
-                    if (event.getState() == KeeperState.SyncConnected) {
-                        countDownLatch.countDown();
-                    }
-
-                    System.out.println("已经触发了" + event.getType() + "事件！");
-                }
-            });
+            zooKeeper = new ZooKeeper("10.1.2.85", SESSION_TIME_OUT, nodeWatcher);
             countDownLatch.await();
+            registerSelf();
         } catch (Exception e) {
             logger.error("", e);
         }
@@ -103,9 +131,8 @@ public class ZooKeeperServiceProvider implements ServiceProvider {
     }
 
     public static void main(String[] args) {
-        ZooKeeperServiceProvider serviceProvider = new ZooKeeperServiceProvider();
-        serviceProvider
-            .register(new ServiceInfo("test", "xxx", new HostAddress("192.168.2.2", 2342)));
+        ZooKeeperServiceProvider serviceProvider = new ZooKeeperServiceProvider(
+            new ServiceInfo("test", "xxx", new HostAddress("192.168.2.2", 2342)));
     }
 
 }

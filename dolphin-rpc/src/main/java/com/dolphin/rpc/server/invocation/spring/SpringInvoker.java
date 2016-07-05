@@ -2,6 +2,8 @@ package com.dolphin.rpc.server.invocation.spring;
 
 import java.lang.reflect.Method;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.ReflectionUtils;
 
 import com.dolphin.rpc.core.exception.ServiceNotFoundException;
@@ -14,16 +16,24 @@ import com.dolphin.rpc.server.AbstractInvoker;
  */
 public class SpringInvoker extends AbstractInvoker {
 
+    private ApplicationContext applicationContext;
+
+    public SpringInvoker() {
+        this.applicationContext = new ClassPathXmlApplicationContext(
+            "classpath*:/spring/root-context.xml");
+    }
+
     @Override
     public Object invoke(String className, String methodName, Object[] parameters,
                          Class<?>[] parameterTypes) {
         Object bean;
+        Class<?> beanClass;
         try {
-            bean = SpringContextsUtil.getBean(Class.forName(className));
+            beanClass = Class.forName(className);
+            bean = applicationContext.getBean(beanClass);
         } catch (ClassNotFoundException e) {
             throw new ServiceNotFoundException();
         }
-        Class<? extends Object> beanClass = bean.getClass();
         Method method = ReflectionUtils.findMethod(beanClass, methodName, parameterTypes);
         return ReflectionUtils.invokeMethod(method, bean, parameters);
     }

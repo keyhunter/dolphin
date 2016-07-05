@@ -12,9 +12,10 @@ import com.dolphin.rpc.core.exception.RPCRunTimeException;
 import com.dolphin.rpc.core.exception.ServiceInfoFormatException;
 import com.dolphin.rpc.core.io.Connection;
 import com.dolphin.rpc.core.io.ConnectionCloseListenser;
-import com.dolphin.rpc.registry.AbstractServiceCustomer;
+import com.dolphin.rpc.core.io.ConnectionManager;
 import com.dolphin.rpc.registry.ServiceChangeListener;
 import com.dolphin.rpc.registry.ServiceInfo;
+import com.dolphin.rpc.registry.consumer.AbstractServiceCustomer;
 import com.dolphin.rpc.registry.consumer.ServiceCustomer;
 
 /**
@@ -25,19 +26,21 @@ import com.dolphin.rpc.registry.consumer.ServiceCustomer;
 public class ServiceConnectionSelector implements ConnectionSelector, ConnectionCloseListenser,
                                        ServiceChangeListener {
 
-    private static Logger                    logger       = Logger
+    private static Logger                    logger            = Logger
         .getLogger(ServiceConnectionSelector.class);
 
-    private Map<String, Connection>          serviceConnections;
+    private Map<String, Long>                serviceConnections;
 
     private ServiceCustomer                  serviceCustomer;
 
-    private static ServiceConnectionSelector selector     = new ServiceConnectionSelector();
+    private static ServiceConnectionSelector selector          = new ServiceConnectionSelector();
+
+    private static ConnectionManager         connectionManager = ConnectionManager.getInstance();
 
     private static RPCConnector              rpcConnector;
 
-    private static final String              SERVICE_KEY  = "serviceKey";
-    private static final String              SERVICE_INFO = "serviceInfo";
+    private static final String              SERVICE_KEY       = "serviceKey";
+    private static final String              SERVICE_INFO      = "serviceInfo";
 
     private ServiceConnectionSelector() {
         rpcConnector = new RPCConnector();
@@ -66,9 +69,10 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
     @Override
     public Connection select(String group, String serviceName) {
         String serviceKey = getServiceKey(group, serviceName);
-        Connection connection = serviceConnections.get(serviceKey);
+        Connection connection = getConnection(serviceKey);
         if (connection == null) {
             synchronized (this) {
+                connection = getConnection(serviceKey);
                 if (connection == null) {
                     ServiceInfo[] serviceInfos = serviceCustomer.getServices(group, serviceName);
                     if (serviceInfos == null || serviceInfos.length == 0) {
@@ -76,20 +80,35 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
                     }
 
                     //负载均衡，这里随机一个 TODO 之后可以 写的更复杂一下
-                    ServiceInfo serviceInfo = serviceInfos[new Random()
+                    final ServiceInfo serviceInfo = serviceInfos[new Random()
                         .nextInt(serviceInfos.length)];
                     //订阅服务
                     serviceCustomer.subcride(group, serviceName);
                     connection = rpcConnector.connect(serviceInfo.getHostAddress());
+                    connection.addCloseListener(new ConnectionCloseListenser() {
+                        @Override
+                        public void close(Connection connection) {
+                            ConnectionManager.getInstance().remove(connection.getId());
+                            connection = null;
+                        }
+                    });
                     //连接内放放接口名等信息
                     connection.setAttribute(SERVICE_KEY, serviceKey);
                     connection.setAttribute(SERVICE_INFO, serviceInfo);
-                    serviceConnections.put(serviceKey, connection);
+                    serviceConnections.put(serviceKey, connection.getId());
                     return connection;
                 }
             }
         }
         return connection;
+    }
+
+    private Connection getConnection(String serviceKey) {
+        Long connId = serviceConnections.get(serviceKey);
+        if (connId == null) {
+            return null;
+        }
+        return connectionManager.get(connId.longValue());
     }
 
     private String getServiceKey(String group, String serviceName) {
@@ -129,7 +148,7 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
             throw new ServiceInfoFormatException();
         }
         logger.info("ServiceInfo Changed [group:" + group + ",name:" + serviceName + "]");
-        Connection connection = serviceConnections.get(getServiceKey(group, serviceName));
+        Connection connection = getConnection(getServiceKey(group, serviceName));
         if (connection != null) {
             ServiceInfo oldServiceInfo = (ServiceInfo) connection.getAttribute(SERVICE_INFO);
             ServiceInfo[] serviceInfos = serviceCustomer.getServices(group, serviceName);
