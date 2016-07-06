@@ -1,52 +1,51 @@
 package com.dolphin.rpc.netty.connector;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 
 import com.dolphin.rpc.core.exception.AddressFormatException;
 import com.dolphin.rpc.core.io.Connection;
-import com.dolphin.rpc.core.io.ConnectionCloseListenser;
 import com.dolphin.rpc.core.io.ConnectionManager;
 import com.dolphin.rpc.core.io.Connector;
 import com.dolphin.rpc.core.io.HostAddress;
-import com.dolphin.rpc.netty.NettyConnection;
 import com.dolphin.rpc.netty.NettyChannelInitializer;
+import com.dolphin.rpc.netty.NettyConnection;
 import com.dolphin.rpc.netty.ResponseHandler;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
-public class NettyConnector implements Connector, ConnectionCloseListenser {
+public class NettyConnector implements Connector {
 
-    private Logger                   logger                  = Logger
+    private Logger                  logger                  = Logger
         .getLogger(NettyConnector.class);
 
-    private HostAddress              hostAddress;
-
     /** 是否正在运行中  @author jiujie 2016年6月1日 下午1:20:44 */
-    private volatile AtomicBoolean   isStarting              = new AtomicBoolean(false);
+    private volatile AtomicBoolean  isStarting              = new AtomicBoolean(false);
 
-    private ConnectionManager        connectionManager       = ConnectionManager.getInstance();
+    private ConnectionManager       connectionManager       = ConnectionManager.getInstance();
 
-    private ScheduledExecutorService executor;
+    private NettyChannelInitializer nettyChannelInitializer = new NettyChannelInitializer() {
 
-    private NettyChannelInitializer  nettyChannelInitializer = new NettyChannelInitializer();
+                                                                @Override
+                                                                public void registerHandler(SocketChannel ch) {
+                                                                    ch.pipeline().addLast("timeout",
+                                                                        new IdleHeartBeatHandler(3,
+                                                                            1, 0));
+                                                                }
 
-    private EventLoopGroup           group;
+                                                            };
 
     public NettyConnector() {
         super();
-        nettyChannelInitializer.registerHandler("responseHandler", new ResponseHandler());
-
+        registerHandler("responseHandler", new ResponseHandler());
     }
 
     public void registerHandler(String name, ChannelHandler handler) {
@@ -58,10 +57,6 @@ public class NettyConnector implements Connector, ConnectionCloseListenser {
         nettyClient.connect(new HostAddress("10.1.1.31", 1114));
     }
 
-    public HostAddress getHostAddress() {
-        return hostAddress;
-    }
-
     @Override
     public void shutdown() {
         synchronized (this) {
@@ -70,8 +65,6 @@ public class NettyConnector implements Connector, ConnectionCloseListenser {
     }
 
     private void free() {
-        group.shutdownGracefully();
-        executor.shutdown();
         isStarting.set(false);
     }
 
@@ -88,39 +81,36 @@ public class NettyConnector implements Connector, ConnectionCloseListenser {
     }
 
     private Connection startConnect(final HostAddress address) {
-        if (group == null || group.isShutdown()) {
-            group = new NioEventLoopGroup();
-            executor = Executors.newSingleThreadScheduledExecutor();
-        }
-        this.hostAddress = address;
+        final NioEventLoopGroup group = new NioEventLoopGroup();
         Bootstrap bootstrap = new Bootstrap().group(group).channel(NioSocketChannel.class)
             .handler(nettyChannelInitializer);
-        ChannelFuture future = bootstrap.connect(hostAddress.getHost(), hostAddress.getPort());
+        ChannelFuture future = bootstrap.connect(address.getHost(), address.getPort());
         // awaitUninterruptibly() 等待连接成功
         io.netty.channel.Channel channel = future.awaitUninterruptibly().channel();
         final Connection connection = connectionManager.create(new NettyConnection(channel));
-        connection.addCloseListener(this);
-        future.channel().closeFuture()
-            .addListener(new GenericFutureListener<Future<? super Void>>() {
-                @Override
-                public void operationComplete(Future<? super Void> arg0) throws Exception {
+        channel.closeFuture().addListener(new GenericFutureListener<Future<? super Void>>() {
+            @Override
+            public void operationComplete(Future<? super Void> arg0) throws Exception {
+                logger.error("Connection closed: [" + connection.getId() + "]");
+                try {
                     connection.close();
+                    connectionManager.remove(connection.getId());
+                } finally {
+                    //连接关闭，释放资源
+                    group.shutdownGracefully();
                 }
-            });
+            }
+        });
         return connection;
     }
 
     @Override
     public void startup() {
         //初始化客端
-        //初始化最大连接数
+        //TODO 初始化最大连接数
         //初始化一个清理线程，来清理已经关闭Connection
         //是否启动重连服务，启动重连服务的话，如果断开的话，就定时重连，不启动重连服务的话，就不再重连
-    }
 
-    @Override
-    public void close(Connection channel) {
-        connectionManager.remove(channel.getId());
     }
 
 }

@@ -36,7 +36,6 @@ public class RegistryConnectorTest {
                 }
             }
             System.out.println("End print service info-------------");
-            connector.close(connection);
             connector.shutdown();
         }
     }

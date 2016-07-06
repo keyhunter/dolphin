@@ -128,12 +128,11 @@ public class ServiceInfoContainer {
      * @author jiujie
      * @version $Id: ServiceInfoContaintor.java, v 0.1 2016年5月31日 下午3:59:25 jiujie Exp $
      */
-    public class ServiceInfoSet implements Set<ServiceInfo> {
+    public static class ServiceInfoSet implements Set<ServiceInfo> {
 
         private Map<String, ServiceInfo> map = new HashMap<>();
 
         public ServiceInfoSet() {
-
         }
 
         private String getUniqueKey(ServiceInfo serviceInfo) {
