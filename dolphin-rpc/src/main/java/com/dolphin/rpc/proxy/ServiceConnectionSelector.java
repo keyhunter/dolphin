@@ -98,7 +98,6 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
         List<Connection> connections = getConnections(serviceKey);
         if (connections == null || connections.isEmpty()) {
             resetServiceConnection(group, serviceName);
-        } else {
             connections = getConnections(serviceKey);
             if (connections == null || connections.isEmpty()) {
                 return null;

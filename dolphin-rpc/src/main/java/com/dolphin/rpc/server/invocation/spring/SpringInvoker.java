@@ -2,8 +2,10 @@ package com.dolphin.rpc.server.invocation.spring;
 
 import java.lang.reflect.Method;
 
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import com.dolphin.rpc.core.exception.ServiceNotFoundException;
@@ -14,13 +16,14 @@ import com.dolphin.rpc.server.AbstractInvoker;
  * @author jiujie
  * @version $Id: SpringInvoker.java, v 0.1 2016年5月11日 上午11:05:22 jiujie Exp $
  */
-public class SpringInvoker extends AbstractInvoker {
+@Component
+public class SpringInvoker extends AbstractInvoker implements ApplicationContextAware {
 
-    private ApplicationContext applicationContext;
+    private static ApplicationContext applicationContext;
 
     public SpringInvoker() {
-        this.applicationContext = new ClassPathXmlApplicationContext(
-            "classpath*:/spring/root-context.xml");
+        //        this.applicationContext = new ClassPathXmlApplicationContext(
+        //            "classpath*:/spring/root-context.xml");
     }
 
     @Override
@@ -38,17 +41,8 @@ public class SpringInvoker extends AbstractInvoker {
         return ReflectionUtils.invokeMethod(method, bean, parameters);
     }
 
-    private String getBeanName(String className) {
-        int lastIndexOf = className.lastIndexOf(".");
-        if (lastIndexOf >= 0) {
-            String beanName = className.substring(lastIndexOf + 1, className.length());
-            return beanName;
-        }
-        return className;
-    }
-
-    public static void main(String[] args) throws ClassNotFoundException {
-        Class<?> forName = Class.forName("com.dolphin.rpc.test.service.OrderService");
-        System.out.println(forName);
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        SpringInvoker.applicationContext = applicationContext;
     }
 }
