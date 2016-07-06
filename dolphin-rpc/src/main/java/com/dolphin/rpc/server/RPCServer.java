@@ -88,6 +88,9 @@ public class RPCServer extends NettyServer {
             Header header = message.getHeader();
             RPCResult response = new RPCResult();
             if (header != null && header.getPacketType() == PacketType.HEART_BEAT.getValue()) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Server heared client heart beat.");
+                }
                 ctx.writeAndFlush(new Message(message.getHeader(), response));
                 return;
             }
