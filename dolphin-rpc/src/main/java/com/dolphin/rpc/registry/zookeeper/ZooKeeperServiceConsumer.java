@@ -1,12 +1,9 @@
 package com.dolphin.rpc.registry.zookeeper;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -143,7 +140,7 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
         }
         Matcher matcher = PATH_PATTERN.matcher(path);
         if (matcher.find()) {
-            ServiceInfo serviceInfo = new ServiceInfo(matcher.group(2), matcher.group(1),
+            ServiceInfo serviceInfo = new ServiceInfo(matcher.group(1), matcher.group(2),
                 new HostAddress(matcher.group(3), Integer.valueOf(matcher.group(4))));
             return serviceInfo;
         }

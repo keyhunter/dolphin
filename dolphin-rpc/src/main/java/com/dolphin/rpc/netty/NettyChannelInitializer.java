@@ -9,12 +9,14 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.dolphin.rpc.netty.connector.IdleHeartBeatHandler;
+
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 
-public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
+public abstract class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     private Logger                            logger   = Logger
         .getLogger(NettyChannelInitializer.class);
@@ -26,6 +28,7 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast("decoder", new NettyDecoder());
         pipeline.addLast("encoder", new NettyEncoder());
+        registerHandler(ch);
         for (Map<String, ChannelHandler> handler : handlers) {
             for (Entry<String, ChannelHandler> entry : handler.entrySet()) {
                 pipeline.addLast(entry.getKey(), entry.getValue());
@@ -33,8 +36,10 @@ public class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
         }
     }
 
+    public abstract void registerHandler(SocketChannel ch);
+
     /**
-     * 注册处理器
+     * 注册共享的处理器
      * @author jiujie
      * 2016年5月25日 下午9:50:25
      * @param name

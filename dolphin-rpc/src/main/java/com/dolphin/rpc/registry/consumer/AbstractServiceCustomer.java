@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.dolphin.rpc.core.exception.ServiceInfoFormatException;
-import com.dolphin.rpc.core.io.HostAddress;
 import com.dolphin.rpc.registry.ServiceChangeListener;
 import com.dolphin.rpc.registry.ServiceInfo;
 import com.dolphin.rpc.registry.ServiceInfoContainer;
@@ -40,7 +39,8 @@ public abstract class AbstractServiceCustomer implements ServiceCustomer, Servic
     public ServiceInfo[] getServices(String group, String serviceName) {
         ServiceInfoSet serviceInfoSet = cachedServiceInfos.get(group, serviceName);
         if (serviceInfoSet != null && serviceInfoSet.size() > 0) {
-            return (ServiceInfo[]) serviceInfoSet.toArray();
+            ServiceInfo[] serviceInfoArr = new ServiceInfo[serviceInfoSet.size()];
+            return serviceInfoSet.toArray(serviceInfoArr);
         }
         ServiceInfo[] serviceInfos = getRemoteServiceInfos(group, serviceName);
         if (serviceInfos != null && serviceInfos.length > 0) {

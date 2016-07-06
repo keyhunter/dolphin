@@ -22,8 +22,7 @@ public class NettyConnection extends AbstractConnection {
     }
 
     @Override
-    public void close() {
-        super.close();
+    public void doClose() {
         channel.close();
     }
 }

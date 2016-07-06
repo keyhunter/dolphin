@@ -14,7 +14,6 @@ import com.dolphin.rpc.core.io.transport.RPCResult;
 import com.dolphin.rpc.core.utils.HostUtil;
 import com.dolphin.rpc.netty.server.NettyServer;
 import com.dolphin.rpc.registry.ServiceInfo;
-import com.dolphin.rpc.registry.provider.AbstractServiceProvider;
 import com.dolphin.rpc.registry.provider.ServiceProvider;
 import com.dolphin.rpc.server.invocation.spring.SpringInvoker;
 
@@ -87,13 +86,13 @@ public class RPCServer extends NettyServer {
         protected void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {
 
             Header header = message.getHeader();
-            RPCRequest requset = message.getBody(RPCRequest.class);
             RPCResult response = new RPCResult();
-            response.setRequestId(requset.getId());
             if (header != null && header.getPacketType() == PacketType.HEART_BEAT.getValue()) {
                 ctx.writeAndFlush(new Message(message.getHeader(), response));
                 return;
             }
+            RPCRequest requset = message.getBody(RPCRequest.class);
+            response.setRequestId(requset.getId());
             if (header != null && header.getPacketType() == PacketType.RPC.getValue()) {
                 try {
                     Object invoke = invoker.invoke(requset.getClassName(), requset.getMethodName(),

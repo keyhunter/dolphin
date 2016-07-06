@@ -1,8 +1,18 @@
 package com.dolphin.rpc.proxy;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -15,6 +25,7 @@ import com.dolphin.rpc.core.io.ConnectionCloseListenser;
 import com.dolphin.rpc.core.io.ConnectionManager;
 import com.dolphin.rpc.registry.ServiceChangeListener;
 import com.dolphin.rpc.registry.ServiceInfo;
+import com.dolphin.rpc.registry.ServiceInfoContainer.ServiceInfoSet;
 import com.dolphin.rpc.registry.consumer.AbstractServiceCustomer;
 import com.dolphin.rpc.registry.consumer.ServiceCustomer;
 
@@ -26,26 +37,41 @@ import com.dolphin.rpc.registry.consumer.ServiceCustomer;
 public class ServiceConnectionSelector implements ConnectionSelector, ConnectionCloseListenser,
                                        ServiceChangeListener {
 
-    private static Logger                    logger            = Logger
+    private static Logger                    logger                        = Logger
         .getLogger(ServiceConnectionSelector.class);
 
-    private Map<String, Long>                serviceConnections;
+    private Map<String, List<Long>>          serviceConnections;
+
+    /** 重连列表 @author jiujie 2016年7月6日 上午10:18:36 */
+    private ServiceInfoSet                   disConnectServiceInfos        = new ServiceInfoSet();
 
     private ServiceCustomer                  serviceCustomer;
 
-    private static ServiceConnectionSelector selector          = new ServiceConnectionSelector();
+    private static ServiceConnectionSelector selector                      = new ServiceConnectionSelector();
 
-    private static ConnectionManager         connectionManager = ConnectionManager.getInstance();
+    private ScheduledExecutorService         executorService               = Executors
+        .newSingleThreadScheduledExecutor();
+
+    private static ConnectionManager         connectionManager             = ConnectionManager
+        .getInstance();
 
     private static RPCConnector              rpcConnector;
 
-    private static final String              SERVICE_KEY       = "serviceKey";
-    private static final String              SERVICE_INFO      = "serviceInfo";
+    private Lock                             connectionLock                = new ReentrantLock();
+
+    private static final String              SERVICE_KEY                   = "serviceKey";
+    private static final String              SERVICE_INFO                  = "serviceInfo";
+
+    private static final int                 EACH_SERVICE_CONNECTION_LIMIT = 2;
+
+    private static final int                 RECONNECT_INTERVAL            = 3;
 
     private ServiceConnectionSelector() {
         rpcConnector = new RPCConnector();
         rpcConnector.startup();
         initCustomer();
+        executorService.scheduleAtFixedRate(new ReconnectTask(), RECONNECT_INTERVAL,
+            RECONNECT_INTERVAL, TimeUnit.SECONDS);
     }
 
     private void initCustomer() {
@@ -69,50 +95,40 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
     @Override
     public Connection select(String group, String serviceName) {
         String serviceKey = getServiceKey(group, serviceName);
-        Connection connection = getConnection(serviceKey);
-        if (connection == null) {
-            synchronized (this) {
-                connection = getConnection(serviceKey);
-                if (connection == null) {
-                    ServiceInfo[] serviceInfos = serviceCustomer.getServices(group, serviceName);
-                    if (serviceInfos == null || serviceInfos.length == 0) {
-                        return null;
-                    }
-
-                    //负载均衡，这里随机一个 TODO 之后可以 写的更复杂一下
-                    final ServiceInfo serviceInfo = serviceInfos[new Random()
-                        .nextInt(serviceInfos.length)];
-                    //订阅服务
-                    serviceCustomer.subcride(group, serviceName);
-                    connection = rpcConnector.connect(serviceInfo.getHostAddress());
-                    connection.addCloseListener(new ConnectionCloseListenser() {
-                        @Override
-                        public void close(Connection connection) {
-                            ConnectionManager.getInstance().remove(connection.getId());
-                            connection = null;
-                        }
-                    });
-                    //连接内放放接口名等信息
-                    connection.setAttribute(SERVICE_KEY, serviceKey);
-                    connection.setAttribute(SERVICE_INFO, serviceInfo);
-                    serviceConnections.put(serviceKey, connection.getId());
-                    return connection;
-                }
+        List<Connection> connections = getConnections(serviceKey);
+        if (connections == null || connections.isEmpty()) {
+            resetServiceConnection(group, serviceName);
+        } else {
+            connections = getConnections(serviceKey);
+            if (connections == null || connections.isEmpty()) {
+                return null;
             }
         }
-        return connection;
+        return connections.get(new Random().nextInt(connections.size()));
     }
 
-    private Connection getConnection(String serviceKey) {
-        Long connId = serviceConnections.get(serviceKey);
-        if (connId == null) {
+    private List<Connection> getConnections(String serviceKey) {
+        List<Long> connIds = serviceConnections.get(serviceKey);
+        if (connIds == null || connIds.isEmpty()) {
             return null;
         }
-        return connectionManager.get(connId.longValue());
+        List<Connection> connections = new ArrayList<>();
+        for (Long connId : connIds) {
+            Connection connection = connectionManager.get(connId.longValue());
+            if (connection != null) {
+                connections.add(connection);
+            }
+        }
+        return connections;
     }
 
     private String getServiceKey(String group, String serviceName) {
         String serviceKey = group + serviceName;
+        return serviceKey;
+    }
+
+    private String getServiceKey(ServiceInfo serviceInfo) {
+        String serviceKey = serviceInfo.getGroup() + serviceInfo.getName();
         return serviceKey;
     }
 
@@ -126,9 +142,29 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
     @Override
     public void close(Connection connection) {
         if (connection != null && connection.getAttribute(SERVICE_KEY) != null) {
-            connection.getAttribute(SERVICE_KEY);
-            String serviceKey = (String) connection.getAttribute(SERVICE_KEY);
-            serviceConnections.remove(serviceKey);
+            connectionLock.lock();
+            try {
+                String serviceKey;
+                if (connection != null
+                    && (serviceKey = (String) connection.getAttribute(SERVICE_KEY)) != null) {
+                    if (StringUtils.isNotBlank(serviceKey)) {
+                        List<Long> connIds = serviceConnections.get(serviceKey);
+                        for (Long connId : connIds) {
+                            if (connId == connection.getId()) {
+                                connIds.remove(connId);
+                                break;
+                            }
+                        }
+                    }
+                    ServiceInfo serviceInfo = (ServiceInfo) connection.getAttribute(SERVICE_INFO);
+                    //将断开的连接加入重连列表
+                    if (serviceInfo != null) {
+                        disConnectServiceInfos.add(serviceInfo);
+                    }
+                }
+            } finally {
+                connectionLock.unlock();
+            }
         }
     }
 
@@ -144,23 +180,157 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
      * @param serviceInfo
      */
     private void resetServiceConnection(String group, String serviceName) {
-        if (StringUtils.isBlank(group) || StringUtils.isBlank(serviceName)) {
-            throw new ServiceInfoFormatException();
-        }
-        logger.info("ServiceInfo Changed [group:" + group + ",name:" + serviceName + "]");
-        Connection connection = getConnection(getServiceKey(group, serviceName));
-        if (connection != null) {
-            ServiceInfo oldServiceInfo = (ServiceInfo) connection.getAttribute(SERVICE_INFO);
+        connectionLock.lock();
+        try {
+            if (StringUtils.isBlank(group) || StringUtils.isBlank(serviceName)) {
+                throw new ServiceInfoFormatException();
+            }
+            logger.info("ServiceInfo Changed [group:" + group + ",name:" + serviceName + "]");
+            String serviceKey = getServiceKey(group, serviceName);
+            List<Connection> connections = getConnections(serviceKey);
             ServiceInfo[] serviceInfos = serviceCustomer.getServices(group, serviceName);
-            if (serviceInfos == null) {
+            if (serviceInfos == null || serviceInfos.length == 0) {
                 return;
             }
-            //负载均衡，这里随机一个 TODO 之后可以 写的更复杂一下
-            ServiceInfo newServiceInfo = serviceInfos[new Random().nextInt(serviceInfos.length)];
-            if (newServiceInfo != null
-                && !newServiceInfo.getHostAddress().equals(oldServiceInfo.getHostAddress()))
-                connection = rpcConnector.connect(newServiceInfo.getHostAddress());
+            ServiceInfo[] targets = random(serviceInfos, EACH_SERVICE_CONNECTION_LIMIT);
+            if (targets == null || targets.length == 0) {
+                return;
+            }
+            //如果没有连接
+            if (connections == null || connections.isEmpty()) {
+                for (ServiceInfo newServiceInfo : targets) {
+                    if (disConnectServiceInfos.contains(newServiceInfo)) {
+                        continue;
+                    }
+                    connect(newServiceInfo);
+                }
+            } else {
+                for (Connection connection : connections) {
+                    boolean exist = false;
+                    for (ServiceInfo newServiceInfo : targets) {
+                        ServiceInfo oldServiceInfo = (ServiceInfo) connection
+                            .getAttribute(SERVICE_INFO);
+                        if (oldServiceInfo != null && oldServiceInfo.equals(newServiceInfo)) {
+                            exist = true;
+                            break;
+                        }
+                    }
+                    if (!exist) {
+                        connectionManager.remove(connection.getId());
+                        connection.close();
+                    }
+                }
+                for (ServiceInfo newServiceInfo : targets) {
+                    if (disConnectServiceInfos.contains(newServiceInfo)) {
+                        continue;
+                    }
+                    boolean exist = false;
+                    for (Connection connection : connections) {
+                        ServiceInfo oldServiceInfo = (ServiceInfo) connection
+                            .getAttribute(SERVICE_INFO);
+                        if (oldServiceInfo != null && oldServiceInfo.equals(newServiceInfo)) {
+                            exist = true;
+                            break;
+                        }
+                    }
+                    if (exist) {
+                        continue;
+                    }
+                    connect(newServiceInfo);
+                }
+            }
+        } finally {
+            connectionLock.unlock();
         }
+    }
+
+    private void connect(ServiceInfo serviceInfo) {
+        Connection connection = rpcConnector.connect(serviceInfo.getHostAddress());
+        connection.addCloseListener(this);
+        String serviceKey = getServiceKey(serviceInfo);
+        //连接内放放接口名等信息
+        connection.setAttribute(SERVICE_KEY, serviceKey);
+        connection.setAttribute(SERVICE_INFO, serviceInfo);
+        List<Long> connIds = serviceConnections.get(serviceKey);
+        if (connIds == null) {
+            connIds = new ArrayList<>();
+            serviceConnections.put(serviceKey, connIds);
+        }
+        connIds.add(connection.getId());
+    }
+
+    /**
+     * 从一个ServiceInfo数组serviceInfos中随机出targetSize个ServiceInfo
+     * @author jiujie
+     * 2016年7月6日 上午10:57:16
+     * @param serviceInfos
+     * @param targetSize
+     * @return
+     */
+    private ServiceInfo[] random(ServiceInfo[] serviceInfos, int targetSize) {
+        int length = 0;
+        if (serviceInfos == null || (length = serviceInfos.length) < targetSize) {
+            return serviceInfos;
+        }
+        ServiceInfo[] targetServiceInfos = new ServiceInfo[targetSize];
+        Set<Integer> targetIndexs = new HashSet<>();
+        Random random = new Random();
+        while (targetIndexs.size() < targetSize) {
+            targetIndexs.add(random.nextInt(length));
+        }
+        Iterator<Integer> iterator = targetIndexs.iterator();
+        int i = 0;
+        while (iterator.hasNext()) {
+            Integer next = iterator.next();
+            targetServiceInfos[i] = serviceInfos[next];
+            i++;
+        }
+        return targetServiceInfos;
+    }
+
+    /**
+     * 重连任务
+     * @author jiujie
+     * @version $Id: ServiceConnectionSelector.java, v 0.1 2016年7月6日 上午11:56:32 jiujie Exp $
+     */
+    public class ReconnectTask implements Runnable {
+
+        @Override
+        public void run() {
+            connectionLock.lock();
+            try {
+                Iterator<ServiceInfo> iterator = disConnectServiceInfos.iterator();
+                while (iterator.hasNext()) {
+                    ServiceInfo serviceInfo = iterator.next();
+                    if (logger.isInfoEnabled()) {
+                        logger.info("Start reconnect to service [" + serviceInfo + "]");
+                    }
+                    String serviceKey = getServiceKey(serviceInfo);
+                    List<Connection> connections = getConnections(serviceKey);
+                    if (connections == null || connections.isEmpty()) {
+                        connect(serviceInfo);
+                        disConnectServiceInfos.remove(serviceInfo);
+                    } else {
+                        boolean exist = false;
+                        for (Connection connection : connections) {
+                            if (serviceInfo != null
+                                && serviceInfo.equals(connection.getAttribute(SERVICE_INFO))) {
+                                exist = true;
+                                break;
+                            }
+                        }
+                        if (exist) {
+                            continue;
+                        }
+                        connect(serviceInfo);
+                        disConnectServiceInfos.remove(serviceInfo);
+                    }
+                }
+            } finally {
+                connectionLock.unlock();
+            }
+        }
+
     }
 
 }

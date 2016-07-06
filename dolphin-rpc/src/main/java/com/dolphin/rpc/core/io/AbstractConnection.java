@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class AbstractConnection implements Connection {
 
@@ -13,6 +14,8 @@ public abstract class AbstractConnection implements Connection {
     private Map<String, Object>            attributes      = new HashMap<>();
 
     private List<ConnectionCloseListenser> closeListensers = new ArrayList<>();
+
+    private AtomicBoolean                  isClose         = new AtomicBoolean(false);
 
     public void setId(long id) {
         this.id = id;
@@ -42,11 +45,25 @@ public abstract class AbstractConnection implements Connection {
         closeListensers.add(closeListenser);
     }
 
+    public boolean isClose() {
+        return isClose.get();
+    }
+
     @Override
     public void close() {
-        for (ConnectionCloseListenser closeListenser : closeListensers) {
-            closeListenser.close(this);
+        if (!isClose.getAndSet(true)) {
+            for (ConnectionCloseListenser closeListenser : closeListensers) {
+                closeListenser.close(this);
+            }
+            doClose();
         }
     }
+
+    /**
+     * 关闭连接
+     * @author jiujie
+     * 2016年7月6日 上午11:35:29
+     */
+    protected abstract void doClose();
 
 }

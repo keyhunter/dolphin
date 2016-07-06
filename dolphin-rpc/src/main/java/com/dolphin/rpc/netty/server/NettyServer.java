@@ -9,6 +9,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public abstract class NettyServer {
@@ -23,7 +24,13 @@ public abstract class NettyServer {
     /** 是否正在运行中  @author jiujie 2016年6月1日 下午1:20:44 */
     private volatile boolean        isStarting              = false;
 
-    private NettyChannelInitializer nettyChannelInitializer = new NettyChannelInitializer();
+    private NettyChannelInitializer nettyChannelInitializer = new NettyChannelInitializer(){
+
+        @Override
+        public void registerHandler(SocketChannel ch) {
+        }
+        
+    };
 
     public NettyServer(int port) {
         this.port = port;
