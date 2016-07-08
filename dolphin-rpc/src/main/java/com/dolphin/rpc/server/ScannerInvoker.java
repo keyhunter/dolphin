@@ -12,7 +12,7 @@ public class ScannerInvoker extends AbstractInvoker {
     @Override
     public Object invoke(String className, String methodName, Object[] parameters,
                          Class<?>[] parameterTypes) throws InvocationTargetException {
-        Class<?>[] classes = getClasses(parameters);
+//        Class<?>[] classes = getClasses(parameters);
         RpcServiceScanner instance = RpcServiceScanner.getInstance();
         Object bean = instance.getBean(className);
         FastClass target = FastClass.create(bean.getClass());

@@ -13,7 +13,7 @@ public class MappingInvoker extends AbstractInvoker {
     public Object invoke(String className, String methodName, Object[] parameters,
                          Class<?>[] parameterTypes) throws InvocationTargetException {
 
-        Class<?>[] classes = getClasses(parameters);
+//        Class<?>[] classes = getClasses(parameters);
         Object bean = RPCHandlerMapping.getInstance().getHandler(className);
         FastClass target = FastClass.create(bean.getClass());
         FastMethod serviceFastMethod = target.getMethod(methodName, parameterTypes);

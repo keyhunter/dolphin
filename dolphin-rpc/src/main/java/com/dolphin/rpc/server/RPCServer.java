@@ -15,7 +15,7 @@ import com.dolphin.rpc.core.utils.HostUtil;
 import com.dolphin.rpc.netty.server.NettyServer;
 import com.dolphin.rpc.registry.ServiceInfo;
 import com.dolphin.rpc.registry.provider.ServiceProvider;
-import com.dolphin.rpc.server.invocation.spring.SpringInvoker;
+import com.dolphin.rpc.spring.SpringInvoker;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;

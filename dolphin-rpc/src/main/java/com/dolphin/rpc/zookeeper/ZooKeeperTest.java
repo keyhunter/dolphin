@@ -134,49 +134,59 @@ public class ZooKeeperTest implements Watcher {
     }
 
     public static void main(String[] args) throws Exception {
-        String hosts = "10.1.2.85";
-        String groupname = "service/cmsService";
-        String meberName = String.valueOf(System.currentTimeMillis());
-        String path = "/" + groupname;
-
-        // create
-        ZooKeeperTest test = new ZooKeeperTest();
-        //  连接
-        test.connect(hosts);
-        //
-        if (null != test.isexist(path)) {
-            test.delete(path);
-        }
-
-        test.isexist(path);
-        test.create(path);
-
-        test.isexist(path);
-        test.write(path, "192.168.0.1:8080");
-
-        test.isexist(path);
-        String result = test.read(path, test.wh);
-        System.out.println(path + " value = " + result);
-
-        int sum = 0;
-        for (int j = 0; j < 10000; j++) {
-            sum++;
-            Thread.sleep(10);
-        }
-        System.out.println(sum);
-        test.close();
-
-        System.exit(2);
-        // 一个本地连接的znode
-        test.connect(hosts);
-        test.join(groupname, meberName);
-
-        // 遍历
-        List<String> memlist = test.getChilds("/" + "service");
-        if (memlist != null) {
-            for (int i = 0; i < memlist.size() - 1; i++) {
-                System.out.println("mempath = " + memlist.get(i));
+        String hosts = "192.168.0.221:2181,192.168.0.221:2182,192.168.0.221:2183";
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        ZooKeeper zooKeeper = new ZooKeeper(hosts, 5000, new Watcher() {
+            @Override
+            public void process(WatchedEvent event) {
+                System.out.println(event);
+                countDownLatch.countDown();
             }
-        }
+        });
+        countDownLatch.await();
+
+        //        String groupname = "service/cmsService";
+        //        String meberName = String.valueOf(System.currentTimeMillis());
+        //        String path = "/" + groupname;
+        //
+        //        // create
+        //        ZooKeeperTest test = new ZooKeeperTest();
+        //        //  连接
+        //        test.connect(hosts);
+        //        //
+        //        if (null != test.isexist(path)) {
+        //            test.delete(path);
+        //        }
+        //
+        //        test.isexist(path);
+        //        test.create(path);
+        //
+        //        test.isexist(path);
+        //        test.write(path, "192.168.0.221:");
+        //
+        //        test.isexist(path);
+        //        String result = test.read(path, test.wh);
+        //        System.out.println(path + " value = " + result);
+        //
+        //        int sum = 0;
+        //        for (int j = 0; j < 10000; j++) {
+        //            sum++;
+        //            Thread.sleep(10);
+        //        }
+        //        System.out.println(sum);
+        //        test.close();
+        //
+        //        System.exit(2);
+        //        // 一个本地连接的znode
+        //        test.connect(hosts);
+        //        test.join(groupname, meberName);
+        //
+        //        // 遍历
+        //        List<String> memlist = test.getChilds("/" + "service");
+        //        if (memlist != null) {
+        //            for (int i = 0; i < memlist.size() - 1; i++) {
+        //                System.out.println("mempath = " + memlist.get(i));
+        //            }
+        //        }
     }
 }
