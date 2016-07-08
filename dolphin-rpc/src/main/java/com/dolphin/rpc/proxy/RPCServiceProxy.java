@@ -26,14 +26,14 @@ import com.dolphin.rpc.core.io.transport.RPCResult;
  */
 public class RPCServiceProxy implements InvocationHandler {
 
-    private static Logger             logger         = Logger.getLogger(RPCServiceProxy.class);
+    private static Logger               logger          = Logger.getLogger(RPCServiceProxy.class);
 
-    private static RequestManager     requestManager = RequestManager.getInstance();
+    private final static RequestManager REQUSET_MANAGER = RequestManager.getInstance();
 
-    private static String             group          = new ServiceConfig().getGroup();
+    private final static String         DEFAULT_GROUP   = new ServiceConfig().getGroup();
 
     /** 客户端选择器 @author jiujie 2016年5月24日 上午11:33:08 */
-    private static ConnectionSelector clientSelector = ServiceConnectionSelector.getInstance();
+    private static ConnectionSelector   clientSelector  = ServiceConnectionSelector.getInstance();
 
     public RPCServiceProxy() {
     }
@@ -44,11 +44,34 @@ public class RPCServiceProxy implements InvocationHandler {
         RPCService annotation = clazz.getAnnotation(RPCService.class);
         String serviceName = annotation.value();
         String annotationGroup = annotation.group();
+        String group = DEFAULT_GROUP;
         if (StringUtils.isNotBlank(annotationGroup)) {
             group = annotationGroup;
         }
         String className = clazz.getName();
         logBefore(className, method, args);
+        RPCResult result = request(group, serviceName, className, method, args);
+        logAfter(className, method, args);
+        if (result.getException() != null) {
+            throw result.getException();
+        }
+        return result.getResult();
+    }
+
+    /**
+     * 请求远程服务获取结果
+     * @author jiujie
+     * 2016年7月7日 下午4:47:00
+     * @param group 分组名字
+     * @param serviceName 服务名字
+     * @param className 类名
+     * @param method 方法
+     * @param args 参数
+     * @return
+     * @throws ServiceNotFoundException
+     */
+    private RPCResult request(String group, String serviceName, String className, Method method,
+                              Object[] args) throws ServiceNotFoundException {
         RPCRequest request = new RPCRequest();
         request.setClassName(className);
         request.setMethodName(method.getName());
@@ -58,13 +81,9 @@ public class RPCServiceProxy implements InvocationHandler {
         if (connection == null) {
             throw new ServiceNotFoundException();
         }
-        RPCResult result = (RPCResult) requestManager.sysnRequest(connection,
+        RPCResult result = (RPCResult) REQUSET_MANAGER.sysnRequest(connection,
             new Header(PacketType.RPC), request);
-        logAfter(className, method, args);
-        if (result.getException() != null) {
-            throw result.getException();
-        }
-        return result.getResult();
+        return result;
     }
 
     private void logAfter(String className, Method method, Object[] args) {

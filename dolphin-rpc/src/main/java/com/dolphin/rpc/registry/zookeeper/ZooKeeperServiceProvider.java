@@ -17,6 +17,7 @@ import com.dolphin.rpc.core.io.HostAddress;
 import com.dolphin.rpc.registry.ServiceInfo;
 import com.dolphin.rpc.registry.provider.AbstractServiceProvider;
 import com.dolphin.rpc.registry.provider.ServiceProvider;
+import com.dolphin.rpc.registry.zookeeper.comfig.ZookeeperConfig;
 
 public class ZooKeeperServiceProvider extends AbstractServiceProvider implements ServiceProvider {
 
@@ -65,7 +66,8 @@ public class ZooKeeperServiceProvider extends AbstractServiceProvider implements
     public ZooKeeperServiceProvider(ServiceInfo serviceInfo) {
         super(serviceInfo);
         try {
-            zooKeeper = new ZooKeeper("10.1.2.85", SESSION_TIME_OUT, nodeWatcher);
+            zooKeeper = new ZooKeeper(ZookeeperConfig.getConnectString(), SESSION_TIME_OUT,
+                nodeWatcher);
             countDownLatch.await();
             registerSelf();
         } catch (Exception e) {

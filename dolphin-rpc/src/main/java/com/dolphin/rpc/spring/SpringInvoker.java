@@ -1,4 +1,4 @@
-package com.dolphin.rpc.server.invocation.spring;
+package com.dolphin.rpc.spring;
 
 import java.lang.reflect.Method;
 
