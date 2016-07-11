@@ -41,15 +41,21 @@ public abstract class AbstractXMLConfig implements Config {
         }
     }
 
+    /**
+     * 取得xml中配置的int值，如果没有配置则默认返回0
+     * @author jiujie
+     * 2016年7月11日 下午3:44:16
+     * @param path
+     * @return
+     */
     protected int getInt(String path) {
         String text = null;
         try {
             text = document.selectSingleNode(path).getText().trim();
             return Integer.valueOf(text);
         } catch (Exception e) {
-            logger.error("Config read failed.", e);
+            return 0;
         }
-        return 0;
     }
 
     protected String getString(String path) {
@@ -59,7 +65,6 @@ public abstract class AbstractXMLConfig implements Config {
         } catch (Exception e) {
             logger.error("Config read failed.", e);
         }
-
         return text;
     }
 

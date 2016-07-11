@@ -1,5 +1,8 @@
 package com.dolphin.rpc.server;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.log4j.Logger;
 
 import com.dolphin.rpc.core.config.RegistryConfig;
@@ -73,9 +76,13 @@ public class RPCServer extends NettyServer {
     @Sharable
     private static class RPCInvokeHandler extends SimpleChannelInboundHandler<Message> {
 
-        private static Logger  logger  = Logger.getLogger(RPCInvokeHandler.class.getName());
+        private static Logger   logger          = Logger
+            .getLogger(RPCInvokeHandler.class.getName());
 
-        private static Invoker invoker = new SpringInvoker();
+        private static Invoker  invoker         = new SpringInvoker();
+
+        //业务执行，要用线程池来执行，不然会阻塞
+        private ExecutorService executorService = Executors.newCachedThreadPool();
 
         @Override
         public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
@@ -83,10 +90,11 @@ public class RPCServer extends NettyServer {
         }
 
         @Override
-        protected void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {
+        protected void channelRead0(final ChannelHandlerContext ctx,
+                                    final Message message) throws Exception {
 
             Header header = message.getHeader();
-            RPCResult response = new RPCResult();
+            final RPCResult response = new RPCResult();
             if (header != null && header.getPacketType() == PacketType.HEART_BEAT.getValue()) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Server heared client heart beat.");
@@ -94,18 +102,37 @@ public class RPCServer extends NettyServer {
                 ctx.writeAndFlush(new Message(message.getHeader(), response));
                 return;
             }
-            RPCRequest requset = message.getBody(RPCRequest.class);
+            final RPCRequest requset = message.getBody(RPCRequest.class);
             response.setRequestId(requset.getId());
             if (header != null && header.getPacketType() == PacketType.RPC.getValue()) {
-                try {
-                    Object invoke = invoker.invoke(requset.getClassName(), requset.getMethodName(),
-                        requset.getParamters(), requset.getParamterTypes());
-                    response.setResult(invoke);
-                } catch (Exception exception) {
-                    response.setException(exception);
+                if (ctx.executor().inEventLoop()) {
+                    invokeAndReturn(ctx, message, requset, response);
+                } else {
+                    ctx.executor().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            invokeAndReturn(ctx, message, requset, response);
+                        }
+                    });
                 }
-                ctx.writeAndFlush(new Message(message.getHeader(), response));
             }
+        }
+
+        private void invokeAndReturn(final ChannelHandlerContext ctx, final Message message,
+                                     final RPCRequest requset, final RPCResult response) {
+            executorService.execute(new Runnable() {
+                public void run() {
+                    try {
+                        Object invoke = invoker.invoke(requset.getClassName(),
+                            requset.getMethodName(), requset.getParamters(),
+                            requset.getParamterTypes());
+                        response.setResult(invoke);
+                        ctx.writeAndFlush(new Message(message.getHeader(), response));
+                    } catch (Exception exception) {
+                        response.setException(exception);
+                    }
+                }
+            });
         }
 
     }

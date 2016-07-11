@@ -13,7 +13,6 @@ import com.dolphin.rpc.core.io.Request;
 import com.dolphin.rpc.core.io.Response;
 import com.dolphin.rpc.core.io.transport.Header;
 import com.dolphin.rpc.core.io.transport.Message;
-import com.dolphin.rpc.core.io.transport.PacketType;
 
 public class RequestManager {
 
@@ -45,7 +44,7 @@ public class RequestManager {
         requestFutures.put(request.getId(), requestFuture);
         Message message = new Message(header, request);
         connection.writeAndFlush(message);
-        Response response = requestFuture.getResponse(6, TimeUnit.SECONDS);
+        Response response = requestFuture.getResponse(3, TimeUnit.SECONDS);
         if (response == null) {
             requestFutures.remove(request.getId());
             throw new InvokeTimeoutException();

@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.dolphin.rpc.core.annotation.RPCService;
-import com.dolphin.rpc.core.config.ServiceConfig;
+import com.dolphin.rpc.core.config.ClientConfig;
 import com.dolphin.rpc.core.io.Connection;
 import com.dolphin.rpc.core.io.request.RequestManager;
 import com.dolphin.rpc.core.io.transport.Header;
@@ -30,7 +30,7 @@ public class RPCServiceProxy implements InvocationHandler {
 
     private final static RequestManager REQUSET_MANAGER = RequestManager.getInstance();
 
-    private final static String         DEFAULT_GROUP   = new ServiceConfig().getGroup();
+    private final static String         DEFAULT_GROUP   = new ClientConfig().getGlobalGroup();
 
     /** 客户端选择器 @author jiujie 2016年5月24日 上午11:33:08 */
     private static ConnectionSelector   clientSelector  = ServiceConnectionSelector.getInstance();
@@ -79,6 +79,8 @@ public class RPCServiceProxy implements InvocationHandler {
         request.setParamterTypes(method.getParameterTypes());
         Connection connection = clientSelector.select(group, serviceName);
         if (connection == null) {
+            logger.error(
+                "Service [group:" + group + "," + "name:" + serviceName + "]" + " not found.");
             throw new ServiceNotFoundException();
         }
         RPCResult result = (RPCResult) REQUSET_MANAGER.sysnRequest(connection,
