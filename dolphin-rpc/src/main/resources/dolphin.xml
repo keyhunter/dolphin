@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dolphin>
-	<!-- RPC客户端配置  -->
+	<!-- RPC客户端配置 -->
 	<client>
 		<global>
 			<group>${app.env}</group>
@@ -24,18 +24,25 @@
 		<!-- 主机IP，可不配，程序会自动获取 -->
 		<ip>10.1.1.31</ip>
 		<!-- RPC服务端口 -->
-		<port>8080</port>
+		<ports>
+			<port>8001</port>
+			<port>8002</port>
+			<port>8003</port>
+		</ports>
 	</service>
 
 	<!-- 注册中心配置 -->
 	<registry>
 		<datasource>
-			<url>jdbc:mysql://localhost:3306/fish?characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round</url>
+			<url>jdbc:mysql://localhost:3306/fish?characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round
+			</url>
 			<username>root</username>
 			<password>123456</password>
 		</datasource>
-		<customer>com.dolphin.rpc.registry.zookeeper.ZooKeeperServiceConsumer</customer>
-		<provider>com.dolphin.rpc.registry.zookeeper.ZooKeeperServiceProvider</provider>
+		<customer>com.dolphin.rpc.registry.zookeeper.ZooKeeperServiceConsumer
+		</customer>
+		<provider>com.dolphin.rpc.registry.zookeeper.ZooKeeperServiceProvider
+		</provider>
 	</registry>
 
 </dolphin>
