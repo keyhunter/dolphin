@@ -35,7 +35,20 @@ public class RPCServiceProxy implements InvocationHandler {
     /** 客户端选择器 @author jiujie 2016年5月24日 上午11:33:08 */
     private static ConnectionSelector   clientSelector  = ServiceConnectionSelector.getInstance();
 
+    /** 接口实现类的名字，当一个远程接口有多个实现时需要有此参数  @author jiujie 2016年7月12日 上午10:45:11 */
+    private String                      implementName;
+
     public RPCServiceProxy() {
+    }
+
+    /** 
+     * constructor
+     * @author jiujie
+     * 2016年7月12日 上午10:46:08
+     * @param implementName 接口实现类的名字，当一个远程接口有多个实现时需要有此参数
+     */
+    public RPCServiceProxy(String implementName) {
+        this.implementName = implementName;
     }
 
     @Override
@@ -75,6 +88,9 @@ public class RPCServiceProxy implements InvocationHandler {
         RPCRequest request = new RPCRequest();
         request.setClassName(className);
         request.setMethodName(method.getName());
+        if (StringUtils.isNotBlank(implementName)) {
+            request.setImplementName(implementName);
+        }
         request.setParamters(args);
         request.setParamterTypes(method.getParameterTypes());
         Connection connection = clientSelector.select(group, serviceName);

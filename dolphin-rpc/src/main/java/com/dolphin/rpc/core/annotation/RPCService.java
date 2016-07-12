@@ -17,7 +17,7 @@ public @interface RPCService {
      * 2016年7月7日 下午5:31:16
      * @return
      */
-    String value() default "";
+    String value() default ""; 
 
     /**
      * Service服务分组

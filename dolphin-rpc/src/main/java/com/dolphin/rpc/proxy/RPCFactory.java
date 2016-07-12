@@ -19,4 +19,20 @@ public class RPCFactory {
         return (T) newProxyInstance;
     }
 
+    /**
+     * 通过接口的类型，还有实现类的名字来，得到代理类
+     * @author jiujie
+     * 2016年7月12日 上午10:48:17
+     * @param clazz
+     * @param name
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T getService(Class<T> clazz, String name) {
+        RPCServiceProxy rpcServiceProxy = new RPCServiceProxy(name);
+        Object newProxyInstance = Proxy.newProxyInstance(clazz.getClassLoader(),
+            new Class[] { clazz }, rpcServiceProxy);
+        return (T) newProxyInstance;
+    }
+
 }

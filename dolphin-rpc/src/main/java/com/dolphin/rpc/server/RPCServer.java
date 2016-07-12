@@ -3,6 +3,7 @@ package com.dolphin.rpc.server;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.dolphin.rpc.core.config.RegistryConfig;
@@ -123,10 +124,16 @@ public class RPCServer extends NettyServer {
             executorService.execute(new Runnable() {
                 public void run() {
                     try {
-                        Object invoke = invoker.invoke(requset.getClassName(),
-                            requset.getMethodName(), requset.getParamters(),
-                            requset.getParamterTypes());
-                        response.setResult(invoke);
+                        Object result = null;
+                        if (StringUtils.isBlank(requset.getImplementName())) {
+                            result = invoker.invoke(requset.getClassName(), requset.getMethodName(),
+                                requset.getParamters(), requset.getParamterTypes());
+                        } else {
+                            result = invoker.invoke(requset.getClassName(),
+                                requset.getImplementName(), requset.getMethodName(),
+                                requset.getParamters(), requset.getParamterTypes());
+                        }
+                        response.setResult(result);
                         ctx.writeAndFlush(new Message(message.getHeader(), response));
                     } catch (Exception exception) {
                         response.setException(exception);

@@ -7,10 +7,14 @@ package com.dolphin.rpc.core.config;
  */
 public class RegistryConfig extends DolphinConfig {
 
+    /** 注册中心地址连接的数据库相关配置 @author jiujie 2016年7月11日 下午4:13:47 */
     private String dbUrl;
     private String dbUsername;
     private String dbPassword;
+    
+    /** 服务消费的配置 @author jiujie 2016年7月11日 下午4:14:11 */
     private String customer;
+    /** 服务提供都的配置 @author jiujie 2016年7月11日 下午4:14:29 */
     private String provider;
 
     public RegistryConfig() {
