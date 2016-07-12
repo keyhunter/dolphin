@@ -2,6 +2,7 @@ package com.dolphin.rpc.spring;
 
 import java.lang.reflect.Field;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.PriorityOrdered;
@@ -23,8 +24,15 @@ public class RemotingBeanPostProcessor implements BeanPostProcessor, PriorityOrd
         Class<?> clazz = bean.getClass();
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(RPCResource.class)) {
+                RPCResource annotation = field.getAnnotation(RPCResource.class);
                 field.setAccessible(true);
-                Object service = RPCFactory.getService(field.getType());
+                Object service = null;
+                String name = annotation.name();
+                if (StringUtils.isBlank(name)) {
+                    service = RPCFactory.getService(field.getType());
+                } else {
+                    service = RPCFactory.getService(field.getType(), name);
+                }
                 try {
                     field.set(bean, service);
                 } catch (Exception e) {

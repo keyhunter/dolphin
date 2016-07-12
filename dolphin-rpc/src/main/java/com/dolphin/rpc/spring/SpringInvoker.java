@@ -1,5 +1,6 @@
 package com.dolphin.rpc.spring;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.springframework.beans.BeansException;
@@ -44,5 +45,22 @@ public class SpringInvoker extends AbstractInvoker implements ApplicationContext
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         SpringInvoker.applicationContext = applicationContext;
+    }
+
+    @Override
+    public Object invoke(String className, String implementName, String methodName,
+                         Object[] parameters,
+                         Class<?>[] parameterTypes) throws InvocationTargetException {
+        Object bean;
+        Class<?> beanClass;
+        try {
+            beanClass = Class.forName(className);
+            //根据实现类名，来寻找调用类
+            bean = applicationContext.getBean(implementName, beanClass);
+        } catch (ClassNotFoundException e) {
+            throw new ServiceNotFoundException();
+        }
+        Method method = ReflectionUtils.findMethod(beanClass, methodName, parameterTypes);
+        return ReflectionUtils.invokeMethod(method, bean, parameters);
     }
 }

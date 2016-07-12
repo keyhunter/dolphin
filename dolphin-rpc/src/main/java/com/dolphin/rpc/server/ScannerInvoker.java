@@ -20,4 +20,11 @@ public class ScannerInvoker extends AbstractInvoker {
         return serviceFastMethod.invoke(bean, parameters);
     }
 
+    @Override
+    public Object invoke(String className, String implementName, String methodName,
+                         Object[] parameters,
+                         Class<?>[] parameterTypes) throws InvocationTargetException {
+        return invoke(className, methodName, parameters, parameterTypes);
+    }
+
 }
