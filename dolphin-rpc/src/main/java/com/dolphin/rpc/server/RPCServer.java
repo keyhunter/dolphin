@@ -44,12 +44,13 @@ public class RPCServer extends NettyServer {
     }
 
     private void initProvider(int port) {
-        ServiceConfig serviceConfig = new ServiceConfig();
+        ServiceConfig serviceConfig = ServiceConfig.getInstance();
         String servicName = serviceConfig.getServiceName();
         HostAddress address = new HostAddress(HostUtil.getIp(), port);
         ServiceInfo serviceInfo = new ServiceInfo(serviceConfig.getGroup(), servicName, address);
         try {
-            serviceProvider = (ServiceProvider) Class.forName(new RegistryConfig().getProvider())
+            serviceProvider = (ServiceProvider) Class
+                .forName(RegistryConfig.getInstance().getProvider())
                 .getConstructor(ServiceInfo.class).newInstance(serviceInfo);
         } catch (Exception e) {
             logger.error("", e);

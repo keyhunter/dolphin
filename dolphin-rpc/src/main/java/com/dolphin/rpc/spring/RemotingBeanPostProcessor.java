@@ -52,7 +52,7 @@ public class RemotingBeanPostProcessor implements BeanPostProcessor, PriorityOrd
 
     @Override
     public int getOrder() {
-        return 0;
+        return -1;
     }
 
 }

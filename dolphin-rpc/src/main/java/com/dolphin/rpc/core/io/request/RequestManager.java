@@ -28,7 +28,7 @@ public class RequestManager {
     private static RequestManager    requestManager = new RequestManager();
 
     /** 默认超时时间  @author jiujie 2016年7月18日 上午11:13:33 */
-    private final int                TIME_OUT       = new ClientConfig().getTimeOut();
+    private final int                TIME_OUT       = ClientConfig.getInstance().getTimeOut();
 
     private RequestManager() {
     }

@@ -3,6 +3,7 @@ package com.dolphin.rpc.proxy;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.management.ServiceNotFoundException;
 
@@ -27,23 +28,27 @@ import com.dolphin.rpc.core.io.transport.RPCResult;
  */
 public class RPCServiceProxy implements InvocationHandler {
 
-    private static Logger               logger          = Logger.getLogger(RPCServiceProxy.class);
+    private static Logger                    logger          = Logger
+        .getLogger(RPCServiceProxy.class);
 
-    private final static RequestManager REQUSET_MANAGER = RequestManager.getInstance();
+    private final static RequestManager      REQUSET_MANAGER = RequestManager.getInstance();
 
-    private final static String         DEFAULT_GROUP;
+    private final static String              DEFAULT_GROUP;
 
     /** 默认重试次数 @author jiujie 2016年7月18日 上午11:27:27 */
-    private final static int            RETRY_TIMES;
+    private final static int                 RETRY_TIMES;
+
+    private final static Map<String, String> serviceGroups;
 
     /** 客户端选择器 @author jiujie 2016年5月24日 上午11:33:08 */
-    private static ConnectionSelector   clientSelector  = ServiceConnectionSelector.getInstance();
+    private static ConnectionSelector        clientSelector  = ServiceConnectionSelector
+        .getInstance();
 
     /** 接口实现类的名字，当一个远程接口有多个实现时需要有此参数  @author jiujie 2016年7月12日 上午10:45:11 */
-    private String                      implementName;
+    private String                           implementName;
 
     static {
-        ClientConfig clientConfig = new ClientConfig();
+        ClientConfig clientConfig = ClientConfig.getInstance();
         DEFAULT_GROUP = clientConfig.getGlobalGroup();
         int retryTimes = clientConfig.getRetryTimes();
         if (retryTimes > 0) {
@@ -51,6 +56,7 @@ public class RPCServiceProxy implements InvocationHandler {
         } else {
             RETRY_TIMES = 3;
         }
+        serviceGroups = clientConfig.getServiceGroups();
     }
 
     public RPCServiceProxy() {
@@ -71,11 +77,7 @@ public class RPCServiceProxy implements InvocationHandler {
         Class<?> clazz = method.getDeclaringClass();
         RPCService annotation = clazz.getAnnotation(RPCService.class);
         String serviceName = annotation.value();
-        String annotationGroup = annotation.group();
-        String group = DEFAULT_GROUP;
-        if (StringUtils.isNotBlank(annotationGroup)) {
-            group = annotationGroup;
-        }
+        String group = getGroup(serviceName, annotation);
         String className = clazz.getName();
         logBefore(className, method, args);
         RPCResult result = request(group, serviceName, className, method, args);
@@ -84,6 +86,28 @@ public class RPCServiceProxy implements InvocationHandler {
             throw result.getException();
         }
         return result.getResult();
+    }
+
+    /**
+     * 得到Service所处的分组
+     * @author jiujie
+     * 2016年7月18日 下午4:13:14
+     * @param serviceName
+     * @param annotation
+     * @return
+     */
+    private String getGroup(String serviceName, RPCService annotation) {
+        String group = DEFAULT_GROUP;
+        String annotationGroup = annotation.group();
+        if (StringUtils.isNotBlank(annotationGroup)) {
+            group = annotationGroup;
+        } else {
+            String configedGroup = serviceGroups.get(serviceName);
+            if (StringUtils.isNotBlank(configedGroup)) {
+                group = configedGroup;
+            }
+        }
+        return group;
     }
 
     /**

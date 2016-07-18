@@ -34,7 +34,7 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
     }
 
     private MySQLRegistryAddressContainer() {
-        RegistryConfig registryConfig = new RegistryConfig();
+        RegistryConfig registryConfig = RegistryConfig.getInstance();
         url = registryConfig.getDbUrl();
         username = registryConfig.getDbUsername();
         password = registryConfig.getDbPassword();

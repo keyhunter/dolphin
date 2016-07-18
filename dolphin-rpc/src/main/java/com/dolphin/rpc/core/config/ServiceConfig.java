@@ -10,17 +10,30 @@ import java.util.List;
 public class ServiceConfig extends DolphinConfig {
 
     /** 服务名称 @author jiujie 2016年7月11日 下午4:12:24 */
-    private String serviceName;
+    private String               serviceName;
     /** 服务分组 @author jiujie 2016年7月11日 下午4:12:31 */
-    private String group;
+    private String               group;
 
     /** 服务ip @author jiujie 2016年7月12日 上午11:09:48 */
-    private String ip;
+    private String               ip;
 
     /** 服务端口号 @author jiujie 2016年7月12日 上午11:09:28 */
-    private int[]  ports;
+    private int[]                ports;
 
-    public ServiceConfig() {
+    private static ServiceConfig serviceConfig;
+
+    public static ServiceConfig getInstance() {
+        if (serviceConfig == null) {
+            synchronized (ClientConfig.class) {
+                if (serviceConfig == null) {
+                    serviceConfig = new ServiceConfig();
+                }
+            }
+        }
+        return serviceConfig;
+    }
+
+    private ServiceConfig() {
         super();
         this.serviceName = getString("/dolphin/service/name");
         this.group = getString("/dolphin/service/group");
