@@ -1,4 +1,4 @@
-package com.dolphin.rpc.registry.zookeeper.comfig;
+package com.dolphin.rpc.registry.zookeeper.config;
 
 import java.util.List;
 
