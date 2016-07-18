@@ -10,8 +10,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dolphin.rpc.core.ApplicationType;
+import com.dolphin.rpc.core.exception.RPCException;
 import com.dolphin.rpc.core.io.Connection;
 import com.dolphin.rpc.core.io.ConnectionManager;
 import com.dolphin.rpc.core.io.HostAddress;
@@ -43,7 +46,7 @@ public class ServiceManager implements ServiceRegisterListener {
     /** 连接到这台注册中心的连接ID @author jiujie 2016年6月6日 下午2:03:32 */
     private Set<Long>                           connectToThisRegistryServerConnIds = new HashSet<>();
 
-    private static ServiceManager               serviceManager                     = new ServiceManager();
+    private static ServiceManager               serviceManager;
 
     private List<Connection>                    registryConnections;
 
@@ -51,6 +54,9 @@ public class ServiceManager implements ServiceRegisterListener {
         .getInstance();
 
     private RegistryConnector                   registryConnector;
+
+    private Logger                              logger                             = LoggerFactory
+        .getLogger(ServiceManager.class);
 
     private ServiceManager() {
         //connect to other ServiceRegistryServers
@@ -65,6 +71,13 @@ public class ServiceManager implements ServiceRegisterListener {
     }
 
     public static ServiceManager getInstance() {
+        if (serviceManager == null) {
+            synchronized (ServiceManager.class) {
+                if (serviceManager == null) {
+                    serviceManager = new ServiceManager();
+                }
+            }
+        }
         return serviceManager;
     }
 
@@ -312,9 +325,15 @@ public class ServiceManager implements ServiceRegisterListener {
         if (registryConnections == null || registryConnections.isEmpty()) {
             return;
         }
-        Response response = RequestManager.getInstance().sysnRequest(registryConnections.get(0),
-            new Header(PacketType.REGISTRY),
-            new RegistryRequest(ApplicationType.REGISTRY_SERVER, Commands.SYCN_SERVICE_INFO, null));
+        Response response = null;
+        try {
+            response = RequestManager.getInstance().sysnRequest(registryConnections.get(0),
+                new Header(PacketType.REGISTRY), new RegistryRequest(
+                    ApplicationType.REGISTRY_SERVER, Commands.SYCN_SERVICE_INFO, null));
+        } catch (RPCException e) {
+            logger.error("", e);
+            return;
+        }
         List<ServiceInfo> result = (List<ServiceInfo>) response.getResult();
         serviceInfoContainer.addAll(result);
     }

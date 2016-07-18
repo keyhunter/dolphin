@@ -8,6 +8,10 @@
 		<selector>
 			<class>com.dolphin.rpc.proxy.ServiceConnectorSelector</class>
 		</selector>
+		<!-- 请求超时时间，单位为毫秒  -->
+		<timeout>3000</timeout>
+		<!-- 请求失败 重试次数，默认为3  -->
+		<retry-times>3</retry-times>
 		<services>
 			<service>
 				<name>orderService</name>

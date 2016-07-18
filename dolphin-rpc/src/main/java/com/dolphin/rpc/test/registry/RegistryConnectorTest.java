@@ -3,6 +3,7 @@ package com.dolphin.rpc.test.registry;
 import java.util.List;
 
 import com.dolphin.rpc.core.ApplicationType;
+import com.dolphin.rpc.core.exception.RPCException;
 import com.dolphin.rpc.core.io.Connection;
 import com.dolphin.rpc.core.io.HostAddress;
 import com.dolphin.rpc.core.io.Response;
@@ -17,7 +18,7 @@ import com.dolphin.rpc.registry.netty.protocle.RegistryRequest;
 
 public class RegistryConnectorTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RPCException {
         RegistryAddressContainer instance = MySQLRegistryAddressContainer.getInstance();
         List<HostAddress> all = instance.getAll();
         RequestManager requestManager = RequestManager.getInstance();

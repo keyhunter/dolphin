@@ -10,14 +10,20 @@ public class ClientConfig extends DolphinConfig {
     /** 全局RpcService的分组 @author jiujie 2016年7月11日 下午4:11:34 */
     private String globalGroup;
 
-    /** RPC调用超时时间 @author jiujie 2016年7月11日 下午4:11:54 */
+    /** RPC请求超时时间 @author jiujie 2016年7月11日 下午4:11:54 */
     private int    timeOut;
+
+    private int    retryTimes;
 
     public ClientConfig() {
         this.globalGroup = getString("/dolphin/client/global/group");
         this.timeOut = getInt("/dolphin/client/timeout");
-        if (timeOut == 0) {
-            timeOut = 3;
+        if (timeOut <= 0) {
+            timeOut = 3000;
+        }
+        this.retryTimes = getInt("/dolphin/client/retry-times");
+        if (retryTimes <= 0) {
+            retryTimes = 3;
         }
     }
 
@@ -31,6 +37,10 @@ public class ClientConfig extends DolphinConfig {
 
     public void setTimeOut(int timeOut) {
         this.timeOut = timeOut;
+    }
+
+    public int getRetryTimes() {
+        return retryTimes;
     }
 
 }
