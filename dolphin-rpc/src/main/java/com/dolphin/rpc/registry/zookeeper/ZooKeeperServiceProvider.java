@@ -17,7 +17,7 @@ import com.dolphin.rpc.core.io.HostAddress;
 import com.dolphin.rpc.registry.ServiceInfo;
 import com.dolphin.rpc.registry.provider.AbstractServiceProvider;
 import com.dolphin.rpc.registry.provider.ServiceProvider;
-import com.dolphin.rpc.registry.zookeeper.comfig.ZookeeperConfig;
+import com.dolphin.rpc.registry.zookeeper.config.ZookeeperConfig;
 
 public class ZooKeeperServiceProvider extends AbstractServiceProvider implements ServiceProvider {
 

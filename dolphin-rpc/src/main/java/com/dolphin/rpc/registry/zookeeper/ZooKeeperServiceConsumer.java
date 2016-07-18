@@ -19,7 +19,7 @@ import org.apache.zookeeper.ZooKeeper;
 import com.dolphin.rpc.core.io.HostAddress;
 import com.dolphin.rpc.registry.ServiceInfo;
 import com.dolphin.rpc.registry.consumer.AbstractServiceCustomer;
-import com.dolphin.rpc.registry.zookeeper.comfig.ZookeeperConfig;
+import com.dolphin.rpc.registry.zookeeper.config.ZookeeperConfig;
 
 /**
  * ZooKeeper实现的Service的消费者
@@ -53,7 +53,7 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
     public ZooKeeperServiceConsumer() {
         try {
             countDownLatch = new CountDownLatch(1);
-            zooKeeper = new ZooKeeper(ZookeeperConfig.getConnectString(), SESSION_TIME_OUT,
+            zooKeeper = new ZooKeeper("192.168.0.221:1182", SESSION_TIME_OUT,
                 nodeWatcher, true);
             countDownLatch.await();
         } catch (Exception e) {
@@ -82,7 +82,7 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
                 try {
                     logger.info("Reconnect to zookeeper server.");
                     countDownLatch = new CountDownLatch(1);
-                    zooKeeper = new ZooKeeper("10.1.2.85", SESSION_TIME_OUT, nodeWatcher, true);
+                    zooKeeper = new ZooKeeper("192.168.0.221:1182", SESSION_TIME_OUT, nodeWatcher, true);
                     countDownLatch.await();
                 } catch (Exception e) {
                     logger.error("", e);
