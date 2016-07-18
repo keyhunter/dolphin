@@ -78,7 +78,7 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
         AbstractServiceCustomer abstractServiceCustomer = null;
         try {
             abstractServiceCustomer = (AbstractServiceCustomer) Class
-                .forName(new RegistryConfig().getCustomer()).newInstance();
+                .forName(RegistryConfig.getInstance().getCustomer()).newInstance();
         } catch (Exception e) {
             logger.error("", e);
             throw new RPCRunTimeException("Init customer failed");

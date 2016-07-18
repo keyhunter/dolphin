@@ -18,7 +18,7 @@ public class ServerBoot {
         if (BaseJunitRunner.isRunWithJunit()) {
             return;
         }
-        ServiceConfig serviceConfig = new ServiceConfig();
+        ServiceConfig serviceConfig = ServiceConfig.getInstance();
         int[] ports = serviceConfig.getPorts();
         for (int port : ports) {
             if (HostUtil.isPortBound(port)) {
