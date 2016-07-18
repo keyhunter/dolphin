@@ -6,6 +6,7 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 
 import com.dolphin.rpc.core.ApplicationType;
+import com.dolphin.rpc.core.exception.RPCException;
 import com.dolphin.rpc.core.io.Connection;
 import com.dolphin.rpc.core.io.ConnectionCloseListenser;
 import com.dolphin.rpc.core.io.HostAddress;
@@ -96,8 +97,14 @@ public class NettyServiceConsumer extends AbstractServiceCustomer {
     public ServiceInfo[] getRemoteServiceInfos(String group, String serviceName) {
         RegistryRequest registryRequest = new RegistryRequest(ApplicationType.RPC_CLIENT,
             Commands.GET_SERVICES, new ServiceInfo(group, serviceName, null));
-        RegistryResponse response = (RegistryResponse) requestManager.sysnRequest(connection,
-            new Header(PacketType.REGISTRY), registryRequest);
+        RegistryResponse response = null;
+        try {
+            response = (RegistryResponse) requestManager.sysnRequest(connection,
+                new Header(PacketType.REGISTRY), registryRequest);
+        } catch (RPCException e) {
+            logger.error("", e);
+            return null;
+        }
         return (ServiceInfo[]) response.getResult();
     }
 

@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import com.dolphin.rpc.core.annotation.RPCService;
 import com.dolphin.rpc.core.config.ClientConfig;
+import com.dolphin.rpc.core.exception.RPCException;
 import com.dolphin.rpc.core.io.Connection;
 import com.dolphin.rpc.core.io.request.RequestManager;
 import com.dolphin.rpc.core.io.transport.Header;
@@ -30,13 +31,27 @@ public class RPCServiceProxy implements InvocationHandler {
 
     private final static RequestManager REQUSET_MANAGER = RequestManager.getInstance();
 
-    private final static String         DEFAULT_GROUP   = new ClientConfig().getGlobalGroup();
+    private final static String         DEFAULT_GROUP;
+
+    /** 默认重试次数 @author jiujie 2016年7月18日 上午11:27:27 */
+    private final static int            RETRY_TIMES;
 
     /** 客户端选择器 @author jiujie 2016年5月24日 上午11:33:08 */
     private static ConnectionSelector   clientSelector  = ServiceConnectionSelector.getInstance();
 
     /** 接口实现类的名字，当一个远程接口有多个实现时需要有此参数  @author jiujie 2016年7月12日 上午10:45:11 */
     private String                      implementName;
+
+    static {
+        ClientConfig clientConfig = new ClientConfig();
+        DEFAULT_GROUP = clientConfig.getGlobalGroup();
+        int retryTimes = clientConfig.getRetryTimes();
+        if (retryTimes > 0) {
+            RETRY_TIMES = retryTimes;
+        } else {
+            RETRY_TIMES = 3;
+        }
+    }
 
     public RPCServiceProxy() {
     }
@@ -93,14 +108,42 @@ public class RPCServiceProxy implements InvocationHandler {
         }
         request.setParamters(args);
         request.setParamterTypes(method.getParameterTypes());
-        Connection connection = clientSelector.select(group, serviceName);
-        if (connection == null) {
-            logger.error(
-                "Service [group:" + group + "," + "name:" + serviceName + "]" + " not found.");
-            throw new ServiceNotFoundException();
+
+        RPCResult result = null;
+        //如果失败，则重试请求
+        for (int i = 0; i < RETRY_TIMES; i++) {
+            try {
+                Connection connection = clientSelector.select(group, serviceName);
+                if (connection == null) {
+                    logger.error("Service [group:" + group + "," + "name:" + serviceName + "]"
+                                 + " not found.");
+                    throw new ServiceNotFoundException();
+                }
+                result = sendRequest(connection, request);
+            } catch (RPCException e) {
+                logger.error("", e);
+                logger.info("Now retry request: " + i);
+            }
+            if (result != null) {
+                return result;
+            }
         }
-        RPCResult result = (RPCResult) REQUSET_MANAGER.sysnRequest(connection,
-            new Header(PacketType.RPC), request);
+        return result;
+    }
+
+    /**
+     * 发送请求
+     * @author jiujie
+     * 2016年7月18日 上午11:26:06
+     * @param connection
+     * @param request
+     * @return
+     * @throws RPCException
+     */
+    private RPCResult sendRequest(Connection connection, RPCRequest request) throws RPCException {
+        RPCResult result;
+        result = (RPCResult) REQUSET_MANAGER.sysnRequest(connection, new Header(PacketType.RPC),
+            request);
         return result;
     }
 

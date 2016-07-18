@@ -7,7 +7,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.Logger;
 
+import com.dolphin.rpc.core.config.ClientConfig;
+import com.dolphin.rpc.core.exception.ConnectClosedException;
 import com.dolphin.rpc.core.exception.InvokeTimeoutException;
+import com.dolphin.rpc.core.exception.RPCException;
 import com.dolphin.rpc.core.io.Connection;
 import com.dolphin.rpc.core.io.Request;
 import com.dolphin.rpc.core.io.Response;
@@ -24,6 +27,9 @@ public class RequestManager {
 
     private static RequestManager    requestManager = new RequestManager();
 
+    /** 默认超时时间  @author jiujie 2016年7月18日 上午11:13:33 */
+    private final int                TIME_OUT       = new ClientConfig().getTimeOut();
+
     private RequestManager() {
     }
 
@@ -37,14 +43,20 @@ public class RequestManager {
      * 2016年5月11日 下午9:23:20
      * @param request
      * @return 
+     * @throws RPCException 
      */
-    public Response sysnRequest(Connection connection, Header header, Request request) {
+    public Response sysnRequest(Connection connection, Header header,
+                                Request request) throws RPCException {
+        if (connection.isClose()) {
+            throw new ConnectClosedException();
+        }
         request.setId(atomicLong.incrementAndGet());
         RequestFuture requestFuture = new RequestFuture();
         requestFutures.put(request.getId(), requestFuture);
         Message message = new Message(header, request);
         connection.writeAndFlush(message);
-        Response response = requestFuture.getResponse(3, TimeUnit.SECONDS);
+
+        Response response = requestFuture.getResponse(TIME_OUT, TimeUnit.MILLISECONDS);
         if (response == null) {
             requestFutures.remove(request.getId());
             throw new InvokeTimeoutException();
