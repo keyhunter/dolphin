@@ -30,7 +30,7 @@ public class InvokerTest {
                                         new Product(4, "汽车"), new Product(2, "汽车"),
                                         new Product(2, "汽车"), new Product(2, "汽车"),
                                         new Product(2, "汽车"), new Product(2, "汽车") };
-        invoker.invoke("com.dolphin.rpc.test.service.OrderService", "createOrder", parameters,
+        invoker.invoke("com.dolphin.rpc.test.service.TestService", "createOrder", parameters,
             new Class<?>[] { String.class, Product[].class });
         long currentTimeMillis = System.currentTimeMillis();
         System.out.println(currentTimeMillis);

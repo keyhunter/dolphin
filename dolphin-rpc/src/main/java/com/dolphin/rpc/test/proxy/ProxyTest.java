@@ -1,12 +1,12 @@
 package com.dolphin.rpc.test.proxy;
 
 import com.dolphin.rpc.proxy.RPCFactory;
-import com.dolphin.rpc.test.service.OrderService;
+import com.dolphin.rpc.test.service.TestService;
 
 public class ProxyTest {
 
     public static void main(String[] args) {
-        OrderService service = RPCFactory.getService(OrderService.class);
+        TestService service = RPCFactory.getService(TestService.class);
         long currentTimeMillis = System.currentTimeMillis();
         for (int i = 0; i < 100; i++) {
             service.test();
