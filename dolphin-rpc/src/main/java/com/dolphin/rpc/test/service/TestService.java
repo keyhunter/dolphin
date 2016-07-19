@@ -5,7 +5,7 @@ import com.dolphin.rpc.test.Constants;
 import com.dolphin.rpc.test.Product;
 
 @RPCService(group = "test", value = Constants.SERVICE_NAME)
-public interface OrderService {
+public interface TestService {
 
     int createOrder(String name, Product[] products);
 

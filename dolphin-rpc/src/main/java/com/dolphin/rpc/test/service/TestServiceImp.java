@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 
 import com.dolphin.rpc.test.Product;
 
-@Service("orderService")
-public class OrderServiceImp implements OrderService {
+@Service("testService")
+public class TestServiceImp implements TestService {
 
     private static AtomicLong al = new AtomicLong();
-    
-    public OrderServiceImp(){
+
+    public TestServiceImp() {
     }
 
     @Override
