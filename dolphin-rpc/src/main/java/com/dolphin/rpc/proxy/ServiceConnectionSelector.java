@@ -296,6 +296,7 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
 
         @Override
         public void run() {
+            Thread.currentThread().setName("reconnectTask");
             connectionLock.lock();
             try {
                 Iterator<ServiceInfo> iterator = disConnectServiceInfos.iterator();
