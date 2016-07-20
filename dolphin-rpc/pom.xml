@@ -92,6 +92,15 @@
 			<artifactId>protostuff-runtime</artifactId>
 			<version>1.4.4</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.protostuff/protostuff-runtime-registry -->
+		<dependency>
+			<groupId>io.protostuff</groupId>
+			<artifactId>protostuff-runtime-registry</artifactId>
+			<version>1.4.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.objenesis/objenesis <dependency> 
+			<groupId>org.objenesis</groupId> <artifactId>objenesis</artifactId> <version>2.4</version> 
+			</dependency> -->
 	</dependencies>
 
 	<build>
