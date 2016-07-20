@@ -135,9 +135,11 @@ public class RPCServer extends NettyServer {
                                 requset.getParamters(), requset.getParamterTypes());
                         }
                         response.setResult(result);
-                        ctx.writeAndFlush(new Message(message.getHeader(), response));
                     } catch (Exception exception) {
+                        logger.error(exception);
                         response.setException(exception);
+                    } finally {
+                        ctx.writeAndFlush(new Message(message.getHeader(), response));
                     }
                 }
             });
