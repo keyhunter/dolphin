@@ -3,7 +3,6 @@ package com.dolphin.rpc.registry.zookeeper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,15 +10,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.EventType;
-import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooKeeper;
 
 import com.dolphin.rpc.core.io.HostAddress;
 import com.dolphin.rpc.registry.ServiceInfo;
 import com.dolphin.rpc.registry.consumer.AbstractServiceCustomer;
 import com.dolphin.rpc.registry.zookeeper.config.ZookeeperConfig;
+import com.dolphin.rpc.registry.zookeeper.connector.ZookeeperConnector;
+import com.dolphin.rpc.registry.zookeeper.listener.AbstractWatcherListener;
 
 /**
  * ZooKeeper实现的Service的消费者
@@ -29,13 +28,12 @@ import com.dolphin.rpc.registry.zookeeper.config.ZookeeperConfig;
 public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
 
     private static Logger        logger              = Logger
-        .getLogger(ZooKeeperServiceConsumer.class);
+                                                         .getLogger(ZooKeeperServiceConsumer.class);
 
     private ZooKeeper            zooKeeper;
 
+    /**zookeeper操作失败 重新执行次数  */
     private final int            RETRY_TIMES         = 3;
-
-    private final int            SESSION_TIME_OUT    = 300;
 
     private final static String  PARENT_REGEX        = "^/service/([a-zA-Z]+)/([a-zA-Z]+)";
 
@@ -45,49 +43,32 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
 
     private final static Pattern PATH_PATTERN        = Pattern.compile(PATH_REGEX);
 
-    private CountDownLatch       countDownLatch;
-
-    //注册中心的监听器
-    private Watcher              nodeWatcher         = new RegistryWatcher();
-
     public ZooKeeperServiceConsumer() {
         try {
-            countDownLatch = new CountDownLatch(1);
-            zooKeeper = new ZooKeeper("192.168.0.221:1182", SESSION_TIME_OUT,
-                nodeWatcher, true);
-            countDownLatch.await();
+            zooKeeper = new ZookeeperConnector(new ConsumerWatcherListener(), true,
+                ZookeeperConfig.getConnectString()).connect();
         } catch (Exception e) {
             logger.error("", e);
         }
     }
 
     /**
-     * 注册中心监视器
-     * @author jiujie
-     * @version $Id: ZooKeeperServiceConsumer.java, v 0.1 2016年7月1日 下午5:25:28 jiujie Exp $
+     * zookeeper watcher 监听器实现
+     * @author tianxiao
+     * @version $Id: ZooKeeperServiceProvider.java, v 0.1 2016年7月19日 上午10:23:02 tianxiao Exp $
      */
-    public class RegistryWatcher implements Watcher {
-
+    class ConsumerWatcherListener extends AbstractWatcherListener {
         @Override
-        public void process(WatchedEvent watchedEvent) {
-            if (watchedEvent.getState() == KeeperState.SyncConnected) {
-                countDownLatch.countDown();
-            }
-            if (watchedEvent.getState() == KeeperState.Expired) {
-                try {
-                    zooKeeper.close();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-                try {
-                    logger.info("Reconnect to zookeeper server.");
-                    countDownLatch = new CountDownLatch(1);
-                    zooKeeper = new ZooKeeper("192.168.0.221:1182", SESSION_TIME_OUT, nodeWatcher, true);
-                    countDownLatch.await();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-            }
+        public void timeout(WatchedEvent watchedEvent, ZooKeeper args) {
+            zooKeeper = args;
+        }
+
+        /**
+         * @author tianxiao
+         * @see com.dolphin.rpc.registry.zookeeper.listener.AbstractWatcherListener#after(org.apache.zookeeper.WatchedEvent)
+         */
+        @Override
+        public void after(WatchedEvent watchedEvent) {
             String path = watchedEvent.getPath();
             if (path == null) {
                 return;
@@ -102,9 +83,15 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
                 }
             }
         }
-
     }
 
+    /**
+     * 通过zookeeper存储路径获取服务名称
+     * @author tianxiao
+     * @param path
+     * @return
+     * @version 2016年7月19日 上午11:03:11 tianxiao
+     */
     private String getServiceName(String path) {
         if (path == null || StringUtils.isBlank(path)) {
             return null;
@@ -119,6 +106,13 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
         return null;
     }
 
+    /**
+     * 通过zookeeper存储路径获取服务组名称
+     * @author tianxiao
+     * @param path
+     * @return
+     * @version 2016年7月19日 上午11:04:03 tianxiao
+     */
     private String getGroup(String path) {
         if (path == null || StringUtils.isBlank(path)) {
             return null;
@@ -133,6 +127,13 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
         return null;
     }
 
+    /**
+     * 通过zookeeper存储路径获取服务信息
+     * @author tianxiao
+     * @param path
+     * @return
+     * @version 2016年7月19日 上午11:04:26 tianxiao
+     */
     private ServiceInfo getServiceInfo(String path) {
         if (path == null || StringUtils.isBlank(path)) {
             return null;
@@ -167,6 +168,9 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
         //zookeeper在查询的时候可以设置watch
     }
 
+    /**
+     * @see com.dolphin.rpc.registry.consumer.AbstractServiceCustomer#getRemoteServiceInfos(java.lang.String, java.lang.String)
+     */
     @Override
     protected ServiceInfo[] getRemoteServiceInfos(String group, String serviceName) {
         String path = "/service/" + group + "/" + serviceName;
@@ -182,6 +186,15 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
         return null;
     }
 
+    /**
+     * 通过存储路径获取该路径所有子路径下的服务
+     * @author tianxiao
+     * @param path
+     * @return
+     * @throws KeeperException
+     * @throws InterruptedException
+     * @version 2016年7月19日 上午11:08:32 tianxiao
+     */
     private ServiceInfo[] getChiledren(String path) throws KeeperException, InterruptedException {
         List<String> children = zooKeeper.getChildren(path, true);
         if (children == null || children.isEmpty()) {
