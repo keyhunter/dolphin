@@ -18,7 +18,7 @@ import io.protostuff.runtime.RuntimeSchema;
  */
 public class ProtobufferCodec implements Codec {
 
-    /** 时间戳转换方言，解决时间戳转换后错误问题 @author jiujie 2016年7月20日 下午1:52:25 */
+    /** 时间戳转换委托类，解决时间戳转换后错误问题 @author jiujie 2016年7月20日 下午1:52:25 */
     private final static Delegate<Timestamp>                    TIMESTAMP_DELEGATE = new TimestampDelegate();
 
     private final static DefaultIdStrategy                      idStrategy         = ((DefaultIdStrategy) RuntimeEnv.ID_STRATEGY);
