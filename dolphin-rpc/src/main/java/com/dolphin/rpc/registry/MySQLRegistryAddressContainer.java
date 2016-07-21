@@ -14,6 +14,11 @@ import com.dolphin.rpc.core.exception.AddressExitsException;
 import com.dolphin.rpc.core.exception.AddressFormatException;
 import com.dolphin.rpc.core.io.HostAddress;
 
+/**
+ * mysql 实现的 服务地址注册容器
+ * @author tianxiao
+ * @version $Id: MySQLRegistryAddressContainer.java, v 0.1 2016年7月19日 上午11:13:10 tianxiao Exp $
+ */
 public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
 
     private static RegistryAddressContainer registryAddressContainer = new MySQLRegistryAddressContainer();
@@ -44,6 +49,9 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
         return registryAddressContainer;
     }
 
+    /**
+     * @see com.dolphin.rpc.registry.RegistryAddressContainer#getAll()
+     */
     @Override
     public List<HostAddress> getAll() {
         List<HostAddress> addresses = new ArrayList<>();
@@ -70,6 +78,12 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
 
     }
 
+    /**判断当前地址是否存在
+     * @author tianxiao
+     * @param address
+     * @return
+     * @version 2016年7月19日 上午11:10:42 tianxiao
+     */
     private boolean exist(HostAddress address) {
         Connection conn = null;
         PreparedStatement st = null;
@@ -92,6 +106,9 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
         return false;
     }
 
+    /**
+     * @see com.dolphin.rpc.registry.RegistryAddressContainer#add(com.dolphin.rpc.core.io.HostAddress)
+     */
     @Override
     public void add(HostAddress address) {
         if (!HostAddress.verify(address)) {
@@ -117,6 +134,9 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
         }
     }
 
+    /**
+     * @see com.dolphin.rpc.registry.RegistryAddressContainer#remove(com.dolphin.rpc.core.io.HostAddress)
+     */
     @Override
     public void remove(HostAddress address) {
         if (!HostAddress.verify(address)) {

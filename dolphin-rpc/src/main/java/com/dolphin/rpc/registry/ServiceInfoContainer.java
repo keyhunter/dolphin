@@ -15,6 +15,11 @@ import org.apache.log4j.Logger;
 import com.dolphin.rpc.core.io.HostAddress;
 import com.dolphin.rpc.core.io.transport.codec.ProtobufferCodec;
 
+/**
+ * 服务信息容器
+ * @author tianxiao
+ * @version $Id: ServiceInfoContainer.java, v 0.1 2016年7月19日 上午11:19:33 tianxiao Exp $
+ */
 public class ServiceInfoContainer {
 
     private transient static Logger                  logger              = Logger
