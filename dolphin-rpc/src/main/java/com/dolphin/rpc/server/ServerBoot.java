@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.dolphin.rpc.core.config.ServiceConfig;
 import com.dolphin.rpc.core.exception.RPCRunTimeException;
 import com.dolphin.rpc.core.utils.HostUtil;
-import com.showjoy.core.BaseJunitRunner;
 
 public class ServerBoot {
 
@@ -15,9 +14,9 @@ public class ServerBoot {
     private Logger           logger   = LoggerFactory.getLogger(ServerBoot.class);
 
     public void start() {
-        if (BaseJunitRunner.isRunWithJunit()) {
-            return;
-        }
+//        if (BaseJunitRunner.isRunWithJunit()) {
+//            return;
+//        }
         ServiceConfig serviceConfig = ServiceConfig.getInstance();
         int[] ports = serviceConfig.getPorts();
         for (int port : ports) {
