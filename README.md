@@ -8,6 +8,7 @@ Remote Invocation Framwork，高性能远程调用框架，海豚RPC框架，基
 * 支持ProtoBuf进行传输中的序列化
 * 基于Netty进行通信，客户端与服务端有心跳检测及重连机制
 * 服务的注册与发现基于ZooKeeper
+
 ##使用方法
 ###Spring架构下用法：
 ####客户端通过注解方式注入服务
