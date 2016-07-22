@@ -12,24 +12,24 @@ Remote Invocation Framwork
 
 Spring架构下用法：
 客户端通过注解方式注入服务
-@RPCResource
-private UserService userService;
+    @RPCResource
+    private UserService userService;
 服务端通过Spring的@InitializingBean方式启动
-@Component
-public class RpcBoot implements InitializingBean {
+    @Component
+    public class RpcBoot implements InitializingBean {
+    
+        @Override
+        public void afterPropertiesSet() throws Exception {
+            ServerBoot serverBoot = new ServerBoot();
+            serverBoot.start();
+        }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        ServerBoot serverBoot = new ServerBoot();
-        serverBoot.start();
     }
-
-}
 
 非Spring架构下用法：
 客户端通过工厂得到服务
-private UserService userService = RPCFactory.getService(UserService.class);
+    private UserService userService = RPCFactory.getService(UserService.class);
 
 服务端启动
-ServerBoot serverBoot = new ServerBoot();
-serverBoot.start();
+    ServerBoot serverBoot = new ServerBoot();
+    serverBoot.start();
