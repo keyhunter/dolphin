@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://dolphin.showjoy.com" xmlns="http://dolphin.showjoy.com"
+	elementFormDefault="qualified">
+	<xs:simpleType name="stringtype">
+		<xs:restriction base="xs:string" />
+	</xs:simpleType>
+	<xs:simpleType name="dectype">
+		<xs:restriction base="xs:decimal" />
+	</xs:simpleType>
+
+	<xs:complexType name="global">
+		<xs:sequence>
+			<xs:element name="group" type="stringtype" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ports">
+		<xs:sequence>
+			<xs:element name="preview-port" type="stringtype"
+				maxOccurs="unbounded" /> <!--maxOccurs="unbounded" maxOccurs指示器 不限制出现次数 -->
+			<xs:element name="port" type="stringtype" maxOccurs="unbounded" /> <!--maxOccurs="unbounded" maxOccurs指示器 不限制出现次数 -->
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="selector">
+		<xs:sequence>
+			<xs:element name="class" type="stringtype" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="services">
+		<xs:sequence>
+			<xs:element name="service" type="service" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="service">
+		<xs:sequence>
+			<xs:element name="name" type="stringtype" />
+			<xs:element name="group" type="stringtype" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="datasource">
+		<xs:sequence>
+			<xs:element name="url" type="stringtype" />
+			<xs:element name="username" type="stringtype" />
+			<xs:element name="password" type="stringtype" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="client">
+		<xs:sequence>
+			<xs:element name="global" type="global" />
+			<xs:element name="selector" type="selector" />
+			<xs:element name="timeout" type="stringtype" />
+			<xs:element name="retry-times" type="stringtype" />
+			<xs:element name="services" type="services" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="server">
+		<xs:sequence>
+			<xs:element name="group" type="stringtype" />
+			<xs:element name="name" type="stringtype" />
+			<xs:element name="ip" type="stringtype" />
+			<xs:element name="ip-regex" type="stringtype" />
+			<xs:element name="ports" type="ports" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="registry">
+		<xs:sequence>
+			<xs:element name="datasource" type="datasource" />
+			<xs:element name="customer" type="stringtype" />
+			<xs:element name="provider" type="stringtype" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="dolphin">
+		<xs:sequence>
+			<xs:element name="client" type="client" />
+			<xs:element name="service" type="server" />
+			<xs:element name="registry" type="registry" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="dolphin" type="dolphin" />
+</xs:schema>

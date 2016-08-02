@@ -46,7 +46,17 @@ public class RPCServer extends NettyServer {
     private void initProvider(int port) {
         ServiceConfig serviceConfig = ServiceConfig.getInstance();
         String servicName = serviceConfig.getServiceName();
-        HostAddress address = new HostAddress(HostUtil.getIp(), port);
+        //获取当前主机IP
+        String currentIp;
+        if (StringUtils.isNotBlank(serviceConfig.getIp())) {
+            currentIp = serviceConfig.getIp();
+        } else {
+            currentIp = HostUtil.getIp(serviceConfig.getIpRegex());
+        }
+        if (StringUtils.isBlank(currentIp)) {
+            throw new RPCRunTimeException("Failed to get current service ip.");
+        }
+        HostAddress address = new HostAddress(currentIp, port);
         ServiceInfo serviceInfo = new ServiceInfo(serviceConfig.getGroup(), servicName, address);
         try {
             serviceProvider = (ServiceProvider) Class

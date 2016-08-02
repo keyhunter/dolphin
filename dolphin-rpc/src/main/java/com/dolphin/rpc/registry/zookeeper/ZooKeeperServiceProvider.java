@@ -10,10 +10,10 @@ import org.apache.zookeeper.ZooKeeper;
 
 import com.dolphin.rpc.core.exception.RPCRunTimeException;
 import com.dolphin.rpc.core.io.HostAddress;
+import com.dolphin.rpc.registry.MySQLRegistryAddressContainer;
 import com.dolphin.rpc.registry.ServiceInfo;
 import com.dolphin.rpc.registry.provider.AbstractServiceProvider;
 import com.dolphin.rpc.registry.provider.ServiceProvider;
-import com.dolphin.rpc.registry.zookeeper.config.ZookeeperConfig;
 import com.dolphin.rpc.registry.zookeeper.connector.ZookeeperConnector;
 import com.dolphin.rpc.registry.zookeeper.listener.AbstractWatcherListener;
 
@@ -34,7 +34,7 @@ public class ZooKeeperServiceProvider extends AbstractServiceProvider implements
         super(serviceInfo);
         try {
             zooKeeper = new ZookeeperConnector(new ProviderWatcherListener(), true,
-                ZookeeperConfig.getConnectString()).connect();
+                MySQLRegistryAddressContainer.getInstance()).connect();
             registerSelf();
         } catch (Exception e) {
             logger.error("", e);
@@ -141,7 +141,6 @@ public class ZooKeeperServiceProvider extends AbstractServiceProvider implements
         ZooKeeperServiceProvider serviceProvider = new ZooKeeperServiceProvider(new ServiceInfo(
             "test", "xxx", new HostAddress("192.168.2.2", 2342)));
         while (true) {
-            System.out.println(serviceProvider);
         }
     }
 

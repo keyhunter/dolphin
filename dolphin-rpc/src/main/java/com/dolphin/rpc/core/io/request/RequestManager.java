@@ -35,6 +35,7 @@ public class RequestManager {
 
     public static RequestManager getInstance() {
         return requestManager;
+        
     }
 
     /**

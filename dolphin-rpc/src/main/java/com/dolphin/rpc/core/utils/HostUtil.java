@@ -1,8 +1,12 @@
 package com.dolphin.rpc.core.utils;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 public class HostUtil {
 
@@ -12,6 +16,7 @@ public class HostUtil {
      * 2016年7月12日 上午11:23:46
      * @return
      */
+    @Deprecated
     public static String getIp() {
         InetAddress ia = null;
         try {
@@ -23,6 +28,45 @@ public class HostUtil {
             return null;
         }
         return ia.getHostAddress();
+    }
+
+    /**
+     * 通过网卡，IP网段的正则匹配来查找本机IP
+     * @author jiujie
+     * 2016年7月28日 下午12:41:00
+     * @param ipRegex IP网段的正则表达式
+     * @return
+     */
+    public static String getIp(String ipRegex) {
+        Enumeration<NetworkInterface> networkInterfaces;
+        try {
+            networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface nextElement = networkInterfaces.nextElement();
+                if (nextElement.isUp()) {
+                    Enumeration<InetAddress> inetAddresses = nextElement.getInetAddresses();
+                    if (inetAddresses == null) {
+                        continue;
+                    }
+                    while (inetAddresses.hasMoreElements()) {
+                        InetAddress inetAddress = inetAddresses.nextElement();
+                        if (inetAddress instanceof Inet4Address) {
+                            String hostAddress = inetAddress.getHostAddress();
+                            if (hostAddress.equals("127.0.0.1")) {
+                                continue;
+                            }
+                            if (hostAddress.matches(ipRegex)) {
+                                return hostAddress;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SocketException e1) {
+            e1.printStackTrace();
+        }
+        return null;
+
     }
 
     /**
@@ -50,6 +94,8 @@ public class HostUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(isPortBound(100));
+        System.out.println("172.16.1.2".matches("172\\.16\\.1\\..*"));
+        System.out.println("172.160.1.2".matches("172\\.16\\.1\\..*"));
+        System.out.println("172.160.11.2".matches("172\\.16\\.1\\..*"));
     }
 }

@@ -23,7 +23,7 @@
 		<url>http://git.showjoy.net/jiujie/dolphin-rpc.git</url>
 		<connection>scm:git:http://git.showjoy.net/jiujie/dolphin-rpc.git</connection>
 		<developerConnection>scm:git:http://git.showjoy.net/jiujie/dolphin-rpc.git</developerConnection>
-		<tag>master</tag>
+		<tag>1.0.x</tag>
 	</scm>
 
 	<dependencies>

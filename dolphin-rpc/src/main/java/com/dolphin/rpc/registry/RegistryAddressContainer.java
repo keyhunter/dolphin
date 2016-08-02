@@ -9,7 +9,7 @@ import com.dolphin.rpc.core.io.HostAddress;
  * @author tianxiao
  * @version $Id: RegistryAddressContainer.java, v 0.1 2016年7月19日 上午11:13:45 tianxiao Exp $
  */
-public interface RegistryAddressContainer {
+public interface RegistryAddressContainer extends HostAddressGetter {
 
     /**
      * 获取所有已注册的服务地址

@@ -14,9 +14,9 @@ import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.ZooKeeper;
 
 import com.dolphin.rpc.core.io.HostAddress;
+import com.dolphin.rpc.registry.MySQLRegistryAddressContainer;
 import com.dolphin.rpc.registry.ServiceInfo;
 import com.dolphin.rpc.registry.consumer.AbstractServiceCustomer;
-import com.dolphin.rpc.registry.zookeeper.config.ZookeeperConfig;
 import com.dolphin.rpc.registry.zookeeper.connector.ZookeeperConnector;
 import com.dolphin.rpc.registry.zookeeper.listener.AbstractWatcherListener;
 
@@ -46,7 +46,7 @@ public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
     public ZooKeeperServiceConsumer() {
         try {
             zooKeeper = new ZookeeperConnector(new ConsumerWatcherListener(), true,
-                ZookeeperConfig.getConnectString()).connect();
+                MySQLRegistryAddressContainer.getInstance()).connect();
         } catch (Exception e) {
             logger.error("", e);
         }

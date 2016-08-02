@@ -1,9 +1,11 @@
 package com.dolphin.rpc.registry.zookeeper.connector;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -11,6 +13,8 @@ import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.ZooKeeper.States;
 
+import com.dolphin.rpc.core.io.HostAddress;
+import com.dolphin.rpc.registry.HostAddressGetter;
 import com.dolphin.rpc.registry.zookeeper.listener.WatcherListener;
 
 /**
@@ -19,60 +23,58 @@ import com.dolphin.rpc.registry.zookeeper.listener.WatcherListener;
  * @version $Id: ZookeeperConnector.java, v 0.1 2016年7月19日 上午10:43:12 tianxiao Exp $
  */
 public class ZookeeperConnector {
-    private static Logger         logger               = Logger.getLogger(ZookeeperConnector.class);
-    private ZooKeeper             zooKeeper;
-    private CountDownLatch        countDownLatch       = null;
+    private static Logger         logger                    = Logger
+                                                                .getLogger(ZookeeperConnector.class);
     /**zookeeper session timeout 时间  */
-    private final int             SESSION_TIME_OUT     = 300;
+    private static final int      SESSION_TIME_OUT          = 300;
+    /**连接字符串的有效时长  */
+    private static final long     CONNECTION_STRING_TIMEOUT = 1000L * 60L * 10L;
+    /**最大的线程睡眠时间  */
+    private static final long     MAX_INTERVAL              = 1000 * 5;
+    private static final String   IP_HOST_CONNECT_STRING    = ":";
+    private static final String   COMMA                     = ",";
+    /**zookeeper 重连次数默认值  */
+    private static final int      INIT_RECONNECT_TIMES      = 20;
+
+    private ZooKeeper             zooKeeper;
+    private CountDownLatch        countDownLatch            = null;
     private String                connectString;
     /**是否需要重连，默认为true  */
-    private boolean               needReconnect        = true;
-    /**zookeeper 重连次数默认值  */
-    private static final int      INIT_RECONNECT_TIMES = 20;
+    private boolean               needReconnect             = true;
     /**zookeeper 重连次数  */
-    private int                   reconnectTimes       = INIT_RECONNECT_TIMES;
-    /**最大的线程睡眠时间  */
-    private static final long     MAX_INTERVAL         = 1000 * 5;
+    private int                   reconnectTimes            = INIT_RECONNECT_TIMES;
     /**注册中心的监听器*/
-    private Watcher               nodeWatcher          = new RegistryWatcher();
+    private Watcher               nodeWatcher               = new RegistryWatcher();
     /**watcher 监听器  */
     private List<WatcherListener> watcherListeners;
+    private HostAddressGetter     addressGetter;
+    private long                  lastConnectTime;
 
     /**
      * zookeeper连接器构造器
-     * @param watcherListeners 监视器的监听器
-     * @param connectString zookeeper连接地址  ip:port, 多个用逗号连接
+     * @param watcherListeners 监听器
+     * @param addressGetter 
      */
-    public ZookeeperConnector(List<WatcherListener> watcherListeners, String connectString) {
+    public ZookeeperConnector(List<WatcherListener> watcherListeners,
+                              HostAddressGetter addressGetter) {
         this.watcherListeners = watcherListeners;
-        this.connectString = connectString;
-    }
-
-    /**
-     * zookeeper连接器构造器
-     * @param watcherListeners 监视器的监听器
-     * @param needReconnect 是否需要重连
-     * @param connectString zookeeper连接地址  ip:port, 多个用逗号连接
-     */
-    public ZookeeperConnector(List<WatcherListener> watcherListeners, boolean needReconnect,
-                              String connectString) {
-        this.needReconnect = needReconnect;
-        this.watcherListeners = watcherListeners;
-        this.connectString = connectString;
+        this.addressGetter = addressGetter;
+        this.connectString = getConnectString();
     }
 
     /**
      * zookeeper连接器构造器
      * @param watcherListener 监视器的监听器
      * @param needReconnect 是否需要重连
-     * @param connectString zookeeper连接地址  ip:port, 多个用逗号连接
+     * @param addressGetter
      */
     public ZookeeperConnector(WatcherListener watcherListener, boolean needReconnect,
-                              String connectString) {
+                              HostAddressGetter addressGetter) {
         this.needReconnect = needReconnect;
         this.watcherListeners = new ArrayList<WatcherListener>();
         watcherListeners.add(watcherListener);
-        this.connectString = connectString;
+        this.addressGetter = addressGetter;
+        this.connectString = getConnectString();
     }
 
     /**zookeeper 连接
@@ -85,6 +87,8 @@ public class ZookeeperConnector {
             countDownLatch = new CountDownLatch(1);
             zooKeeper = new ZooKeeper(connectString, SESSION_TIME_OUT, nodeWatcher, true);
             countDownLatch.await();
+            // 连接成功记录连接时间
+            lastConnectTime = System.currentTimeMillis();
         } catch (Exception e) {
             logger.error("", e);
         }
@@ -113,11 +117,13 @@ public class ZookeeperConnector {
                         }
                         logger.info("Reconnect to zookeeper server.");
                         countDownLatch = new CountDownLatch(1);
-                        zooKeeper = new ZooKeeper(connectString, SESSION_TIME_OUT, nodeWatcher,
-                            true);
+                        zooKeeper = new ZooKeeper(getConnectString(), SESSION_TIME_OUT,
+                            nodeWatcher, true);
                         countDownLatch.await();
                         if (zooKeeper.getState() == States.CONNECTED) {
                             logger.info("Reconnect to zookeeper server complite.");
+                            // 连接成功记录连接时间
+                            lastConnectTime = System.currentTimeMillis();
                             excuteWatcherListenersDoAfterReconnect(watchedEvent, zooKeeper);
                         }
                         reconnectTimes--;
@@ -187,5 +193,37 @@ public class ZookeeperConnector {
                 watcherListener.after(watchedEvent);
             }
         }
+    }
+
+    private String getConnectString() {
+        long currentTime = System.currentTimeMillis();
+        // 如果上次连接成功时间距本次连接时间超过10分钟则重新获取
+        if ((currentTime - lastConnectTime < CONNECTION_STRING_TIMEOUT) && !StringUtils.isBlank(connectString)) {
+            return connectString;
+        }
+        List<HostAddress> address = getAddress();
+        StringBuilder sb = new StringBuilder();
+        if (null == address || address.isEmpty()) {
+            return null;
+        }
+        int endIndex = address.size() - 1;
+        for (int i = 0; i < address.size(); i++) {
+            HostAddress host = address.get(i);
+            if (null == host) {
+                continue;
+            }
+            if (i < endIndex) {
+                sb.append(host.getHost() + IP_HOST_CONNECT_STRING + host.getPort() + COMMA);
+            } else {
+                sb.append(host.getHost() + IP_HOST_CONNECT_STRING + host.getPort());
+            }
+        }
+        return sb.toString();
+    }
+
+    private List<HostAddress> getAddress() {
+        List<HostAddress> address = addressGetter.getAll();
+        Collections.shuffle(address); // 随机打乱
+        return address;
     }
 }

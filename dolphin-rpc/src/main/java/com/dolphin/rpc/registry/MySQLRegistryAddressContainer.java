@@ -43,6 +43,11 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
         url = registryConfig.getDbUrl();
         username = registryConfig.getDbUsername();
         password = registryConfig.getDbPassword();
+        try {
+            password = SecurityAES.decrypt(password, "yunjee");
+        } catch (Exception exception) {
+        }
+
     }
 
     public static RegistryAddressContainer getInstance() {
@@ -195,8 +200,6 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
     }
 
     public static void main(String[] args) {
-        RegistryAddressContainer instance = MySQLRegistryAddressContainer.getInstance();
-        System.out.println();
     }
 
 }

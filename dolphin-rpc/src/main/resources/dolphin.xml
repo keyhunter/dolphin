@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dolphin>
+<dolphin xmlns="http://dolphin.showjoy.com"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://dolphin.showjoy.com dolphin.xsd">
 	<!-- RPC客户端配置 -->
 	<client>
 		<global>
@@ -27,14 +29,15 @@
 		<name>orderService</name>
 		<!-- 主机IP，可不配，程序会自动获取 -->
 		<ip>10.1.1.31</ip>
+		<ip-regex>${service.ip.regex}</ip-regex>
 		<!-- RPC服务端口 -->
 		<ports>
+			<preview-port>${preview.port}</preview-port>
 			<port>8001</port>
 			<port>8002</port>
 			<port>8003</port>
 		</ports>
 	</service>
-
 	<!-- 注册中心配置 -->
 	<registry>
 		<datasource>
