@@ -1,4 +1,4 @@
-package com.dolphin.rpc.core.utils;
+package com.dolphin.core.utils;
 
 public interface ClassFilter {
     boolean accept(Class clazz);

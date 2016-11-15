@@ -8,7 +8,12 @@
     <version>1.0</version>
     <modules>
         <module>dolphin-core</module>
-        <!--<module>dolphin-registry</module>-->
+        <module>dolphin-netty</module>
+        <module>dolphin-proxy</module>
+        <module>dolphin-registry</module>
+        <module>dolphin-server</module>
+        <module>dolphin-spring</module>
+        <module>dolphin-test</module>
     </modules>
     <packaging>pom</packaging>
 

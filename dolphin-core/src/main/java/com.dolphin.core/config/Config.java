@@ -1,4 +1,4 @@
-package com.dolphin.rpc.core.config;
+package com.dolphin.core.config;
 
 import java.net.URL;
 

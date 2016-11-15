@@ -1,4 +1,4 @@
-package com.dolphin.rpc.core.annotation;
+package com.dolphin.core.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

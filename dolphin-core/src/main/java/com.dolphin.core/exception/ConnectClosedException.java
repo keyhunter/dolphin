@@ -1,4 +1,4 @@
-package com.dolphin.rpc.core.exception;
+package com.dolphin.core.exception;
 
 /**
  * 连接关闭异常

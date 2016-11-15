@@ -1,4 +1,4 @@
-package com.dolphin.rpc.core.serializer;
+package com.dolphin.core.serializer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

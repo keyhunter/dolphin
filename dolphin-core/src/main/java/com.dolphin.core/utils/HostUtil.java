@@ -1,4 +1,4 @@
-package com.dolphin.rpc.core.utils;
+package com.dolphin.core.utils;
 
 import java.io.IOException;
 import java.net.Inet4Address;

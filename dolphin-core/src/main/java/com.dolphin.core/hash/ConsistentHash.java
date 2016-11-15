@@ -1,4 +1,4 @@
-package com.dolphin.rpc.core.hash;
+package com.dolphin.core.hash;
 
 import java.util.Collection;
 import java.util.SortedMap;

@@ -1,4 +1,4 @@
-package com.dolphin.rpc.core.utils;
+package com.dolphin.core.utils;
 
 import java.io.File;
 import java.io.FileFilter;

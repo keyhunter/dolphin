@@ -1,8 +1,6 @@
-package com.dolphin.rpc.core.serializer;
+package com.dolphin.core.serializer;
 
 import com.alibaba.fastjson.JSON;
-import com.dolphin.rpc.core.io.HostAddress;
-import com.dolphin.rpc.registry.ServiceInfo;
 
 public class JSONSerializer implements Serializer {
 
@@ -16,15 +14,5 @@ public class JSONSerializer implements Serializer {
         return JSON.parseObject(bytes, clazz);
     }
 
-    public static void main(String[] args) {
-
-        Serializer serializer = new JSONSerializer();
-        ServiceInfo object = new ServiceInfo();
-        object.setGroup("sdfsdf");
-        object.setName("xxx11");
-        object.setHostAddress(new HostAddress("xxxx", 232432));
-        byte[] serialize = serializer.serialize(object);
-        System.out.println(serializer.unSerialize(serialize, ServiceInfo.class));
-    }
 
 }

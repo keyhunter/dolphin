@@ -1,4 +1,4 @@
-package com.dolphin.rpc.core.hash;
+package com.dolphin.core.hash;
 
 /** 
  * murmur hash 2.0.

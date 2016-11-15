@@ -1,4 +1,4 @@
-package com.dolphin.rpc.core.exception;
+package com.dolphin.core.exception;
 
 /**
  * 没有该RPC服务异常

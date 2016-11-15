@@ -1,4 +1,4 @@
-package com.dolphin.rpc.core;
+package com.dolphin.core;
 
 /**
  * 应用
