@@ -5,8 +5,8 @@ import com.dolphin.core.protocle.Connection;
 /**
  * 连接选择器
  *
- * @author jiujie
- * @version $Id: ConnectorLoadBanlance.java, v 0.1 2016年5月31日 下午1:35:56 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: ConnectorLoadBanlance.java, v 0.1 2016年5月31日 下午1:35:56 keyhunter Exp $
  */
 public interface ConnectionSelector {
 
@@ -16,7 +16,7 @@ public interface ConnectionSelector {
      * @param group
      * @param serviceName
      * @return
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月25日 上午11:55:14
      */
     Connection select(String group, String serviceName);

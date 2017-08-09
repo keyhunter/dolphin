@@ -17,10 +17,10 @@ public class Heart implements Runnable {
 
     private volatile long       unHealthCount = 0;
 
-    /** 心跳失败次数限制 @author jiujie 2016年5月15日 下午2:35:22 */
+    /** 心跳失败次数限制 @author keyhunter 2016年5月15日 下午2:35:22 */
     private int                 unHealthLimit;
 
-    /** 心跳成功次数限制 @author jiujie 2016年5月15日 下午2:58:06 */
+    /** 心跳成功次数限制 @author keyhunter 2016年5月15日 下午2:58:06 */
     private final int           healthLimit;
 
     public Heart(HeartBeatable heartBeatable, int healthLimit, int unHealthLimit) {

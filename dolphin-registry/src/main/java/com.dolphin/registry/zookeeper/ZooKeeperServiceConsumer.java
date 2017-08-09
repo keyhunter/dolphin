@@ -22,8 +22,8 @@ import com.dolphin.registry.zookeeper.listener.AbstractWatcherListener;
 
 /**
  * ZooKeeper实现的Service的消费者
- * @author jiujie
- * @version $Id: ZooKeeperServiceConsumer.java, v 0.1 2016年6月30日 下午4:01:21 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: ZooKeeperServiceConsumer.java, v 0.1 2016年6月30日 下午4:01:21 keyhunter Exp $
  */
 public class ZooKeeperServiceConsumer extends AbstractServiceCustomer {
 

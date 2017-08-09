@@ -24,8 +24,8 @@ import com.dolphin.core.protocle.transport.RPCResult;
  * RPC服务的代理类，通过该代理，去调用远程的服务。
  * 会根据RPCService注解上的value去服务中心取到该服务所在的地址，并进行通信。
  *
- * @author jiujie
- * @version $Id: RPCServiceProxy.java, v 0.1 2016年6月30日 上午9:56:53 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: RPCServiceProxy.java, v 0.1 2016年6月30日 上午9:56:53 keyhunter Exp $
  */
 public class RPCServiceProxy implements InvocationHandler {
 
@@ -37,20 +37,20 @@ public class RPCServiceProxy implements InvocationHandler {
     private final static String DEFAULT_GROUP;
 
     /**
-     * 默认重试次数 @author jiujie 2016年7月18日 上午11:27:27
+     * 默认重试次数 @author keyhunter 2016年7月18日 上午11:27:27
      */
     private final static int RETRY_TIMES;
 
     private final static Map<String, String> serviceGroups;
 
     /**
-     * 客户端选择器 @author jiujie 2016年5月24日 上午11:33:08
+     * 客户端选择器 @author keyhunter 2016年5月24日 上午11:33:08
      */
     private static ConnectionSelector clientSelector = ServiceConnectionSelector
             .getInstance();
 
     /**
-     * 接口实现类的名字，当一个远程接口有多个实现时需要有此参数  @author jiujie 2016年7月12日 上午10:45:11
+     * 接口实现类的名字，当一个远程接口有多个实现时需要有此参数  @author keyhunter 2016年7月12日 上午10:45:11
      */
     private String implementName;
 
@@ -73,7 +73,7 @@ public class RPCServiceProxy implements InvocationHandler {
      * constructor
      *
      * @param implementName 接口实现类的名字，当一个远程接口有多个实现时需要有此参数
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月12日 上午10:46:08
      */
     public RPCServiceProxy(String implementName) {
@@ -102,7 +102,7 @@ public class RPCServiceProxy implements InvocationHandler {
      * @param serviceName
      * @param annotation
      * @return
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月18日 下午4:13:14
      */
     private String getGroup(String serviceName, RPCService annotation) {
@@ -129,7 +129,7 @@ public class RPCServiceProxy implements InvocationHandler {
      * @param args        参数
      * @return
      * @throws ServiceNotFoundException
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月7日 下午4:47:00
      */
     private RPCResult request(String group, String serviceName, String className, Method method,
@@ -172,7 +172,7 @@ public class RPCServiceProxy implements InvocationHandler {
      * @param request
      * @return
      * @throws RPCException
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月18日 上午11:26:06
      */
     private RPCResult sendRequest(Connection connection, RPCRequest request) throws RPCException {

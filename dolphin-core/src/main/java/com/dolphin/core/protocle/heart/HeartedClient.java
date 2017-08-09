@@ -61,14 +61,14 @@ package com.dolphin.core.protocle.heart;
 //
 //    /**
 //     * 启动客户端
-//     * @author jiujie
+//     * @author keyhunter
 //     * 2016年5月15日 下午3:23:03
 //     */
 //    protected abstract void execute();
 //
 //    /**
 //     * 启动心脏
-//     * @author jiujie
+//     * @author keyhunter
 //     * 2016年5月15日 下午5:57:40
 //     * @param heart
 //     */

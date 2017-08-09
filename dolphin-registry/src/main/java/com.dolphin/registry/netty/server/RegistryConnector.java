@@ -16,8 +16,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * 注册中心服务连接其他注册中心的连接器
- * @author jiujie
- * @version $Id: RegistryConnector.java, v 0.1 2016年6月1日 下午7:11:06 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: RegistryConnector.java, v 0.1 2016年6月1日 下午7:11:06 keyhunter Exp $
  */
 public class RegistryConnector extends NettyConnector {
 

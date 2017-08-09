@@ -27,7 +27,7 @@ public class NettyConnector implements Connector {
     private Logger                  logger                  = Logger
         .getLogger(NettyConnector.class);
 
-    /** 是否正在运行中  @author jiujie 2016年6月1日 下午1:20:44 */
+    /** 是否正在运行中  @author keyhunter 2016年6月1日 下午1:20:44 */
     private volatile AtomicBoolean  isStarting              = new AtomicBoolean(false);
 
     private ConnectionManager       connectionManager       = ConnectionManager.getInstance();

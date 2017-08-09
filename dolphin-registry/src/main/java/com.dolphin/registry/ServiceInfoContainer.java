@@ -36,7 +36,7 @@ public class ServiceInfoContainer {
      * 往分组中加入一个Service的信息
      *
      * @param serviceInfo
-     * @author jiujie
+     * @author keyhunter
      * 2016年5月31日 下午3:07:18
      */
     public void add(ServiceInfo serviceInfo) {
@@ -54,7 +54,7 @@ public class ServiceInfoContainer {
      * @param group
      * @param serviceName
      * @return
-     * @author jiujie
+     * @author keyhunter
      * 2016年5月31日 下午3:08:28
      */
     public ServiceInfoSet get(String group, String serviceName) {
@@ -86,7 +86,7 @@ public class ServiceInfoContainer {
      *
      * @param group
      * @param serviceName
-     * @author jiujie
+     * @author keyhunter
      * 2016年5月31日 下午3:13:02
      */
     public void remove(String group, String serviceName) {
@@ -102,7 +102,7 @@ public class ServiceInfoContainer {
      * 移除一个分组中的ServiceInfo
      *
      * @param serviceInfo
-     * @author jiujie
+     * @author keyhunter
      * 2016年5月31日 下午3:13:02
      */
     public void remove(ServiceInfo serviceInfo) {
@@ -135,8 +135,8 @@ public class ServiceInfoContainer {
     /**
      * ServiceInfo的Set
      *
-     * @author jiujie
-     * @version $Id: ServiceInfoContaintor.java, v 0.1 2016年5月31日 下午3:59:25 jiujie Exp $
+     * @author keyhunter
+     * @version $Id: ServiceInfoContaintor.java, v 0.1 2016年5月31日 下午3:59:25 keyhunter Exp $
      */
     public static class ServiceInfoSet implements Set<ServiceInfo> {
 

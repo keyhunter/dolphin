@@ -10,8 +10,8 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
  * 包的编码器
- * @author jiujie
- * @version $Id: PacketEncoder.java, v 0.1 2016年3月31日 下午3:04:10 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: PacketEncoder.java, v 0.1 2016年3月31日 下午3:04:10 keyhunter Exp $
  */
 public class NettyEncoder extends MessageToByteEncoder<Object> {
 

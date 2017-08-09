@@ -2,8 +2,8 @@ package com.dolphin.core.exception;
 
 /**
  * RPC异常
- * @author jiujie
- * @version $Id: RPCException.java, v 0.1 2016年5月9日 下午5:35:52 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: RPCException.java, v 0.1 2016年5月9日 下午5:35:52 keyhunter Exp $
  */
 public class RPCException extends Exception {
 

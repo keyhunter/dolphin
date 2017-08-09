@@ -39,7 +39,7 @@ public class ServerBoot {
 
     /**
      * 是否是预发环境
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月27日 下午8:22:47
      * @return
      */

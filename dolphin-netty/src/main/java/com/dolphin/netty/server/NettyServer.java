@@ -21,7 +21,7 @@ public abstract class NettyServer {
     private EventLoopGroup          bossGroup;
     private EventLoopGroup          workerGroup;
 
-    /** 是否正在运行中  @author jiujie 2016年6月1日 下午1:20:44 */
+    /** 是否正在运行中  @author keyhunter 2016年6月1日 下午1:20:44 */
     private volatile boolean        isStarting              = false;
 
     private NettyChannelInitializer nettyChannelInitializer = new NettyChannelInitializer() {

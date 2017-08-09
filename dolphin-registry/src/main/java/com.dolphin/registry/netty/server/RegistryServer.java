@@ -74,8 +74,8 @@ public class RegistryServer extends NettyServer implements Server {
 
     /**
      * RPC方法调用的Handler，用于解析RPC请求并处理请求的
-     * @author jiujie
-     * @version $Id: RPCServer.java, v 0.1 2016年5月23日 下午2:39:58 jiujie Exp $
+     * @author keyhunter
+     * @version $Id: RPCServer.java, v 0.1 2016年5月23日 下午2:39:58 keyhunter Exp $
      */
     @Sharable
     private static class RegistryServerHandler extends SimpleChannelInboundHandler<Message> {

@@ -4,10 +4,10 @@ import org.apache.commons.lang.StringUtils;
 
 public class HostAddress {
 
-    /** 主机IP地址  @author jiujie 2016年5月13日 上午11:10:31 */
+    /** 主机IP地址  @author keyhunter 2016年5月13日 上午11:10:31 */
     private String host;
 
-    /** 主机端口号  @author jiujie 2016年5月13日 上午11:10:50 */
+    /** 主机端口号  @author keyhunter 2016年5月13日 上午11:10:50 */
     private int    port;
 
     public static boolean verify(HostAddress address) {

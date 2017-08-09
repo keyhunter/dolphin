@@ -6,7 +6,7 @@ public class RPCFactory {
 
     /**
      * 获取代理类
-     * @author jiujie
+     * @author keyhunter
      * 2016年5月24日 上午11:38:00
      * @param clazz
      * @return
@@ -21,7 +21,7 @@ public class RPCFactory {
 
     /**
      * 通过接口的类型，还有实现类的名字来，得到代理类
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月12日 上午10:48:17
      * @param clazz
      * @param name

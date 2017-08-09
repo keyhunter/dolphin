@@ -19,8 +19,8 @@ import io.netty.util.concurrent.ScheduledFuture;
 
 /**
  * 定时心跳的NettyHandler，由于不是根据空闲时间来判断的，比较耗资源，不推荐使用
- * @author jiujie
- * @version $Id: HeartBeatConnectorHandler.java, v 0.1 2016年7月5日 下午5:17:21 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: HeartBeatConnectorHandler.java, v 0.1 2016年7月5日 下午5:17:21 keyhunter Exp $
  */
 @Deprecated
 public class HeartBeatConnectorHandler extends SimpleChannelInboundHandler<Message> {

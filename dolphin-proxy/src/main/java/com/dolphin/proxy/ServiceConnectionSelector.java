@@ -25,8 +25,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Service的Client的选择器
- * @author jiujie
- * @version $Id: ServiceClientSelector.java, v 0.1 2016年5月25日 下午10:18:49 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: ServiceClientSelector.java, v 0.1 2016年5月25日 下午10:18:49 keyhunter Exp $
  */
 public class ServiceConnectionSelector implements ConnectionSelector, ConnectionCloseListenser,
         ServiceChangeListener {
@@ -36,7 +36,7 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
 
     private Map<String, List<Long>>          serviceConnections;
 
-    /** 重连列表 @author jiujie 2016年7月6日 上午10:18:36 */
+    /** 重连列表 @author keyhunter 2016年7月6日 上午10:18:36 */
     private ServiceInfoSet disConnectServiceInfos        = new ServiceInfoSet();
 
     private ServiceCustomer serviceCustomer;
@@ -127,7 +127,7 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
 
     /**
      * 关闭连接则从连接中去除这个客户端的连接
-     * @author jiujie
+     * @author keyhunter
      * 2016年6月6日 下午3:01:24
      * @see com.dolphin.core.protocle.ConnectionCloseListenser#close(com.dolphin.core.protocle.Connection)
      * @return
@@ -168,7 +168,7 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
 
     /**
      * 重置Service服务的链接
-     * @author jiujie
+     * @author keyhunter
      * 2016年6月6日 下午3:24:54
      * @param group
      * @param serviceName
@@ -255,7 +255,7 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
 
     /**
      * 从一个ServiceInfo数组serviceInfos中随机出targetSize个ServiceInfo
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月6日 上午10:57:16
      * @param serviceInfos
      * @param targetSize
@@ -284,8 +284,8 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
 
     /**
      * 重连任务
-     * @author jiujie
-     * @version $Id: ServiceConnectionSelector.java, v 0.1 2016年7月6日 上午11:56:32 jiujie Exp $
+     * @author keyhunter
+     * @version $Id: ServiceConnectionSelector.java, v 0.1 2016年7月6日 上午11:56:32 keyhunter Exp $
      */
     public class ReconnectTask implements Runnable {
 

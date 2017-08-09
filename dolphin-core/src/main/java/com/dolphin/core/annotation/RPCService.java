@@ -13,7 +13,7 @@ public @interface RPCService {
 
     /**
      * Service服务名字
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月7日 下午5:31:16
      * @return
      */
@@ -21,7 +21,7 @@ public @interface RPCService {
 
     /**
      * Service服务分组
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月7日 下午5:31:05
      * @return
      */

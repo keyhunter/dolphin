@@ -4,7 +4,7 @@ import com.dolphin.core.protocle.AbstractConnection;
 
 public class NettyConnection extends AbstractConnection {
 
-    /** 与服务端的通道  @author jiujie 2016年5月13日 上午11:19:50 */
+    /** 与服务端的通道  @author keyhunter 2016年5月13日 上午11:19:50 */
     private io.netty.channel.Channel channel;
 
     public NettyConnection(io.netty.channel.Channel channel) {

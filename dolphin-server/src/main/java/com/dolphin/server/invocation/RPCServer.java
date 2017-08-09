@@ -23,8 +23,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * RPC服务器
- * @author jiujie
- * @version $Id: RPCServer.java, v 0.1 2016年5月23日 下午2:40:37 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: RPCServer.java, v 0.1 2016年5月23日 下午2:40:37 keyhunter Exp $
  */
 public class RPCServer extends NettyServer {
 
@@ -78,8 +78,8 @@ public class RPCServer extends NettyServer {
 
     /**
      * RPC方法调用的Handler，用于解析RPC请求并处理请求的
-     * @author jiujie
-     * @version $Id: RPCServer.java, v 0.1 2016年5月23日 下午2:39:58 jiujie Exp $
+     * @author keyhunter
+     * @version $Id: RPCServer.java, v 0.1 2016年5月23日 下午2:39:58 keyhunter Exp $
      */
     @Sharable
     private static class RPCInvokeHandler extends SimpleChannelInboundHandler<Message> {

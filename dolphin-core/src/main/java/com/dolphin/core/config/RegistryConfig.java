@@ -2,19 +2,19 @@ package com.dolphin.core.config;
 
 /**
  * 注册中心配置
- * @author jiujie
- * @version $Id: RegistryConfig.java, v 0.1 2016年6月2日 下午8:01:57 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: RegistryConfig.java, v 0.1 2016年6月2日 下午8:01:57 keyhunter Exp $
  */
 public class RegistryConfig extends DolphinConfig {
 
-    /** 注册中心地址连接的数据库相关配置 @author jiujie 2016年7月11日 下午4:13:47 */
+    /** 注册中心地址连接的数据库相关配置 @author keyhunter 2016年7月11日 下午4:13:47 */
     private String                dbUrl;
     private String                dbUsername;
     private String                dbPassword;
 
-    /** 服务消费的配置 @author jiujie 2016年7月11日 下午4:14:11 */
+    /** 服务消费的配置 @author keyhunter 2016年7月11日 下午4:14:11 */
     private String                customer;
-    /** 服务提供都的配置 @author jiujie 2016年7月11日 下午4:14:29 */
+    /** 服务提供都的配置 @author keyhunter 2016年7月11日 下午4:14:29 */
     private String                provider;
 
     private static RegistryConfig registryConfig;

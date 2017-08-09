@@ -34,8 +34,8 @@ import com.dolphin.registry.netty.protocle.RegistryResponse;
 
 /**
  * Service的管理器，用于管理服务
- * @author jiujie
- * @version $Id: ServiceManager.java, v 0.1 2016年5月16日 下午8:28:48 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: ServiceManager.java, v 0.1 2016年5月16日 下午8:28:48 keyhunter Exp $
  */
 public class ServiceManager implements ServiceRegisterListener {
 
@@ -43,7 +43,7 @@ public class ServiceManager implements ServiceRegisterListener {
 
     private Map<String, Map<String, Set<Long>>> notifyClients                      = new ConcurrentHashMap<>();
 
-    /** 连接到这台注册中心的连接ID @author jiujie 2016年6月6日 下午2:03:32 */
+    /** 连接到这台注册中心的连接ID @author keyhunter 2016年6月6日 下午2:03:32 */
     private Set<Long>                           connectToThisRegistryServerConnIds = new HashSet<>();
 
     private static ServiceManager               serviceManager;
@@ -141,7 +141,7 @@ public class ServiceManager implements ServiceRegisterListener {
     }
 
     /**
-     * @author jiujie
+     * @author keyhunter
      * 2016年6月1日 下午7:56:59
      * @param serviceInfo
      */
@@ -150,7 +150,7 @@ public class ServiceManager implements ServiceRegisterListener {
     }
 
     /**
-     * @author jiujie
+     * @author keyhunter
      * 2016年6月1日 下午7:56:59
      * @param serviceInfo
      */
@@ -160,7 +160,7 @@ public class ServiceManager implements ServiceRegisterListener {
 
     /**
      * 订阅Service
-     * @author jiujie
+     * @author keyhunter
      * 2016年5月24日 下午9:13:28
      * @param connId
      * @param group
@@ -239,7 +239,7 @@ public class ServiceManager implements ServiceRegisterListener {
 
     /**
      * 通知订阅者，服务发生注册
-     * @author jiujie
+     * @author keyhunter
      * 2016年5月16日 下午8:38:43
      * @param serviceInfo
      */

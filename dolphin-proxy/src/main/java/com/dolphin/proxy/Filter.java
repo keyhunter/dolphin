@@ -6,7 +6,7 @@ public interface Filter {
 
     /**
      * RPC拦截器
-     * @author jiujie
+     * @author keyhunter
      * 2016年6月2日 下午7:35:20
      * @param group
      * @param serviceName

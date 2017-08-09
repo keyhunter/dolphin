@@ -28,8 +28,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * Netty服务的消费者，订阅和得到ServiceInfo
- * @author jiujie
- * @version $Id: NettyServiceCustomer.java, v 0.1 2016年5月25日 下午10:31:46 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: NettyServiceCustomer.java, v 0.1 2016年5月25日 下午10:31:46 keyhunter Exp $
  */
 public class NettyServiceConsumer extends AbstractServiceCustomer {
 
@@ -51,7 +51,7 @@ public class NettyServiceConsumer extends AbstractServiceCustomer {
 
     /**
      * 连接到注册中心
-     * @author jiujie
+     * @author keyhunter
      * 2016年6月29日 下午12:48:28
      */
     private void connectToRegistryServer() {

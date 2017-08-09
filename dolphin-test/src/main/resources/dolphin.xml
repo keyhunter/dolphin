@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dolphin xmlns="http://dolphin.showjoy.com"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://dolphin.showjoy.com dolphin.xsd">
+    <!-- RPC客户端配置 -->
+    <client>
+        <global>
+            <group>${app.env}</group>
+        </global>
+        <selector>
+            <class>com.dolphin.proxy.ServiceConnectorSelector</class>
+        </selector>
+        <!-- 请求超时时间，单位为毫秒  -->
+        <timeout>3000</timeout>
+        <!-- 请求失败 重试次数，默认为3  -->
+        <retry-times>3</retry-times>
+        <services>
+            <service>
+                <name>orderService</name>
+                <group>test</group>
+            </service>
+        </services>
+    </client>
+
+    <!-- RPC服务配置 -->
+    <service>
+        <group>${app.env}</group>
+        <!-- RPC服务名 -->
+        <name>orderService</name>
+        <!-- 主机IP，可不配，程序会自动获取 -->
+        <ip>10.1.1.31</ip>
+        <ip-regex>${service.ip.regex}</ip-regex>
+        <!-- RPC服务端口 -->
+        <ports>
+            <preview-port>${preview.port}</preview-port>
+            <port>8001</port>
+            <port>8002</port>
+            <port>8003</port>
+        </ports>
+    </service>
+    <!-- 注册中心配置 -->
+    <registry>
+        <datasource>
+            <url>jdbc:mysql://localhost:3306/fish?characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round
+            </url>
+            <username>root</username>
+            <password>123456</password>
+        </datasource>
+        <customer>com.dolphin.rpc.registry.zookeeper.ZooKeeperServiceConsumer
+        </customer>
+        <provider>com.dolphin.rpc.registry.zookeeper.ZooKeeperServiceProvider
+        </provider>
+    </registry>
+
+</dolphin>

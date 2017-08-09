@@ -6,7 +6,7 @@ import com.dolphin.server.invocation.ScannerInvoker;
 import java.lang.reflect.InvocationTargetException;
 
 
-public class InvokerTest {
+public class InvokerTests {
 
     public static void main(String[] args) throws InvocationTargetException {
         Invoker invoker = new ScannerInvoker();
@@ -33,12 +33,9 @@ public class InvokerTest {
                 new Product(2, "汽车"), new Product(2, "汽车")};
         invoker.invoke("com.dolphin.test.service.TestService", "createOrder", parameters,
                 new Class<?>[]{String.class, Product[].class});
-        long currentTimeMillis = System.currentTimeMillis();
-        System.out.println(currentTimeMillis);
         for (int i = 0; i < 1000000; i++) {
             getClasses(parameters);
         }
-        System.out.println(System.currentTimeMillis() - currentTimeMillis);
 
     }
 

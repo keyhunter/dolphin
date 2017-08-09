@@ -6,7 +6,7 @@ public interface Invoker {
 
     /**
      * 当接口有一个实现时，执行方法
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月12日 上午10:37:33
      * @param className
      * @param methodName
@@ -20,7 +20,7 @@ public interface Invoker {
 
     /**
      * 加入implementName参数，用于多实现情况下找出实现类
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月12日 上午10:36:59
      * @param className
      * @param implementName

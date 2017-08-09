@@ -5,18 +5,18 @@ import com.dolphin.core.protocle.HostAddress;
 
 /**
  * 服务信息
- * @author jiujie
- * @version $Id: ServiceInfo.java, v 0.1 2016年5月16日 下午5:45:29 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: ServiceInfo.java, v 0.1 2016年5月16日 下午5:45:29 keyhunter Exp $
  */
 public class ServiceInfo {
     
-    /** Service的分组  @author jiujie 2016年5月31日 下午3:16:35 */
+    /** Service的分组  @author keyhunter 2016年5月31日 下午3:16:35 */
     private String      group;
 
-    /** 服务名字 @author jiujie 2016年5月16日 下午5:44:53 */
+    /** 服务名字 @author keyhunter 2016年5月16日 下午5:44:53 */
     private String      name;
 
-    /** 服务地址 @author jiujie 2016年5月16日 下午5:45:06 */
+    /** 服务地址 @author keyhunter 2016年5月16日 下午5:45:06 */
     private HostAddress hostAddress;
 
     public ServiceInfo() {

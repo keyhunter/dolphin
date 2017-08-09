@@ -23,7 +23,7 @@ public abstract class AbstractServiceCustomer implements ServiceCustomer, Servic
 
     /**
      * 添加Serive改变监听器
-     * @author jiujie
+     * @author keyhunter
      * 2016年5月25日 下午10:11:35
      * @param listener
      */

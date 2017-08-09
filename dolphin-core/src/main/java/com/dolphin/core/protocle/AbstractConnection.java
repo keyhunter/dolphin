@@ -10,7 +10,7 @@ public abstract class AbstractConnection implements Connection {
 
     private long                           id;
 
-    /** 参数  @author jiujie 2016年6月1日 上午10:43:03 */
+    /** 参数  @author keyhunter 2016年6月1日 上午10:43:03 */
     private Map<String, Object>            attributes      = new HashMap<>();
 
     private List<ConnectionCloseListenser> closeListensers = new ArrayList<>();
@@ -61,7 +61,7 @@ public abstract class AbstractConnection implements Connection {
 
     /**
      * 关闭连接
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月6日 上午11:35:29
      */
     protected abstract void doClose();

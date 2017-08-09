@@ -9,8 +9,8 @@ import com.dolphin.core.annotation.RPCService;
 
 /**
  * RPC服务Service名字的映射
- * @author jiujie
- * @version $Id: ServiceMapping.java, v 0.1 2016年5月23日 下午7:47:40 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: ServiceMapping.java, v 0.1 2016年5月23日 下午7:47:40 keyhunter Exp $
  */
 public class RPCHandlerMapping {
 

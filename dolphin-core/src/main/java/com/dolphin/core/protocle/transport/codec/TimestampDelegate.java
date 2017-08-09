@@ -11,8 +11,8 @@ import io.protostuff.runtime.Delegate;
 
 /**
  * protostuff timestamp 委托类
- * @author jiujie
- * @version $Id: TimestampDelegate.java, v 0.1 2016年7月20日 下午2:08:11 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: TimestampDelegate.java, v 0.1 2016年7月20日 下午2:08:11 keyhunter Exp $
  */
 public class TimestampDelegate implements Delegate<Timestamp> {
     

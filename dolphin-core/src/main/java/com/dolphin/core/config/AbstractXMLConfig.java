@@ -14,8 +14,8 @@ import org.dom4j.io.SAXReader;
 /**
  * XML配置项
  *
- * @author jiujie
- * @version $Id: AbstractXMLConfig.java, v 0.1 2016年5月9日 下午4:58:51 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: AbstractXMLConfig.java, v 0.1 2016年5月9日 下午4:58:51 keyhunter Exp $
  */
 public abstract class AbstractXMLConfig implements Config {
 
@@ -47,7 +47,7 @@ public abstract class AbstractXMLConfig implements Config {
      *
      * @param path
      * @return
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月11日 下午3:44:16
      */
     protected int getInt(String path) {

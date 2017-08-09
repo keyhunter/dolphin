@@ -15,8 +15,8 @@ import org.springframework.util.ReflectionUtils;
 /**
  * 基于Spring的方法调用
  *
- * @author jiujie
- * @version $Id: SpringInvoker.java, v 0.1 2016年5月11日 上午11:05:22 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: SpringInvoker.java, v 0.1 2016年5月11日 上午11:05:22 keyhunter Exp $
  */
 @Component
 public class SpringInvoker extends AbstractInvoker implements ApplicationContextAware {

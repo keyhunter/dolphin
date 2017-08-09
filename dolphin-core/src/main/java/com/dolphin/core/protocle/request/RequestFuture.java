@@ -12,7 +12,7 @@ public class RequestFuture {
 
     private Logger        logger    = Logger.getLogger(RequestFuture.class);
 
-    /** 是否请求成功  @author jiujie 2016年5月11日 下午9:14:24 */
+    /** 是否请求成功  @author keyhunter 2016年5月11日 下午9:14:24 */
     private AtomicBoolean isSuccess = new AtomicBoolean();
 
     private AtomicBoolean isDone    = new AtomicBoolean();

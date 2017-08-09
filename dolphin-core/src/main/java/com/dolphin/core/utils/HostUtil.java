@@ -12,7 +12,7 @@ public class HostUtil {
 
     /**
      * 获取本机IP
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月12日 上午11:23:46
      * @return
      */
@@ -32,7 +32,7 @@ public class HostUtil {
 
     /**
      * 通过网卡，IP网段的正则匹配来查找本机IP
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月28日 下午12:41:00
      * @param ipRegex IP网段的正则表达式
      * @return
@@ -71,7 +71,7 @@ public class HostUtil {
 
     /**
      * 获取端口是否被占用
-     * @author jiujie
+     * @author keyhunter
      * 2016年7月12日 上午11:23:54
      * @param port
      * @return

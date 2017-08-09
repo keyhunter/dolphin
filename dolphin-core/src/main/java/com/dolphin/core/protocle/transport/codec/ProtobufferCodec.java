@@ -13,12 +13,12 @@ import io.protostuff.runtime.RuntimeSchema;
 
 /**
  * ProtoBuffer编解码
- * @author jiujie
- * @version $Id: ProtobufferCodec.java, v 0.1 2016年7月20日 下午1:52:41 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: ProtobufferCodec.java, v 0.1 2016年7月20日 下午1:52:41 keyhunter Exp $
  */
 public class ProtobufferCodec implements Codec {
 
-    /** 时间戳转换委托类，解决时间戳转换后错误问题 @author jiujie 2016年7月20日 下午1:52:25 */
+    /** 时间戳转换委托类，解决时间戳转换后错误问题 @author keyhunter 2016年7月20日 下午1:52:25 */
     private final static Delegate<Timestamp>                    TIMESTAMP_DELEGATE = new TimestampDelegate();
 
     private final static DefaultIdStrategy                      idStrategy         = ((DefaultIdStrategy) RuntimeEnv.ID_STRATEGY);

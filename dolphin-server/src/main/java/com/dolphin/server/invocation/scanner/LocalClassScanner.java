@@ -13,22 +13,23 @@ import com.dolphin.core.utils.ClassScanner;
 import net.sf.cglib.reflect.FastClass;
 
 /**
- * 
- * @author jiujie
- * @version $Id: RpcServiceManager.java, v 0.1 2016年5月23日 下午5:20:50 jiujie Exp $
+ * local class scanner
+ * scan class by class name
+ *
+ * @author keyhunter
+ * @version $Id: RpcServiceManager.java, v 0.1 2016年5月23日 下午5:20:50 keyhunter Exp $
  */
-public class RpcServiceScanner {
+public class LocalClassScanner {
 
-    private static Logger                     logger  = Logger
-        .getLogger(RpcServiceClassFilter.class);
+    private static Logger logger = Logger.getLogger(DefaultClassFilter.class);
 
-    private static Map<String, Object>        rpcServices;
+    private static Map<String, Object> rpcServices;
 
-    private static volatile RpcServiceScanner scanner = null;
+    private static volatile LocalClassScanner scanner = null;
 
-    private RpcServiceScanner() {
+    private LocalClassScanner() {
         rpcServices = new HashMap<>();
-        List<Class> classes = ClassScanner.scanPackage("com", new RpcServiceClassFilter());
+        List<Class> classes = ClassScanner.scanPackage("com", new DefaultClassFilter());
         if (classes != null && !classes.isEmpty()) {
             for (Class<?> clazz : classes) {
                 try {
@@ -38,7 +39,7 @@ public class RpcServiceScanner {
                             RPCService annotation = interfaceClass.getAnnotation(RPCService.class);
                             if (annotation != null) {
                                 rpcServices.put(interfaceClass.getName(),
-                                    FastClass.create(clazz).newInstance());
+                                        FastClass.create(clazz).newInstance());
                             }
                         }
                     } else {
@@ -52,11 +53,11 @@ public class RpcServiceScanner {
         }
     }
 
-    public static RpcServiceScanner getInstance() {
+    public static LocalClassScanner getInstance() {
         if (scanner == null) {
-            synchronized (RpcServiceScanner.class) {
+            synchronized (LocalClassScanner.class) {
                 if (scanner == null) {
-                    scanner = new RpcServiceScanner();
+                    scanner = new LocalClassScanner();
                 }
             }
         }

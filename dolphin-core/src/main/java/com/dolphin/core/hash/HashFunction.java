@@ -2,8 +2,8 @@ package com.dolphin.core.hash;
 
 /**
  * Hash方法
- * @author jiujie
- * @version $Id: HashFunction.java, v 0.1 2016年5月4日 下午5:34:45 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: HashFunction.java, v 0.1 2016年5月4日 下午5:34:45 keyhunter Exp $
  */
 public class HashFunction {
 

@@ -38,7 +38,7 @@ public abstract class NettyChannelInitializer extends ChannelInitializer<SocketC
 
     /**
      * 注册共享的处理器
-     * @author jiujie
+     * @author keyhunter
      * 2016年5月25日 下午9:50:25
      * @param name
      * @param handler

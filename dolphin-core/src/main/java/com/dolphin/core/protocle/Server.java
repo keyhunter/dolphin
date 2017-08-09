@@ -4,8 +4,8 @@ import com.dolphin.core.Application;
 
 /**
  * 服务器端
- * @author jiujie
- * @version $Id: Server.java, v 0.1 2016年5月13日 上午11:09:45 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: Server.java, v 0.1 2016年5月13日 上午11:09:45 keyhunter Exp $
  */
 public interface Server extends Application {
 

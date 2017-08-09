@@ -14,8 +14,8 @@ import io.netty.handler.timeout.IdleStateHandler;
 
 /**
  * 空闲心跳检测服务
- * @author jiujie
- * @version $Id: IdleHeartBeatHandler.java, v 0.1 2016年7月5日 下午5:18:25 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: IdleHeartBeatHandler.java, v 0.1 2016年7月5日 下午5:18:25 keyhunter Exp $
  */
 public class IdleHeartBeatHandler extends IdleStateHandler {
 

@@ -12,8 +12,8 @@ import javassist.bytecode.ConstPool;
 
 /**
  * 此类操作反射，现在不可用，请不要尝试
- * @author jiujie
- * @version $Id: ClassUtil.java, v 0.1 2016年7月20日 下午1:09:21 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: ClassUtil.java, v 0.1 2016年7月20日 下午1:09:21 keyhunter Exp $
  */
 @Deprecated
 public class ClassUtil {

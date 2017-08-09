@@ -7,8 +7,8 @@ import org.apache.log4j.Logger;
 
 /**
  * 编码注册器
- * @author jiujie
- * @version $Id: CodecRegistry.java, v 0.1 2016年3月31日 上午11:06:56 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: CodecRegistry.java, v 0.1 2016年3月31日 上午11:06:56 keyhunter Exp $
  */
 public class CodecRegistry {
 
@@ -35,7 +35,7 @@ public class CodecRegistry {
 
     /**
      * 注册一个编解码器
-     * @author jiujie
+     * @author keyhunter
      * 2016年3月31日 上午11:46:27
      * @param codec
      */

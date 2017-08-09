@@ -45,7 +45,7 @@ public class NettyServiceProvider extends AbstractServiceProvider implements Ser
 
     /**
      * 连接到注册中心
-     * @author jiujie
+     * @author keyhunter
      * 2016年6月29日 下午12:48:28
      */
     private void connectToRegistryServer() {

@@ -5,7 +5,7 @@ import java.lang.annotation.Annotation;
 import com.dolphin.core.annotation.RPCService;
 import com.dolphin.core.utils.ClassFilter;
 
-public class RpcServiceClassFilter implements ClassFilter {
+public class DefaultClassFilter implements ClassFilter {
 
     @Override
     public boolean accept(Class clazz) {

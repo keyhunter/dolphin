@@ -4,8 +4,8 @@ import com.dolphin.core.protocle.Response;
 
 /**
  * RPC结果
- * @author jiujie
- * @version $Id: RPCResult.java, v 0.1 2016年5月23日 下午4:05:59 jiujie Exp $
+ * @author keyhunter
+ * @version $Id: RPCResult.java, v 0.1 2016年5月23日 下午4:05:59 keyhunter Exp $
  */
 public class RPCResult implements Response {
 
