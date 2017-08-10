@@ -8,6 +8,7 @@
     <version>1.0</version>
     <modules>
         <module>dolphin-core</module>
+        <module>dolphin-utils</module>
         <module>dolphin-netty</module>
         <module>dolphin-proxy</module>
         <module>dolphin-registry</module>
