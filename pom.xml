@@ -46,6 +46,7 @@
         <java_target_version>1.8</java_target_version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <org.slf4j-version>1.6.6</org.slf4j-version>
+        <dolphin.version>1.0-SNAPSHOT</dolphin.version>
     </properties>
 
     <dependencies>
