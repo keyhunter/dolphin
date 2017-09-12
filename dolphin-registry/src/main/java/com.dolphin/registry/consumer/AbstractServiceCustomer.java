@@ -1,31 +1,32 @@
 package com.dolphin.registry.consumer;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.dolphin.core.protocle.transport.ServiceInfo;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import com.dolphin.core.exception.ServiceInfoFormatException;
+import com.dolphin.core.protocle.transport.ServiceInfo;
 import com.dolphin.registry.ServiceChangeListener;
 import com.dolphin.registry.ServiceInfoContainer;
 import com.dolphin.registry.ServiceInfoContainer.ServiceInfoSet;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractServiceCustomer implements ServiceCustomer, ServiceChangeListener {
 
-    private ServiceInfoContainer        cachedServiceInfos = new ServiceInfoContainer();
+    private ServiceInfoContainer cachedServiceInfos = new ServiceInfoContainer();
 
-    private Logger                      logger             = Logger
-        .getLogger(AbstractServiceCustomer.class);
+    private Logger logger = LoggerFactory
+            .getLogger(AbstractServiceCustomer.class);
 
-    private List<ServiceChangeListener> listeners          = new ArrayList<>();
+    private List<ServiceChangeListener> listeners = new ArrayList<>();
 
     /**
      * 添加Serive改变监听器
+     *
+     * @param listener
      * @author keyhunter
      * 2016年5月25日 下午10:11:35
-     * @param listener
      */
     public void addServiceListener(ServiceChangeListener listener) {
         if (listener == null) {

@@ -1,20 +1,20 @@
 package com.dolphin.server.invocation.mapping;
 
+import com.dolphin.core.annotation.RPCService;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.dolphin.core.annotation.RPCService;
-
 /**
  * RPC服务Service名字的映射
+ *
  * @author keyhunter
  * @version $Id: ServiceMapping.java, v 0.1 2016年5月23日 下午7:47:40 keyhunter Exp $
  */
 public class RPCHandlerMapping {
 
-    private Map<String, Object>               handlers;
+    private Map<String, Object> handlers;
 
     private static volatile RPCHandlerMapping handlerMapping;
 

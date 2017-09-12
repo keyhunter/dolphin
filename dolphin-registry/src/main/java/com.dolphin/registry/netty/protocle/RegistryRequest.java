@@ -6,15 +6,15 @@ import com.dolphin.core.protocle.transport.ServiceInfo;
 
 public class RegistryRequest implements Request {
 
-    private long            id;
+    private long id;
 
-    private String          command;
+    private String command;
 
     private ApplicationType applicationType;
 
     private ServiceInfo serviceInfo;
-    
-    public RegistryRequest(){
+
+    public RegistryRequest() {
     }
 
     public RegistryRequest(ApplicationType applicationType, String command,

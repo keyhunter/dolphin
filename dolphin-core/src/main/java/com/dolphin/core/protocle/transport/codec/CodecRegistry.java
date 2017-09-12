@@ -1,20 +1,22 @@
 package com.dolphin.core.protocle.transport.codec;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
-
 /**
  * 编码注册器
+ *
  * @author keyhunter
  * @version $Id: CodecRegistry.java, v 0.1 2016年3月31日 上午11:06:56 keyhunter Exp $
  */
 public class CodecRegistry {
 
-    private Logger               logger        = Logger.getLogger(CodecRegistry.class);
+    private Logger logger = LoggerFactory.getLogger(CodecRegistry.class);
 
-    private Map<Short, Codec>    codecMappings = new ConcurrentHashMap<>();
+    private Map<Short, Codec> codecMappings = new ConcurrentHashMap<>();
 
     private static CodecRegistry codecRegistry = new CodecRegistry();
 
@@ -35,9 +37,10 @@ public class CodecRegistry {
 
     /**
      * 注册一个编解码器
+     *
+     * @param codec
      * @author keyhunter
      * 2016年3月31日 上午11:46:27
-     * @param codec
      */
     public void register(Codec codec) {
         if (codec == null) {

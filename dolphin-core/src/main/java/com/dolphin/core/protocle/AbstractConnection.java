@@ -8,14 +8,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class AbstractConnection implements Connection {
 
-    private long                           id;
+    private long id;
 
-    /** 参数  @author keyhunter 2016年6月1日 上午10:43:03 */
-    private Map<String, Object>            attributes      = new HashMap<>();
+    /**
+     * 参数  @author keyhunter 2016年6月1日 上午10:43:03
+     */
+    private Map<String, Object> attributes = new HashMap<>();
 
     private List<ConnectionCloseListenser> closeListensers = new ArrayList<>();
 
-    private AtomicBoolean                  isClose         = new AtomicBoolean(false);
+    private AtomicBoolean isClose = new AtomicBoolean(false);
 
     public void setId(long id) {
         this.id = id;
@@ -61,6 +63,7 @@ public abstract class AbstractConnection implements Connection {
 
     /**
      * 关闭连接
+     *
      * @author keyhunter
      * 2016年7月6日 上午11:35:29
      */

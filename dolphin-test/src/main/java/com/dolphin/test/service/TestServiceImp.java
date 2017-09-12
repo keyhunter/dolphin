@@ -1,13 +1,16 @@
 package com.dolphin.test.service;
 
-import java.util.concurrent.atomic.AtomicLong;
-
+import com.dolphin.test.Product;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.dolphin.test.Product;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service("testService")
 public class TestServiceImp implements TestService {
+
+    private static final Logger logger = LoggerFactory.getLogger(TestServiceImp.class);
 
     private static AtomicLong al = new AtomicLong();
 
@@ -16,21 +19,21 @@ public class TestServiceImp implements TestService {
 
     @Override
     public int createOrder(String name, Product[] products) {
-        System.out.println(al.incrementAndGet());
-        System.out.println(name);
+        logger.info(al.incrementAndGet() + "");
+        logger.info(name);
         if (products == null) {
             return 0;
         }
         for (Product p : products) {
-            System.out.println(p.getId() + p.getName());
+            logger.info(p.getId() + p.getName());
         }
         return 0;
     }
 
     @Override
     public void test() {
-        System.out.println(al.incrementAndGet());
-        System.out.println("I'm running....................");
+        logger.info(al.incrementAndGet() + "");
+        logger.info("I'm running....................");
     }
 
 }

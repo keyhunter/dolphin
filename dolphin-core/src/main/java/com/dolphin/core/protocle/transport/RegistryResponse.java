@@ -4,11 +4,11 @@ import com.dolphin.core.protocle.Response;
 
 public class RegistryResponse implements Response {
 
-    private String    command;
+    private String command;
 
-    private long      requestId;
+    private long requestId;
 
-    private Object    result;
+    private Object result;
 
     private Exception exception;
 

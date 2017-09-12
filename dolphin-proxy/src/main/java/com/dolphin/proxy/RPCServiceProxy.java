@@ -1,15 +1,5 @@
 package com.dolphin.proxy;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Map;
-
-import javax.management.ServiceNotFoundException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import com.dolphin.core.annotation.RPCService;
 import com.dolphin.core.config.ClientConfig;
 import com.dolphin.core.exception.RPCException;
@@ -19,6 +9,15 @@ import com.dolphin.core.protocle.transport.Header;
 import com.dolphin.core.protocle.transport.PacketType;
 import com.dolphin.core.protocle.transport.RPCRequest;
 import com.dolphin.core.protocle.transport.RPCResult;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.management.ServiceNotFoundException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Map;
 
 /**
  * RPC服务的代理类，通过该代理，去调用远程的服务。
@@ -29,7 +28,7 @@ import com.dolphin.core.protocle.transport.RPCResult;
  */
 public class RPCServiceProxy implements InvocationHandler {
 
-    private static Logger logger = Logger
+    private static Logger logger = LoggerFactory
             .getLogger(RPCServiceProxy.class);
 
     private final static RequestManager REQUSET_MANAGER = RequestManager.getInstance();

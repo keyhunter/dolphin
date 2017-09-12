@@ -10,54 +10,58 @@ import java.util.zip.ZipFile;
 
 public class ClassScanner {
 
-    private static final String      CLASS_EXT         = ".class";
-    private static final String      JAR_FILE_EXT      = ".jar";
-    private static final String      ERROR_MESSAGE     = "packageName can't be null";
-    private static final String      DOT               = ".";
-    private static final String      ZIP_SLASH         = "/";
-    private static final String      BLACK             = "";
+    private static final String CLASS_EXT = ".class";
+    private static final String JAR_FILE_EXT = ".jar";
+    private static final String ERROR_MESSAGE = "packageName can't be null";
+    private static final String DOT = ".";
+    private static final String ZIP_SLASH = "/";
+    private static final String BLACK = "";
     private static final ClassFilter NULL_CLASS_FILTER = null;
-    /**(1) 文件过滤器，过滤掉不需要的文件**/
-    private static FileFilter        fileFilter        = new FileFilter() {
-                                                           @Override
-                                                           public boolean accept(File pathname) {
-                                                               return isClass(pathname.getName())
-                                                                      || isDirectory(pathname)
-                                                                      || isJarFile(
-                                                                          pathname.getName());
-                                                           }
-                                                       };
+    /**
+     * (1) 文件过滤器，过滤掉不需要的文件
+     **/
+    private static FileFilter fileFilter = new FileFilter() {
+        @Override
+        public boolean accept(File pathname) {
+            return isClass(pathname.getName())
+                    || isDirectory(pathname)
+                    || isJarFile(
+                    pathname.getName());
+        }
+    };
 
     /**
-         * 如果packageName为空，就抛出空指针异常。</br>
-         * (本工具类有一个bug，如果扫描文件时需要一个包路径为截取字符串的条件，现在还没有修复,所以加上该条件)
-         * 
-         * @param packageName
-         */
+     * 如果packageName为空，就抛出空指针异常。</br>
+     * (本工具类有一个bug，如果扫描文件时需要一个包路径为截取字符串的条件，现在还没有修复,所以加上该条件)
+     *
+     * @param packageName
+     */
     private static void ckeckNullPackageName(String packageName) {
         if (packageName == null || packageName.trim().length() == 0)
             throw new NullPointerException(ERROR_MESSAGE);
     }
 
     /**
-         * 改变 com -> com. 避免在比较的时候把比如 completeTestSuite.class类扫描进去，如果没有"."
-         * </br>那class里面com开头的class类也会被扫描进去,其实名称后面或前面需要一个 ".",来添加包的特征 
-         * @param packageName
-         * @return
-         */
+     * 改变 com -> com. 避免在比较的时候把比如 completeTestSuite.class类扫描进去，如果没有"."
+     * </br>那class里面com开头的class类也会被扫描进去,其实名称后面或前面需要一个 ".",来添加包的特征
+     *
+     * @param packageName
+     * @return
+     */
     private static String getWellFormedPackageName(String packageName) {
         return packageName.lastIndexOf(DOT) != packageName.length() - 1 ? packageName + DOT
-            : packageName;
+                : packageName;
     }
 
     /**
-         * 扫面包路径下满足class过滤器条件的所有class文件，</br> 如果包路径为 com.abs + A.class 
-         * 但是输入 abs 会产生classNotFoundException</br> 因为className 应该为 com.abs.A 现在却成为
-         * abs.A,此工具类对该异常进行忽略处理,有可能是一个不完善的地方，以后需要进行修改</br>
-         * @param packageName  包路径 com | com. | com.abs | com.abs.
-         * @param classFilter  class过滤器，过滤掉不需要的class
-         * @return
-         */
+     * 扫面包路径下满足class过滤器条件的所有class文件，</br> 如果包路径为 com.abs + A.class
+     * 但是输入 abs 会产生classNotFoundException</br> 因为className 应该为 com.abs.A 现在却成为
+     * abs.A,此工具类对该异常进行忽略处理,有可能是一个不完善的地方，以后需要进行修改</br>
+     *
+     * @param packageName 包路径 com | com. | com.abs | com.abs.
+     * @param classFilter class过滤器，过滤掉不需要的class
+     * @return
+     */
     public static List<Class> scanPackage(String packageName, ClassFilter classFilter) {
         //检测packageName 是否为空，如果为空就抛出NullPointException
         ckeckNullPackageName(packageName);
@@ -67,13 +71,14 @@ public class ClassScanner {
         for (String classPath : getClassPathArray()) {
             // 填充 classes 
             fillClasses(new File(classPath), getWellFormedPackageName(packageName), classFilter,
-                classes);
+                    classes);
         }
         return classes;
     }
 
     /**
      * 扫面改包路径下所有class文件
+     *
      * @param packageName 包路径 com | com. | com.abs | com.abs.
      * @return
      */
@@ -83,11 +88,11 @@ public class ClassScanner {
 
     /**
      * 填充满足条件的class 填充到 classes
-     * 
-     * @param file          类路径下的文件
-     * @param packageName   需要扫面的包名
-     * @param classFilter   class过滤器
-     * @param classes       List 集合
+     *
+     * @param file        类路径下的文件
+     * @param packageName 需要扫面的包名
+     * @param classFilter class过滤器
+     * @param classes     List 集合
      */
     private static void fillClasses(File file, String packageName, ClassFilter classFilter,
                                     List<Class> classes) {
@@ -102,7 +107,7 @@ public class ClassScanner {
 
     /**
      * 处理如果为目录的情况,需要递归调用 fillClasses方法
-     * 
+     *
      * @param directory
      * @param packageName
      * @param classFilter
@@ -117,7 +122,7 @@ public class ClassScanner {
 
     /**
      * 处理为class文件的情况,填充满足条件的class 到 classes
-     * 
+     *
      * @param file
      * @param packageName
      * @param classFilter
@@ -135,7 +140,7 @@ public class ClassScanner {
 
     /**
      * 处理为jar文件的情况，填充满足条件的class 到 classes
-     * 
+     *
      * @param file
      * @param packageName
      * @param classFilter
@@ -147,7 +152,7 @@ public class ClassScanner {
             for (ZipEntry entry : Collections.list(new ZipFile(file).entries())) {
                 if (isClass(entry.getName())) {
                     final String className = entry.getName().replace(ZIP_SLASH, DOT)
-                        .replace(CLASS_EXT, BLACK);
+                            .replace(CLASS_EXT, BLACK);
                     fillClass(className, packageName, classes, classFilter);
                 }
             }
@@ -158,7 +163,7 @@ public class ClassScanner {
 
     /**
      * 填充class 到 classes
-     * 
+     *
      * @param className
      * @param packageName
      * @param classes
@@ -169,7 +174,7 @@ public class ClassScanner {
         if (checkClassName(className, packageName)) {
             try {
                 final Class clazz = Class.forName(className, Boolean.FALSE,
-                    ClassScanner.class.getClassLoader());
+                        ClassScanner.class.getClassLoader());
                 if (checkClassFilter(classFilter, clazz)) {
                     classes.add(clazz);
                 }

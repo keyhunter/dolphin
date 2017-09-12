@@ -7,7 +7,7 @@ public class DolphinConfig extends AbstractXMLConfig {
 
     private static final String DEFAUT_PATH = "dolphin.xml";
 
-    private static final Logger LOGGER      = LoggerFactory.getLogger(DolphinConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DolphinConfig.class);
 
     public DolphinConfig() {
         super(DEFAUT_PATH);

@@ -1,18 +1,13 @@
 package com.dolphin.netty.connector;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.dolphin.netty.NettyChannelInitializer;
-import com.dolphin.netty.NettyConnection;
-import com.dolphin.netty.ResponseHandler;
-import org.apache.log4j.Logger;
-
 import com.dolphin.core.exception.AddressFormatException;
 import com.dolphin.core.protocle.Connection;
 import com.dolphin.core.protocle.ConnectionManager;
 import com.dolphin.core.protocle.Connector;
 import com.dolphin.core.protocle.HostAddress;
-
+import com.dolphin.netty.NettyChannelInitializer;
+import com.dolphin.netty.NettyConnection;
+import com.dolphin.netty.ResponseHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
@@ -21,27 +16,33 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NettyConnector implements Connector {
 
-    private Logger                  logger                  = Logger
-        .getLogger(NettyConnector.class);
+    private Logger logger = LoggerFactory
+            .getLogger(NettyConnector.class);
 
-    /** 是否正在运行中  @author keyhunter 2016年6月1日 下午1:20:44 */
-    private volatile AtomicBoolean  isStarting              = new AtomicBoolean(false);
+    /**
+     * 是否正在运行中  @author keyhunter 2016年6月1日 下午1:20:44
+     */
+    private volatile AtomicBoolean isStarting = new AtomicBoolean(false);
 
-    private ConnectionManager       connectionManager       = ConnectionManager.getInstance();
+    private ConnectionManager connectionManager = ConnectionManager.getInstance();
 
     private NettyChannelInitializer nettyChannelInitializer = new NettyChannelInitializer() {
 
-                                                                @Override
-                                                                public void registerHandler(SocketChannel ch) {
-                                                                    ch.pipeline().addLast("timeout",
-                                                                        new IdleHeartBeatHandler(3,
-                                                                            1, 0));
-                                                                }
+        @Override
+        public void registerHandler(SocketChannel ch) {
+            ch.pipeline().addLast("timeout",
+                    new IdleHeartBeatHandler(3,
+                            1, 0));
+        }
 
-                                                            };
+    };
 
     public NettyConnector() {
         super();
@@ -83,7 +84,7 @@ public class NettyConnector implements Connector {
     private Connection startConnect(final HostAddress address) {
         final NioEventLoopGroup group = new NioEventLoopGroup();
         Bootstrap bootstrap = new Bootstrap().group(group).channel(NioSocketChannel.class)
-            .handler(nettyChannelInitializer);
+                .handler(nettyChannelInitializer);
         ChannelFuture future = bootstrap.connect(address.getHost(), address.getPort());
         // awaitUninterruptibly() 等待连接成功
         io.netty.channel.Channel channel = future.awaitUninterruptibly().channel();

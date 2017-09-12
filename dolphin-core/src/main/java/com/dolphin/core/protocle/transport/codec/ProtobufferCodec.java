@@ -1,8 +1,5 @@
 package com.dolphin.core.protocle.transport.codec;
 
-import java.sql.Timestamp;
-import java.util.concurrent.ConcurrentHashMap;
-
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;
 import io.protostuff.Schema;
@@ -11,19 +8,25 @@ import io.protostuff.runtime.Delegate;
 import io.protostuff.runtime.RuntimeEnv;
 import io.protostuff.runtime.RuntimeSchema;
 
+import java.sql.Timestamp;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * ProtoBuffer编解码
+ *
  * @author keyhunter
  * @version $Id: ProtobufferCodec.java, v 0.1 2016年7月20日 下午1:52:41 keyhunter Exp $
  */
 public class ProtobufferCodec implements Codec {
 
-    /** 时间戳转换委托类，解决时间戳转换后错误问题 @author keyhunter 2016年7月20日 下午1:52:25 */
-    private final static Delegate<Timestamp>                    TIMESTAMP_DELEGATE = new TimestampDelegate();
+    /**
+     * 时间戳转换委托类，解决时间戳转换后错误问题 @author keyhunter 2016年7月20日 下午1:52:25
+     */
+    private final static Delegate<Timestamp> TIMESTAMP_DELEGATE = new TimestampDelegate();
 
-    private final static DefaultIdStrategy                      idStrategy         = ((DefaultIdStrategy) RuntimeEnv.ID_STRATEGY);
+    private final static DefaultIdStrategy idStrategy = ((DefaultIdStrategy) RuntimeEnv.ID_STRATEGY);
 
-    private final static ConcurrentHashMap<Class<?>, Schema<?>> cachedSchema       = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<Class<?>, Schema<?>> cachedSchema = new ConcurrentHashMap<>();
 
     static {
         idStrategy.registerDelegate(TIMESTAMP_DELEGATE);

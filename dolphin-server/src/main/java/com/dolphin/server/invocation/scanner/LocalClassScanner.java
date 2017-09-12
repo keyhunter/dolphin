@@ -1,16 +1,15 @@
 package com.dolphin.server.invocation.scanner;
 
+import com.dolphin.core.annotation.RPCService;
+import com.dolphin.core.utils.ClassScanner;
+import net.sf.cglib.reflect.FastClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
-
-import com.dolphin.core.annotation.RPCService;
-import com.dolphin.core.utils.ClassScanner;
-
-import net.sf.cglib.reflect.FastClass;
 
 /**
  * local class scanner
@@ -21,7 +20,7 @@ import net.sf.cglib.reflect.FastClass;
  */
 public class LocalClassScanner {
 
-    private static Logger logger = Logger.getLogger(DefaultClassFilter.class);
+    private static Logger logger = LoggerFactory.getLogger(DefaultClassFilter.class);
 
     private static Map<String, Object> rpcServices;
 

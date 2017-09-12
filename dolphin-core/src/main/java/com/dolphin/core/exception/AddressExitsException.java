@@ -2,7 +2,9 @@ package com.dolphin.core.exception;
 
 public class AddressExitsException extends RPCRunTimeException {
 
-    /** @author keyhunter 2016年6月2日 下午8:14:50 */
+    /**
+     * @author keyhunter 2016年6月2日 下午8:14:50
+     */
     private static final long serialVersionUID = 1L;
 
     public AddressExitsException() {

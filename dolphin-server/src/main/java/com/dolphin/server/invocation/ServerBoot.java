@@ -1,17 +1,16 @@
 package com.dolphin.server.invocation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.dolphin.core.config.ServiceConfig;
 import com.dolphin.core.exception.RPCRunTimeException;
 import com.dolphin.core.utils.HostUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServerBoot {
 
     private volatile boolean isBooted = false;
 
-    private Logger           logger   = LoggerFactory.getLogger(ServerBoot.class);
+    private Logger logger = LoggerFactory.getLogger(ServerBoot.class);
 
     public void start() {
         //        if (BaseJunitRunner.isRunWithJunit()) {
@@ -39,9 +38,10 @@ public class ServerBoot {
 
     /**
      * 是否是预发环境
+     *
+     * @return
      * @author keyhunter
      * 2016年7月27日 下午8:22:47
-     * @return
      */
     private boolean isPreview() {
         boolean isPreview = false;

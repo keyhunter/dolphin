@@ -1,10 +1,6 @@
 package com.dolphin.core.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -13,17 +9,19 @@ public @interface RPCService {
 
     /**
      * Service服务名字
+     *
+     * @return
      * @author keyhunter
      * 2016年7月7日 下午5:31:16
-     * @return
      */
-    String value() default ""; 
+    String value() default "";
 
     /**
      * Service服务分组
+     *
+     * @return
      * @author keyhunter
      * 2016年7月7日 下午5:31:05
-     * @return
      */
     String group() default "";
 

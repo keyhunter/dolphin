@@ -1,13 +1,15 @@
 package com.dolphin.spring;
 
-import java.lang.reflect.Field;
-
 import com.dolphin.proxy.RPCFactory;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Field;
 
 
 /**
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class RemotingBeanPostProcessor implements BeanPostProcessor, PriorityOrdered {
+
+    private static final Logger logger = LoggerFactory.getLogger(RemotingBeanPostProcessor.class);
 
     @Override
     public Object postProcessBeforeInitialization(Object bean,
@@ -37,7 +41,7 @@ public class RemotingBeanPostProcessor implements BeanPostProcessor, PriorityOrd
                 try {
                     field.set(bean, service);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("set bean service error", e);
                 }
             }
         }

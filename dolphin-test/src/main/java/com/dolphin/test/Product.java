@@ -2,11 +2,11 @@ package com.dolphin.test;
 
 public class Product {
 
-    private int    id;
+    private int id;
 
     private String name;
-    
-    public Product(){
+
+    public Product() {
     }
 
     public Product(int id, String name) {

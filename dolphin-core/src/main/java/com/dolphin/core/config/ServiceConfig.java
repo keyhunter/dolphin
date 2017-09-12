@@ -4,27 +4,40 @@ import java.util.List;
 
 /**
  * RPC服务提供方配置
+ *
  * @author keyhunter
  * @version $Id: ServiceConfig.java, v 0.1 2016年7月11日 下午4:12:13 keyhunter Exp $
  */
 public class ServiceConfig extends DolphinConfig {
 
-    /** 服务名称 @author keyhunter 2016年7月11日 下午4:12:24 */
-    private String               serviceName;
-    /** 服务分组 @author keyhunter 2016年7月11日 下午4:12:31 */
-    private String               group;
+    /**
+     * 服务名称 @author keyhunter 2016年7月11日 下午4:12:24
+     */
+    private String serviceName;
+    /**
+     * 服务分组 @author keyhunter 2016年7月11日 下午4:12:31
+     */
+    private String group;
 
-    /** 服务ip，支持正则匹配 @author keyhunter 2016年7月12日 上午11:09:48 */
-    private String               ip;
+    /**
+     * 服务ip，支持正则匹配 @author keyhunter 2016年7月12日 上午11:09:48
+     */
+    private String ip;
 
-    /** 服务IP正则，可以通过正则动态获取网卡的网址  @author keyhunter 2016年7月28日 下午1:26:58 */
-    private String               ipRegex;
+    /**
+     * 服务IP正则，可以通过正则动态获取网卡的网址  @author keyhunter 2016年7月28日 下午1:26:58
+     */
+    private String ipRegex;
 
-    /** 服务端口号 @author keyhunter 2016年7月12日 上午11:09:28 */
-    private int[]                ports;
+    /**
+     * 服务端口号 @author keyhunter 2016年7月12日 上午11:09:28
+     */
+    private int[] ports;
 
-    /** 预发环境端口号配置 @author keyhunter 2016年7月27日 下午6:52:20 */
-    private int[]                previewPorts;
+    /**
+     * 预发环境端口号配置 @author keyhunter 2016年7月27日 下午6:52:20
+     */
+    private int[] previewPorts;
 
     private static ServiceConfig serviceConfig;
 

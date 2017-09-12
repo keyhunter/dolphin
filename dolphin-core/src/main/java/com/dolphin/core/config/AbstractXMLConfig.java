@@ -1,15 +1,16 @@
 package com.dolphin.core.config;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * XML配置项
@@ -19,7 +20,7 @@ import org.dom4j.io.SAXReader;
  */
 public abstract class AbstractXMLConfig implements Config {
 
-    private static Logger logger = Logger.getLogger(AbstractXMLConfig.class);
+    private static Logger logger = LoggerFactory.getLogger(AbstractXMLConfig.class);
 
     private Document document;
 

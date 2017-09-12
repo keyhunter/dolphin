@@ -5,6 +5,7 @@ import com.dolphin.core.protocle.transport.ServiceInfo;
 
 /**
  * 服务注册监听器
+ *
  * @author keyhunter
  * @version $Id: RegistryServerAddressListener.java, v 0.1 2016年6月1日 下午7:15:10 keyhunter Exp $
  */

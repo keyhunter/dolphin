@@ -1,20 +1,22 @@
 package com.dolphin.core.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.ServerSocket;
-import java.net.SocketException;
+import java.net.*;
 import java.util.Enumeration;
 
 public class HostUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(HostUtil.class);
+
     /**
      * 获取本机IP
+     *
+     * @return
      * @author keyhunter
      * 2016年7月12日 上午11:23:46
-     * @return
      */
     @Deprecated
     public static String getIp() {
@@ -22,7 +24,7 @@ public class HostUtil {
         try {
             ia = ia.getLocalHost();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("getIp error", e);
         }
         if (ia == null) {
             return null;
@@ -32,10 +34,11 @@ public class HostUtil {
 
     /**
      * 通过网卡，IP网段的正则匹配来查找本机IP
-     * @author keyhunter
-     * 2016年7月28日 下午12:41:00
+     *
      * @param ipRegex IP网段的正则表达式
      * @return
+     * @author keyhunter
+     * 2016年7月28日 下午12:41:00
      */
     public static String getIp(String ipRegex) {
         Enumeration<NetworkInterface> networkInterfaces;
@@ -71,10 +74,11 @@ public class HostUtil {
 
     /**
      * 获取端口是否被占用
-     * @author keyhunter
-     * 2016年7月12日 上午11:23:54
+     *
      * @param port
      * @return
+     * @author keyhunter
+     * 2016年7月12日 上午11:23:54
      */
     public static boolean isPortBound(int port) {
         ServerSocket serverSocket = null;
@@ -94,8 +98,8 @@ public class HostUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println("172.16.1.2".matches("172\\.16\\.1\\..*"));
-        System.out.println("172.160.1.2".matches("172\\.16\\.1\\..*"));
-        System.out.println("172.160.11.2".matches("172\\.16\\.1\\..*"));
+        logger.info("172.16.1.2".matches("172\\.16\\.1\\..*") + "");
+        logger.info("172.160.1.2".matches("172\\.16\\.1\\..*") + "");
+        logger.info("172.160.11.2".matches("172\\.16\\.1\\..*") + "");
     }
 }

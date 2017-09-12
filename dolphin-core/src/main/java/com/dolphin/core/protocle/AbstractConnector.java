@@ -4,6 +4,5 @@ public abstract class AbstractConnector implements Connector {
 
 //    private ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
-    
-    
+
 }

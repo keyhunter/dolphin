@@ -1,27 +1,29 @@
 package com.dolphin.core.protocle.request;
 
+import com.dolphin.core.protocle.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.log4j.Logger;
-
-import com.dolphin.core.protocle.Response;
-
 public class RequestFuture {
 
-    private Logger        logger    = Logger.getLogger(RequestFuture.class);
+    private Logger logger = LoggerFactory.getLogger(RequestFuture.class);
 
-    /** 是否请求成功  @author keyhunter 2016年5月11日 下午9:14:24 */
+    /**
+     * 是否请求成功  @author keyhunter 2016年5月11日 下午9:14:24
+     */
     private AtomicBoolean isSuccess = new AtomicBoolean();
 
-    private AtomicBoolean isDone    = new AtomicBoolean();
+    private AtomicBoolean isDone = new AtomicBoolean();
 
-    private Callback      callback;
+    private Callback callback;
 
-    private Semaphore     semaphore = new Semaphore(0);
+    private Semaphore semaphore = new Semaphore(0);
 
-    private Response      response;
+    private Response response;
 
     public RequestFuture() {
     }

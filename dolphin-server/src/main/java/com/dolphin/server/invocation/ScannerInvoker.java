@@ -1,12 +1,11 @@
 package com.dolphin.server.invocation;
 
-import java.lang.reflect.InvocationTargetException;
-
 import com.dolphin.core.invocation.AbstractInvoker;
 import com.dolphin.server.invocation.scanner.LocalClassScanner;
-
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class ScannerInvoker extends AbstractInvoker {
 

@@ -1,59 +1,77 @@
 package com.dolphin.registry.zookeeper.connector;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-
+import com.dolphin.core.protocle.HostAddress;
+import com.dolphin.registry.HostAddressGetter;
+import com.dolphin.registry.zookeeper.listener.WatcherListener;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.ZooKeeper.States;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.dolphin.core.protocle.HostAddress;
-import com.dolphin.registry.HostAddressGetter;
-import com.dolphin.registry.zookeeper.listener.WatcherListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * zookeeper连接器
+ *
  * @author tianxiao
  * @version $Id: ZookeeperConnector.java, v 0.1 2016年7月19日 上午10:43:12 tianxiao Exp $
  */
 public class ZookeeperConnector {
-    private static Logger         logger                    = Logger
-                                                                .getLogger(ZookeeperConnector.class);
-    /**zookeeper session timeout 时间  */
-    private static final int      SESSION_TIME_OUT          = 300;
-    /**连接字符串的有效时长  */
-    private static final long     CONNECTION_STRING_TIMEOUT = 1000L * 60L * 10L;
-    /**最大的线程睡眠时间  */
-    private static final long     MAX_INTERVAL              = 1000 * 5;
-    private static final String   IP_HOST_CONNECT_STRING    = ":";
-    private static final String   COMMA                     = ",";
-    /**zookeeper 重连次数默认值  */
-    private static final int      INIT_RECONNECT_TIMES      = 20;
+    private static Logger logger = LoggerFactory
+            .getLogger(ZookeeperConnector.class);
+    /**
+     * zookeeper session timeout 时间
+     */
+    private static final int SESSION_TIME_OUT = 300;
+    /**
+     * 连接字符串的有效时长
+     */
+    private static final long CONNECTION_STRING_TIMEOUT = 1000L * 60L * 10L;
+    /**
+     * 最大的线程睡眠时间
+     */
+    private static final long MAX_INTERVAL = 1000 * 5;
+    private static final String IP_HOST_CONNECT_STRING = ":";
+    private static final String COMMA = ",";
+    /**
+     * zookeeper 重连次数默认值
+     */
+    private static final int INIT_RECONNECT_TIMES = 20;
 
-    private ZooKeeper             zooKeeper;
-    private CountDownLatch        countDownLatch            = null;
-    private String                connectString;
-    /**是否需要重连，默认为true  */
-    private boolean               needReconnect             = true;
-    /**zookeeper 重连次数  */
-    private int                   reconnectTimes            = INIT_RECONNECT_TIMES;
-    /**注册中心的监听器*/
-    private Watcher               nodeWatcher               = new RegistryWatcher();
-    /**watcher 监听器  */
+    private ZooKeeper zooKeeper;
+    private CountDownLatch countDownLatch = null;
+    private String connectString;
+    /**
+     * 是否需要重连，默认为true
+     */
+    private boolean needReconnect = true;
+    /**
+     * zookeeper 重连次数
+     */
+    private int reconnectTimes = INIT_RECONNECT_TIMES;
+    /**
+     * 注册中心的监听器
+     */
+    private Watcher nodeWatcher = new RegistryWatcher();
+    /**
+     * watcher 监听器
+     */
     private List<WatcherListener> watcherListeners;
-    private HostAddressGetter     addressGetter;
-    private long                  lastConnectTime;
+    private HostAddressGetter addressGetter;
+    private long lastConnectTime;
 
     /**
      * zookeeper连接器构造器
+     *
      * @param watcherListeners 监听器
-     * @param addressGetter 
+     * @param addressGetter
      */
     public ZookeeperConnector(List<WatcherListener> watcherListeners,
                               HostAddressGetter addressGetter) {
@@ -64,8 +82,9 @@ public class ZookeeperConnector {
 
     /**
      * zookeeper连接器构造器
+     *
      * @param watcherListener 监视器的监听器
-     * @param needReconnect 是否需要重连
+     * @param needReconnect   是否需要重连
      * @param addressGetter
      */
     public ZookeeperConnector(WatcherListener watcherListener, boolean needReconnect,
@@ -77,9 +96,11 @@ public class ZookeeperConnector {
         this.connectString = getConnectString();
     }
 
-    /**zookeeper 连接
-     * @author tianxiao
+    /**
+     * zookeeper 连接
+     *
      * @return
+     * @author tianxiao
      * @version 2016年7月18日 下午4:39:20 tianxiao
      */
     public ZooKeeper connect() {
@@ -97,6 +118,7 @@ public class ZookeeperConnector {
 
     /**
      * 注册中心监视器
+     *
      * @author tianxiao
      * @version $Id: ZookeeperConnector.java, v 0.1 2016年7月18日 下午4:39:49 tianxiao Exp $
      */
@@ -118,7 +140,7 @@ public class ZookeeperConnector {
                         logger.info("Reconnect to zookeeper server.");
                         countDownLatch = new CountDownLatch(1);
                         zooKeeper = new ZooKeeper(getConnectString(), SESSION_TIME_OUT,
-                            nodeWatcher, true);
+                                nodeWatcher, true);
                         countDownLatch.await();
                         if (zooKeeper.getState() == States.CONNECTED) {
                             logger.info("Reconnect to zookeeper server complite.");
@@ -138,9 +160,10 @@ public class ZookeeperConnector {
 
     /**
      * 获取重连时间间隔（重连时间间隔规则）
-     * @author tianxiao
+     *
      * @param reconnectTimes
      * @return
+     * @author tianxiao
      * @version 2016年7月6日 下午11:54:51 tianxiao
      */
     private long getReconnectInterval(int reconnectTimes) {
@@ -158,6 +181,7 @@ public class ZookeeperConnector {
 
     /**
      * 重置重连次数
+     *
      * @author tianxiao
      * @version 2016年7月19日 上午10:41:46 tianxiao
      */
@@ -167,9 +191,10 @@ public class ZookeeperConnector {
 
     /**
      * 执行所有watcher监听器的timeout方法
-     * @author tianxiao
+     *
      * @param watchedEvent
      * @param zooKeeper
+     * @author tianxiao
      * @version 2016年7月19日 上午10:42:04 tianxiao
      */
     private void excuteWatcherListenersDoAfterReconnect(WatchedEvent watchedEvent,
@@ -183,8 +208,9 @@ public class ZookeeperConnector {
 
     /**
      * 执行所有watcher监听器after方法
-     * @author tianxiao
+     *
      * @param watchedEvent
+     * @author tianxiao
      * @version 2016年7月19日 上午10:42:26 tianxiao
      */
     private void excuteWatcherListenersDoAfter(WatchedEvent watchedEvent) {

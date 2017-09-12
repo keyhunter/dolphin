@@ -1,14 +1,20 @@
 package com.dolphin.core.serializer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class JAVASerializer {
+
+    private static final Logger logger = LoggerFactory.getLogger(JAVASerializer.class);
+
     /**
      * 序列化
-     * 
+     *
      * @param object
      * @return
      */
@@ -23,14 +29,14 @@ public class JAVASerializer {
             byte[] bytes = baos.toByteArray();
             return bytes;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("serialize error", e);
         }
         return null;
     }
 
     /**
      * 反序列化
-     * 
+     *
      * @param bytes
      * @return
      */

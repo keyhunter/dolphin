@@ -4,7 +4,7 @@ import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.ZooKeeper;
 
 public class AbstractWatcherListener implements WatcherListener {
-    
+
     @Override
     public void after(WatchedEvent watchedEvent) {
     }

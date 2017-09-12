@@ -1,11 +1,5 @@
 package com.dolphin.registry.netty;
 
-import java.util.List;
-import java.util.Random;
-
-import com.dolphin.core.protocle.transport.ServiceInfo;
-import org.apache.log4j.Logger;
-
 import com.dolphin.core.ApplicationType;
 import com.dolphin.core.exception.RPCRunTimeException;
 import com.dolphin.core.protocle.Connection;
@@ -14,18 +8,24 @@ import com.dolphin.core.protocle.HostAddress;
 import com.dolphin.core.protocle.transport.Header;
 import com.dolphin.core.protocle.transport.Message;
 import com.dolphin.core.protocle.transport.PacketType;
+import com.dolphin.core.protocle.transport.ServiceInfo;
 import com.dolphin.netty.connector.NettyConnector;
 import com.dolphin.registry.MySQLRegistryAddressContainer;
 import com.dolphin.registry.netty.protocle.Commands;
 import com.dolphin.registry.netty.protocle.RegistryRequest;
 import com.dolphin.registry.provider.AbstractServiceProvider;
 import com.dolphin.registry.provider.ServiceProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Random;
 
 public class NettyServiceProvider extends AbstractServiceProvider implements ServiceProvider {
 
-    private Logger         logger = Logger.getLogger(NettyServiceProvider.class);
+    private Logger logger = LoggerFactory.getLogger(NettyServiceProvider.class);
 
-    private Connection     connection;
+    private Connection connection;
 
     private NettyConnector nettyConnector;
 
@@ -45,6 +45,7 @@ public class NettyServiceProvider extends AbstractServiceProvider implements Ser
 
     /**
      * 连接到注册中心
+     *
      * @author keyhunter
      * 2016年6月29日 下午12:48:28
      */
@@ -63,14 +64,14 @@ public class NettyServiceProvider extends AbstractServiceProvider implements Ser
     public void register(ServiceInfo serviceInfo) {
         //TODO 获取自己的地址去注册
         RegistryRequest registryRequest = new RegistryRequest(ApplicationType.RPC_SERVER,
-            Commands.REGISTER, serviceInfo);
+                Commands.REGISTER, serviceInfo);
         connection.writeAndFlush(new Message(new Header(PacketType.REGISTRY), registryRequest));
     }
 
     @Override
     public void unRegister(ServiceInfo serviceInfo) {
         RegistryRequest registryRequest = new RegistryRequest(ApplicationType.RPC_SERVER,
-            Commands.UN_REGISTER, serviceInfo);
+                Commands.UN_REGISTER, serviceInfo);
         connection.writeAndFlush(new Message(new Header(PacketType.REGISTRY), registryRequest));
     }
 

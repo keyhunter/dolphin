@@ -1,19 +1,5 @@
 package com.dolphin.registry.netty.server;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.dolphin.core.protocle.transport.ServiceInfo;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.dolphin.core.ApplicationType;
 import com.dolphin.core.exception.RPCException;
 import com.dolphin.core.protocle.Connection;
@@ -24,6 +10,7 @@ import com.dolphin.core.protocle.request.RequestManager;
 import com.dolphin.core.protocle.transport.Header;
 import com.dolphin.core.protocle.transport.Message;
 import com.dolphin.core.protocle.transport.PacketType;
+import com.dolphin.core.protocle.transport.ServiceInfo;
 import com.dolphin.registry.MySQLRegistryAddressContainer;
 import com.dolphin.registry.RegistryAddressContainer;
 import com.dolphin.registry.ServiceInfoContainer;
@@ -31,32 +18,41 @@ import com.dolphin.registry.ServiceInfoContainer.ServiceInfoSet;
 import com.dolphin.registry.netty.protocle.Commands;
 import com.dolphin.registry.netty.protocle.RegistryRequest;
 import com.dolphin.registry.netty.protocle.RegistryResponse;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Service的管理器，用于管理服务
+ *
  * @author keyhunter
  * @version $Id: ServiceManager.java, v 0.1 2016年5月16日 下午8:28:48 keyhunter Exp $
  */
 public class ServiceManager implements ServiceRegisterListener {
 
-    private ServiceInfoContainer                serviceInfoContainer               = new ServiceInfoContainer();
+    private ServiceInfoContainer serviceInfoContainer = new ServiceInfoContainer();
 
-    private Map<String, Map<String, Set<Long>>> notifyClients                      = new ConcurrentHashMap<>();
+    private Map<String, Map<String, Set<Long>>> notifyClients = new ConcurrentHashMap<>();
 
-    /** 连接到这台注册中心的连接ID @author keyhunter 2016年6月6日 下午2:03:32 */
-    private Set<Long>                           connectToThisRegistryServerConnIds = new HashSet<>();
+    /**
+     * 连接到这台注册中心的连接ID @author keyhunter 2016年6月6日 下午2:03:32
+     */
+    private Set<Long> connectToThisRegistryServerConnIds = new HashSet<>();
 
-    private static ServiceManager               serviceManager;
+    private static ServiceManager serviceManager;
 
-    private List<Connection>                    registryConnections;
+    private List<Connection> registryConnections;
 
-    private RegistryAddressContainer            registryAddressContainer           = MySQLRegistryAddressContainer
-        .getInstance();
+    private RegistryAddressContainer registryAddressContainer = MySQLRegistryAddressContainer
+            .getInstance();
 
-    private RegistryConnector                   registryConnector;
+    private RegistryConnector registryConnector;
 
-    private Logger                              logger                             = LoggerFactory
-        .getLogger(ServiceManager.class);
+    private Logger logger = LoggerFactory
+            .getLogger(ServiceManager.class);
 
     private ServiceManager() {
         //connect to other ServiceRegistryServers
@@ -87,7 +83,7 @@ public class ServiceManager implements ServiceRegisterListener {
         //1. notify RegistryConnectors
         if (registryConnections != null) {
             RegistryRequest registryRequest = new RegistryRequest(ApplicationType.REGISTRY_SERVER,
-                Commands.REGISTER_REGISTRY_SERVER, self);
+                    Commands.REGISTER_REGISTRY_SERVER, self);
             Message message = new Message(new Header(PacketType.REGISTRY), registryRequest);
             for (Connection connection : registryConnections) {
                 connection.writeAndFlush(message);
@@ -96,11 +92,11 @@ public class ServiceManager implements ServiceRegisterListener {
         //2. notify connected RegistryServers
         if (connectToThisRegistryServerConnIds != null) {
             RegistryResponse registryResponse = new RegistryResponse(
-                Commands.REGISTER_REGISTRY_SERVER, self);
+                    Commands.REGISTER_REGISTRY_SERVER, self);
             Message message = new Message(new Header(PacketType.REGISTRY), registryResponse);
             for (long notifyRegistryServerConnId : connectToThisRegistryServerConnIds) {
                 Connection connection = ConnectionManager.getInstance()
-                    .get(notifyRegistryServerConnId);
+                        .get(notifyRegistryServerConnId);
                 if (connection == null) {
                     connectToThisRegistryServerConnIds.remove(notifyRegistryServerConnId);
                 }
@@ -115,7 +111,7 @@ public class ServiceManager implements ServiceRegisterListener {
         //1. notify RegistryConnectors
         if (registryConnections != null) {
             RegistryRequest registryRequest = new RegistryRequest(ApplicationType.REGISTRY_SERVER,
-                Commands.UN_REGISTER_REGISTRY_SERVER, self);
+                    Commands.UN_REGISTER_REGISTRY_SERVER, self);
             Message message = new Message(new Header(PacketType.REGISTRY), registryRequest);
             Iterator<Connection> iterator = registryConnections.iterator();
             while (iterator.hasNext()) {
@@ -127,11 +123,11 @@ public class ServiceManager implements ServiceRegisterListener {
         //2. notify connected RegistryServers
         if (connectToThisRegistryServerConnIds != null) {
             RegistryResponse registryResponse = new RegistryResponse(
-                Commands.UN_REGISTER_REGISTRY_SERVER, self);
+                    Commands.UN_REGISTER_REGISTRY_SERVER, self);
             Message message = new Message(new Header(PacketType.REGISTRY), registryResponse);
             for (long notifyRegistryServerConnId : connectToThisRegistryServerConnIds) {
                 Connection connection = ConnectionManager.getInstance()
-                    .get(notifyRegistryServerConnId);
+                        .get(notifyRegistryServerConnId);
                 if (connection == null) {
                     connectToThisRegistryServerConnIds.remove(notifyRegistryServerConnId);
                 }
@@ -141,18 +137,18 @@ public class ServiceManager implements ServiceRegisterListener {
     }
 
     /**
+     * @param serviceInfo
      * @author keyhunter
      * 2016年6月1日 下午7:56:59
-     * @param serviceInfo
      */
     public void registerRegistryServer(long connId, ServiceInfo serviceInfo) {
         connectToThisRegistryServerConnIds.add(connId);
     }
 
     /**
+     * @param serviceInfo
      * @author keyhunter
      * 2016年6月1日 下午7:56:59
-     * @param serviceInfo
      */
     public void unRegisterRegistryServer(long connId, ServiceInfo serviceInfo) {
         connectToThisRegistryServerConnIds.remove(connId);
@@ -160,11 +156,12 @@ public class ServiceManager implements ServiceRegisterListener {
 
     /**
      * 订阅Service
-     * @author keyhunter
-     * 2016年5月24日 下午9:13:28
+     *
      * @param connId
      * @param group
      * @param serviceName
+     * @author keyhunter
+     * 2016年5月24日 下午9:13:28
      */
     public void subcribe(long connId, String group, String serviceName) {
         if (StringUtils.isBlank(group) || StringUtils.isBlank(serviceName)) {
@@ -202,11 +199,11 @@ public class ServiceManager implements ServiceRegisterListener {
 
     public void register(ApplicationType applicationType, ServiceInfo serviceInfo) {
         if (serviceInfo == null || StringUtils.isBlank(serviceInfo.getName())
-            || serviceInfo.getHostAddress() == null) {
+                || serviceInfo.getHostAddress() == null) {
             return;
         }
         Set<ServiceInfo> serviceInfoSet = serviceInfoContainer.get(serviceInfo.getGroup(),
-            serviceInfo.getName());
+                serviceInfo.getName());
         serviceInfoSet.add(serviceInfo);
         // notify register
         notifyRpcConnectorRegister(serviceInfo);
@@ -215,23 +212,23 @@ public class ServiceManager implements ServiceRegisterListener {
             if (registryConnections != null) {
                 for (Connection connection : registryConnections) {
                     RegistryRequest registryRequest = new RegistryRequest(
-                        ApplicationType.REGISTRY_SERVER, Commands.REGISTER, serviceInfo);
+                            ApplicationType.REGISTRY_SERVER, Commands.REGISTER, serviceInfo);
                     connection.writeAndFlush(
-                        new Message(new Header(PacketType.REGISTRY), registryRequest));
+                            new Message(new Header(PacketType.REGISTRY), registryRequest));
                 }
             }
             //2. notify connected RegistryServers
             if (connectToThisRegistryServerConnIds != null) {
                 for (long notifyRegistryServerConnId : connectToThisRegistryServerConnIds) {
                     RegistryResponse registryResponse = new RegistryResponse(Commands.REGISTER,
-                        serviceInfo);
+                            serviceInfo);
                     Connection connection = ConnectionManager.getInstance()
-                        .get(notifyRegistryServerConnId);
+                            .get(notifyRegistryServerConnId);
                     if (connection == null) {
                         connectToThisRegistryServerConnIds.remove(notifyRegistryServerConnId);
                     }
                     connection.writeAndFlush(
-                        new Message(new Header(PacketType.REGISTRY), registryResponse));
+                            new Message(new Header(PacketType.REGISTRY), registryResponse));
                 }
             }
         }
@@ -239,9 +236,10 @@ public class ServiceManager implements ServiceRegisterListener {
 
     /**
      * 通知订阅者，服务发生注册
+     *
+     * @param serviceInfo
      * @author keyhunter
      * 2016年5月16日 下午8:38:43
-     * @param serviceInfo
      */
     private void notifyRpcConnectorRegister(ServiceInfo serviceInfo) {
         // notify register
@@ -249,7 +247,7 @@ public class ServiceManager implements ServiceRegisterListener {
         if (connectionIds != null && connectionIds.size() > 0) {
             for (Long connectionId : connectionIds) {
                 RegistryRequest request = new RegistryRequest(ApplicationType.REGISTRY_SERVER,
-                    Commands.REGISTER, serviceInfo);
+                        Commands.REGISTER, serviceInfo);
                 Connection connection = ConnectionManager.getInstance().get(connectionId);
                 if (connection == null) {
                     connectionIds.remove(connectionId);
@@ -281,13 +279,13 @@ public class ServiceManager implements ServiceRegisterListener {
         if (connectionIds != null && connectionIds.size() > 0) {
             for (Long connectionId : connectionIds) {
                 RegistryRequest registryRequest = new RegistryRequest(
-                    ApplicationType.REGISTRY_SERVER, Commands.UN_REGISTER, serviceInfo);
+                        ApplicationType.REGISTRY_SERVER, Commands.UN_REGISTER, serviceInfo);
                 Connection connection = ConnectionManager.getInstance().get(connectionId);
                 if (connection == null) {
                     connectionIds.remove(connectionId);
                 }
                 connection
-                    .writeAndFlush(new Message(new Header(PacketType.REGISTRY), registryRequest));
+                        .writeAndFlush(new Message(new Header(PacketType.REGISTRY), registryRequest));
             }
         }
 
@@ -296,23 +294,23 @@ public class ServiceManager implements ServiceRegisterListener {
             if (registryConnections != null) {
                 for (Connection connection : registryConnections) {
                     RegistryRequest registryRequest = new RegistryRequest(
-                        ApplicationType.REGISTRY_SERVER, Commands.UN_REGISTER, serviceInfo);
+                            ApplicationType.REGISTRY_SERVER, Commands.UN_REGISTER, serviceInfo);
                     connection.writeAndFlush(
-                        new Message(new Header(PacketType.REGISTRY), registryRequest));
+                            new Message(new Header(PacketType.REGISTRY), registryRequest));
                 }
             }
             //2. notify connected RegistryServers
             if (connectToThisRegistryServerConnIds != null) {
                 for (long notifyRegistryServerConnId : connectToThisRegistryServerConnIds) {
                     RegistryResponse registryResponse = new RegistryResponse(Commands.UN_REGISTER,
-                        serviceInfo);
+                            serviceInfo);
                     Connection connection = ConnectionManager.getInstance()
-                        .get(notifyRegistryServerConnId);
+                            .get(notifyRegistryServerConnId);
                     if (connection == null) {
                         connectToThisRegistryServerConnIds.remove(notifyRegistryServerConnId);
                     }
                     connection.writeAndFlush(
-                        new Message(new Header(PacketType.REGISTRY), registryResponse));
+                            new Message(new Header(PacketType.REGISTRY), registryResponse));
                 }
             }
         }
@@ -329,8 +327,8 @@ public class ServiceManager implements ServiceRegisterListener {
         Response response = null;
         try {
             response = RequestManager.getInstance().sysnRequest(registryConnections.get(0),
-                new Header(PacketType.REGISTRY), new RegistryRequest(
-                    ApplicationType.REGISTRY_SERVER, Commands.SYCN_SERVICE_INFO, null));
+                    new Header(PacketType.REGISTRY), new RegistryRequest(
+                            ApplicationType.REGISTRY_SERVER, Commands.SYCN_SERVICE_INFO, null));
         } catch (RPCException e) {
             logger.error("", e);
             return;

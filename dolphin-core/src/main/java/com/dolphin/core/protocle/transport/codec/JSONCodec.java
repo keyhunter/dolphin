@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 
 /**
  * JSON序列化类，把类序列化成JSON字符串的字节数组
+ *
  * @author keyhunter
  * @version $Id: JSONSerializable.java, v 0.1 2016年3月31日 上午10:53:16 keyhunter Exp $
  */
@@ -16,11 +17,12 @@ public class JSONCodec implements Codec {
 
     /**
      * 把对象数据结构编码成一个DataBuffer
+     *
+     * @param <T>
+     * @return
      * @author keyhunter
      * 2016年3月31日 下午2:41:19
-     * @param <T>
      * @see com.dolphin.rpc.core.io.transport.codec.net.transport.codec.fish.chat.core.codec.Codec#encode()
-     * @return 
      */
     public byte[] encode(Object obj) {
         String jsonString = JSON.toJSONString(obj);
@@ -29,10 +31,11 @@ public class JSONCodec implements Codec {
 
     /**
      * 把DataBuffer解包构造一个对象
+     *
+     * @return
      * @author keyhunter
      * 2016年3月31日 下午2:41:07
      * @see com.dolphin.rpc.core.io.transport.codec.net.transport.codec.fish.chat.core.codec.Codec#decode(com.fish.chat.core.codec.DataBuffer, java.lang.Class)
-     * @return 
      */
     @Override
     public <T> T decode(byte[] buffer, Class<T> clazz) {

@@ -1,5 +1,8 @@
 package com.dolphin.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -10,6 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  *         Created on 2017/8/4.
  */
 public class RequestIdGenerator {
+
+    private static final Logger logger = LoggerFactory.getLogger(RequestIdGenerator.class);
 
     private static final String HOST_IP = IPUtils.getCurrentIp();
 
@@ -47,7 +52,7 @@ public class RequestIdGenerator {
         RequestIdGenerator idGenerator = new RequestIdGenerator();
         for (int i = 0; i < 100; i++) {
             String generate = idGenerator.generate();
-            System.out.println(generate);
+            logger.info(generate);
         }
     }
 

@@ -2,7 +2,7 @@ package com.dolphin.core.protocle.transport;
 
 public enum PacketType {
 
-                        HEART_BEAT((short) 1), RPC((short) 2), REGISTRY((short) 3);
+    HEART_BEAT((short) 1), RPC((short) 2), REGISTRY((short) 3);
 
     private short value;
 

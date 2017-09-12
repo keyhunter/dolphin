@@ -2,12 +2,13 @@ package com.dolphin.core;
 
 /**
  * 应用类型
+ *
  * @author keyhunter
  * @version $Id: ServerType.java, v 0.1 2016年6月1日 上午10:51:59 keyhunter Exp $
  */
 public enum ApplicationType {
 
-                             RPC_CLIENT(1), RPC_SERVER(2), REGISTRY_SERVER(3);
+    RPC_CLIENT(1), RPC_SERVER(2), REGISTRY_SERVER(3);
 
     private int value;
 

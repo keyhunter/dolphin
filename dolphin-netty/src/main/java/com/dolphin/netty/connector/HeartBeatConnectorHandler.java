@@ -1,32 +1,32 @@
 package com.dolphin.netty.connector;
 
+import com.dolphin.core.protocle.transport.Header;
+import com.dolphin.core.protocle.transport.Message;
+import com.dolphin.core.protocle.transport.PacketType;
+import com.dolphin.netty.HeartBeat;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.concurrent.EventExecutor;
+import io.netty.util.concurrent.ScheduledFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
-import com.dolphin.netty.HeartBeat;
-import org.apache.log4j.Logger;
-
-import com.dolphin.core.protocle.transport.Header;
-import com.dolphin.core.protocle.transport.Message;
-import com.dolphin.core.protocle.transport.PacketType;
-
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.concurrent.EventExecutor;
-import io.netty.util.concurrent.ScheduledFuture;
-
 /**
  * 定时心跳的NettyHandler，由于不是根据空闲时间来判断的，比较耗资源，不推荐使用
+ *
  * @author keyhunter
  * @version $Id: HeartBeatConnectorHandler.java, v 0.1 2016年7月5日 下午5:17:21 keyhunter Exp $
  */
 @Deprecated
 public class HeartBeatConnectorHandler extends SimpleChannelInboundHandler<Message> {
 
-    private static Logger               logger = Logger
-        .getLogger(HeartBeatConnectorHandler.class.getName());
+    private static Logger logger = LoggerFactory
+            .getLogger(HeartBeatConnectorHandler.class.getName());
 
     private volatile ScheduledFuture<?> heartBeat;
 
@@ -45,7 +45,7 @@ public class HeartBeatConnectorHandler extends SimpleChannelInboundHandler<Messa
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         EventExecutor executor = ctx.executor();
         heartBeat = executor.scheduleAtFixedRate(new HeartBeatTask(ctx),
-            0, 5000, TimeUnit.MILLISECONDS);
+                0, 5000, TimeUnit.MILLISECONDS);
         super.handlerAdded(ctx);
     }
 
@@ -72,7 +72,7 @@ public class HeartBeatConnectorHandler extends SimpleChannelInboundHandler<Messa
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {
         if (message != null && message.getHeader() != null
-            && message.getHeader().getPacketType() == PacketType.HEART_BEAT.getValue()) {
+                && message.getHeader().getPacketType() == PacketType.HEART_BEAT.getValue()) {
             logger.info("Client revieved server heart beat response success.");
         }
     }

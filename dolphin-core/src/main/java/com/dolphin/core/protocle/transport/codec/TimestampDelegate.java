@@ -1,21 +1,22 @@
 package com.dolphin.core.protocle.transport.codec;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-
 import io.protostuff.Input;
 import io.protostuff.Output;
 import io.protostuff.Pipe;
 import io.protostuff.WireFormat.FieldType;
 import io.protostuff.runtime.Delegate;
 
+import java.io.IOException;
+import java.sql.Timestamp;
+
 /**
  * protostuff timestamp 委托类
+ *
  * @author keyhunter
  * @version $Id: TimestampDelegate.java, v 0.1 2016年7月20日 下午2:08:11 keyhunter Exp $
  */
 public class TimestampDelegate implements Delegate<Timestamp> {
-    
+
     public FieldType getFieldType() {
         return FieldType.FIXED64;
     }

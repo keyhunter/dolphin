@@ -3,13 +3,13 @@ package com.dolphin.netty;
 import com.dolphin.core.exception.RPCRunTimeException;
 import com.dolphin.core.protocle.Packet;
 import com.dolphin.core.protocle.transport.Header;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
  * 包的编码器
+ *
  * @author keyhunter
  * @version $Id: PacketEncoder.java, v 0.1 2016年3月31日 下午3:04:10 keyhunter Exp $
  */

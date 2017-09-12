@@ -5,9 +5,9 @@ import java.util.Map;
 
 public class Order {
 
-    private long                      orderNumber;
+    private long orderNumber;
 
-    private List<Product>             products;
+    private List<Product> products;
 
     private Map<String, List<Product>> activityProducts;
 
@@ -34,7 +34,6 @@ public class Order {
     public void setActivityProducts(Map<String, List<Product>> activityProducts) {
         this.activityProducts = activityProducts;
     }
-    
-    
+
 
 }

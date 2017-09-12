@@ -9,6 +9,7 @@ import com.dolphin.core.protocle.transport.RegistryResponse;
 
 /**
  * 请求的返回数据监听器，服务端返回数据则到些Listener中执行
+ *
  * @author keyhunter
  * @version $Id: ResponseListener.java, v 0.1 2016年5月12日 下午12:50:57 keyhunter Exp $
  */

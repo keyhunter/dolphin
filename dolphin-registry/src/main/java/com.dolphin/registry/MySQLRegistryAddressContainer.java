@@ -1,40 +1,40 @@
 package com.dolphin.registry;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dolphin.core.config.RegistryConfig;
 import com.dolphin.core.exception.AddressExitsException;
 import com.dolphin.core.exception.AddressFormatException;
 import com.dolphin.core.protocle.HostAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * mysql 实现的 服务地址注册容器
+ *
  * @author tianxiao
  * @version $Id: MySQLRegistryAddressContainer.java, v 0.1 2016年7月19日 上午11:13:10 tianxiao Exp $
  */
 public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
 
+    private static final Logger logger = LoggerFactory.getLogger(MySQLRegistryAddressContainer.class);
+
     private static RegistryAddressContainer registryAddressContainer = new MySQLRegistryAddressContainer();
 
-    private String                          url;
+    private String url;
 
-    private String                          username;
+    private String username;
 
-    private String                          password;
+    private String password;
 
     // 加载驱动
     static {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            System.out.println("驱动加载出错!");
+            logger.info("驱动加载出错!");
         }
     }
 
@@ -46,6 +46,7 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
         try {
             password = SecurityAES.decrypt(password, "yunjee");
         } catch (Exception exception) {
+            logger.error("decrypt password error", exception);
         }
 
     }
@@ -74,7 +75,8 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
                 addresses.add(hostAddress);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("getAll error", e);
+            ;
         } finally {
             free(rs, st, conn);
         }
@@ -83,10 +85,12 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
 
     }
 
-    /**判断当前地址是否存在
-     * @author tianxiao
+    /**
+     * 判断当前地址是否存在
+     *
      * @param address
      * @return
+     * @author tianxiao
      * @version 2016年7月19日 上午11:10:42 tianxiao
      */
     private boolean exist(HostAddress address) {
@@ -104,7 +108,8 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
                 return true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("exist error", e);
+            ;
         } finally {
             free(rs, st, conn);
         }
@@ -133,7 +138,7 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
             st.setInt(2, address.getPort());
             st.execute();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("add error", e);
         } finally {
             free(null, st, conn);
         }
@@ -158,7 +163,7 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
             st.setInt(2, address.getPort());
             st.execute();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("remove error", e);
         } finally {
             free(null, st, conn);
         }
@@ -176,21 +181,23 @@ public class MySQLRegistryAddressContainer implements RegistryAddressContainer {
                 rs.close(); // 关闭结果集
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("free error", e);
+            ;
         } finally {
             try {
                 if (st != null) {
                     st.close(); // 关闭Statement
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error("free error", e);
+                ;
             } finally {
                 try {
                     if (conn != null) {
                         conn.close(); // 关闭连接
                     }
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    logger.error("free error", e);
                 }
 
             }

@@ -1,13 +1,14 @@
 package com.dolphin.registry.provider;
 
 import com.dolphin.core.protocle.transport.ServiceInfo;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractServiceProvider implements ServiceProvider {
 
     private ServiceInfo serviceInfo;
 
-    private Logger      logger = Logger.getLogger(AbstractServiceProvider.class);
+    private Logger logger = LoggerFactory.getLogger(AbstractServiceProvider.class);
 
     public AbstractServiceProvider(ServiceInfo serviceInfo) {
         this.serviceInfo = serviceInfo;

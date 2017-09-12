@@ -1,20 +1,14 @@
 package com.dolphin.registry;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.dolphin.core.protocle.transport.ServiceInfo;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import com.dolphin.core.protocle.HostAddress;
+import com.dolphin.core.protocle.transport.ServiceInfo;
 import com.dolphin.core.protocle.transport.codec.ProtobufferCodec;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 服务信息容器
@@ -24,7 +18,7 @@ import com.dolphin.core.protocle.transport.codec.ProtobufferCodec;
  */
 public class ServiceInfoContainer {
 
-    private transient static Logger logger = Logger
+    private static final Logger logger = LoggerFactory
             .getLogger(ServiceInfoContainer.class);
 
     private Map<String, Map<String, ServiceInfoSet>> groupedServiceInfos = new ConcurrentHashMap<>();
@@ -122,14 +116,14 @@ public class ServiceInfoContainer {
         ServiceInfoContainer serviceInfoContaintor = new ServiceInfoContainer();
         serviceInfoContaintor.add(serviceInfo1);
         serviceInfoContaintor.add(serviceInfo2);
-        System.out.println(serviceInfo1.hashCode());
-        System.out.println(serviceInfo2.hashCode());
+        logger.info(serviceInfo1.hashCode() + "");
+        logger.info(serviceInfo2.hashCode() + "");
         //        serviceInfoContaintor.remove(serviceInfo1);
-        System.out.println(serviceInfo1.hashCode());
+        logger.info(serviceInfo1.hashCode() + "");
         ProtobufferCodec protobufferCodec = new ProtobufferCodec();
         byte[] encode = protobufferCodec.encode(serviceInfoContaintor.getAll());
         List<ServiceInfo> decode = protobufferCodec.decode(encode, ArrayList.class);
-        System.out.println(decode.size());
+        logger.info(decode.size() + "");
     }
 
     /**

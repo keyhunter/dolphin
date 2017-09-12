@@ -1,9 +1,9 @@
 package com.dolphin.server.invocation.scanner;
 
-import java.lang.annotation.Annotation;
-
 import com.dolphin.core.annotation.RPCService;
 import com.dolphin.core.utils.ClassFilter;
+
+import java.lang.annotation.Annotation;
 
 public class DefaultClassFilter implements ClassFilter {
 

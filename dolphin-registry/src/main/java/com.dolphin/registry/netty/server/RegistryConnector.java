@@ -1,21 +1,21 @@
 package com.dolphin.registry.netty.server;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dolphin.core.ApplicationType;
 import com.dolphin.core.protocle.transport.Message;
 import com.dolphin.core.protocle.transport.ServiceInfo;
 import com.dolphin.netty.connector.NettyConnector;
 import com.dolphin.registry.netty.protocle.Commands;
 import com.dolphin.registry.netty.protocle.RegistryResponse;
-
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 注册中心服务连接其他注册中心的连接器
+ *
  * @author keyhunter
  * @version $Id: RegistryConnector.java, v 0.1 2016年6月1日 下午7:11:06 keyhunter Exp $
  */

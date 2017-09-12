@@ -4,14 +4,15 @@ import com.dolphin.core.protocle.Response;
 
 /**
  * RPC结果
+ *
  * @author keyhunter
  * @version $Id: RPCResult.java, v 0.1 2016年5月23日 下午4:05:59 keyhunter Exp $
  */
 public class RPCResult implements Response {
 
-    private long      requestId;
+    private long requestId;
 
-    private Object    result;
+    private Object result;
 
     private Exception exception;
 

@@ -6,15 +6,18 @@ import java.util.TreeMap;
 
 /**
  * 一致性Hash
+ *
  * @author keyhunter
  * @version $Id: ConsistentHash.java, v 0.1 2016年5月4日 下午5:08:33 keyhunter Exp $
  */
 public class ConsistentHash<T> {
 
-    /** Hasn方法 @author keyhunter 2016年5月4日 下午5:17:53 */
-    private final HashFunction       hashFunction;
+    /**
+     * Hasn方法 @author keyhunter 2016年5月4日 下午5:17:53
+     */
+    private final HashFunction hashFunction;
     //复制的虚拟节点的数量，使整个环更加平衡
-    private final int                numberOfReplicas;
+    private final int numberOfReplicas;
     //节点的环
     private final SortedMap<Long, T> circle = new TreeMap<>();
 

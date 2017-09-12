@@ -2,7 +2,7 @@ package com.dolphin.test;
 
 public class Obj {
 
-    private Class<?>  clazz;
+    private Class<?> clazz;
 
     private Object object;
 

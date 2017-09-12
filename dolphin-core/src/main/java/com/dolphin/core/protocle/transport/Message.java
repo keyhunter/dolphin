@@ -7,12 +7,13 @@ import com.dolphin.core.protocle.transport.codec.Codecs;
 
 /**
  * 传输的数据信息,Packet的实现
+ *
  * @author keyhunter
  * @version $Id: Message.java, v 0.1 2016年5月23日 下午4:03:30 keyhunter Exp $
  */
 public class Message implements Packet {
 
-    private Codec  codec = CodecRegistry.getInstance().get(Codecs.PROTOBUFFER_CODEC);
+    private Codec codec = CodecRegistry.getInstance().get(Codecs.PROTOBUFFER_CODEC);
 
     private Header header;
 

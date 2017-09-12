@@ -8,9 +8,9 @@ public class ConnectionManager {
 
     private static volatile ConnectionManager channelManager;
 
-    private AtomicLong                        atomicLong  = new AtomicLong();
+    private AtomicLong atomicLong = new AtomicLong();
 
-    private Map<Long, Connection>             connections = new ConcurrentHashMap<>();
+    private Map<Long, Connection> connections = new ConcurrentHashMap<>();
 
     public static ConnectionManager getInstance() {
         if (channelManager == null) {

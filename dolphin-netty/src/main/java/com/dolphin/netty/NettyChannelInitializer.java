@@ -1,23 +1,23 @@
 package com.dolphin.netty;
 
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.socket.SocketChannel;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.socket.SocketChannel;
-
 public abstract class NettyChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-    private Logger                            logger   = Logger
-        .getLogger(NettyChannelInitializer.class);
+    private Logger logger = LoggerFactory
+            .getLogger(NettyChannelInitializer.class);
 
     private List<Map<String, ChannelHandler>> handlers = new ArrayList();
 
@@ -38,10 +38,11 @@ public abstract class NettyChannelInitializer extends ChannelInitializer<SocketC
 
     /**
      * 注册共享的处理器
-     * @author keyhunter
-     * 2016年5月25日 下午9:50:25
+     *
      * @param name
      * @param handler
+     * @author keyhunter
+     * 2016年5月25日 下午9:50:25
      */
     public void registerHandler(String name, ChannelHandler handler) {
         if (StringUtils.isBlank(name) || handler == null) {
@@ -51,7 +52,7 @@ public abstract class NettyChannelInitializer extends ChannelInitializer<SocketC
         handlerMap.put(name, handler);
         handlers.add(handlerMap);
         logger
-            .info("Handler " + name + " (" + handler.getClass().getName() + ") has bean registed.");
+                .info("Handler " + name + " (" + handler.getClass().getName() + ") has bean registed.");
     }
 
 }

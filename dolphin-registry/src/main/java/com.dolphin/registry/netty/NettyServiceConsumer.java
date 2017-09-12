@@ -1,11 +1,5 @@
 package com.dolphin.registry.netty;
 
-import java.util.List;
-import java.util.Random;
-
-import com.dolphin.core.protocle.transport.ServiceInfo;
-import org.apache.log4j.Logger;
-
 import com.dolphin.core.ApplicationType;
 import com.dolphin.core.exception.RPCException;
 import com.dolphin.core.protocle.Connection;
@@ -15,19 +9,25 @@ import com.dolphin.core.protocle.request.RequestManager;
 import com.dolphin.core.protocle.transport.Header;
 import com.dolphin.core.protocle.transport.Message;
 import com.dolphin.core.protocle.transport.PacketType;
+import com.dolphin.core.protocle.transport.ServiceInfo;
 import com.dolphin.netty.connector.NettyConnector;
 import com.dolphin.registry.MySQLRegistryAddressContainer;
 import com.dolphin.registry.consumer.AbstractServiceCustomer;
 import com.dolphin.registry.netty.protocle.Commands;
 import com.dolphin.registry.netty.protocle.RegistryRequest;
 import com.dolphin.registry.netty.protocle.RegistryResponse;
-
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Random;
 
 /**
  * Netty服务的消费者，订阅和得到ServiceInfo
+ *
  * @author keyhunter
  * @version $Id: NettyServiceCustomer.java, v 0.1 2016年5月25日 下午10:31:46 keyhunter Exp $
  */
@@ -35,11 +35,11 @@ public class NettyServiceConsumer extends AbstractServiceCustomer {
 
     private RequestManager requestManager = RequestManager.getInstance();
 
-    private Logger         logger         = Logger.getLogger(NettyServiceConsumer.class);
+    private Logger logger = LoggerFactory.getLogger(NettyServiceConsumer.class);
 
     private NettyConnector nettyConnector;
 
-    private Connection     connection;
+    private Connection connection;
 
     public NettyServiceConsumer() {
         super();
@@ -51,6 +51,7 @@ public class NettyServiceConsumer extends AbstractServiceCustomer {
 
     /**
      * 连接到注册中心
+     *
      * @author keyhunter
      * 2016年6月29日 下午12:48:28
      */
@@ -96,11 +97,11 @@ public class NettyServiceConsumer extends AbstractServiceCustomer {
     @Override
     public ServiceInfo[] getRemoteServiceInfos(String group, String serviceName) {
         RegistryRequest registryRequest = new RegistryRequest(ApplicationType.RPC_CLIENT,
-            Commands.GET_SERVICES, new ServiceInfo(group, serviceName, null));
+                Commands.GET_SERVICES, new ServiceInfo(group, serviceName, null));
         RegistryResponse response = null;
         try {
             response = (RegistryResponse) requestManager.sysnRequest(connection,
-                new Header(PacketType.REGISTRY), registryRequest);
+                    new Header(PacketType.REGISTRY), registryRequest);
         } catch (RPCException e) {
             logger.error("", e);
             return null;
@@ -111,14 +112,14 @@ public class NettyServiceConsumer extends AbstractServiceCustomer {
     @Override
     public void subcride(String group, String serviceName) {
         RegistryRequest registryRequest = new RegistryRequest(ApplicationType.RPC_CLIENT,
-            Commands.SUBCRIBE, new ServiceInfo(group, serviceName, null));
+                Commands.SUBCRIBE, new ServiceInfo(group, serviceName, null));
         connection.writeAndFlush(new Message(new Header(PacketType.REGISTRY), registryRequest));
     }
 
     @Override
     public void unSubcride(String group, String serviceName) {
         RegistryRequest registryRequest = new RegistryRequest(ApplicationType.RPC_CLIENT,
-            Commands.UN_SUBCRIBE, new ServiceInfo(group, serviceName, null));
+                Commands.UN_SUBCRIBE, new ServiceInfo(group, serviceName, null));
         connection.writeAndFlush(new Message(new Header(PacketType.REGISTRY), registryRequest));
     }
 

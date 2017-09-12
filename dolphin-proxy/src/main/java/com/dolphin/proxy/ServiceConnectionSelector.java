@@ -12,7 +12,8 @@ import com.dolphin.registry.ServiceInfoContainer.ServiceInfoSet;
 import com.dolphin.registry.consumer.AbstractServiceCustomer;
 import com.dolphin.registry.consumer.ServiceCustomer;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,54 +26,57 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Service的Client的选择器
+ *
  * @author keyhunter
  * @version $Id: ServiceClientSelector.java, v 0.1 2016年5月25日 下午10:18:49 keyhunter Exp $
  */
 public class ServiceConnectionSelector implements ConnectionSelector, ConnectionCloseListenser,
         ServiceChangeListener {
 
-    private static Logger                    logger                        = Logger
-        .getLogger(ServiceConnectionSelector.class);
+    private static Logger logger = LoggerFactory
+            .getLogger(ServiceConnectionSelector.class);
 
-    private Map<String, List<Long>>          serviceConnections;
+    private Map<String, List<Long>> serviceConnections;
 
-    /** 重连列表 @author keyhunter 2016年7月6日 上午10:18:36 */
-    private ServiceInfoSet disConnectServiceInfos        = new ServiceInfoSet();
+    /**
+     * 重连列表 @author keyhunter 2016年7月6日 上午10:18:36
+     */
+    private ServiceInfoSet disConnectServiceInfos = new ServiceInfoSet();
 
     private ServiceCustomer serviceCustomer;
 
-    private static ServiceConnectionSelector selector                      = new ServiceConnectionSelector();
+    private static ServiceConnectionSelector selector = new ServiceConnectionSelector();
 
-    private ScheduledExecutorService         executorService               = Executors
-        .newSingleThreadScheduledExecutor();
+    private ScheduledExecutorService executorService = Executors
+            .newSingleThreadScheduledExecutor();
 
-    private static ConnectionManager         connectionManager             = ConnectionManager
-        .getInstance();
+    private static ConnectionManager connectionManager = ConnectionManager
+            .getInstance();
 
-    private static RPCConnector              rpcConnector;
+    private static RPCConnector rpcConnector;
 
-    private Lock                             connectionLock                = new ReentrantLock();
+    private Lock connectionLock = new ReentrantLock();
 
-    private static final String              SERVICE_KEY                   = "serviceKey";
-    private static final String              SERVICE_INFO                  = "serviceInfo";
+    private static final String SERVICE_KEY = "serviceKey";
+    private static final String SERVICE_INFO = "serviceInfo";
 
-    private static final int                 EACH_SERVICE_CONNECTION_LIMIT = 2;
+    private static final int EACH_SERVICE_CONNECTION_LIMIT = 2;
 
-    private static final int                 RECONNECT_INTERVAL            = 3;
+    private static final int RECONNECT_INTERVAL = 3;
 
     private ServiceConnectionSelector() {
         rpcConnector = new RPCConnector();
         rpcConnector.startup();
         initCustomer();
         executorService.scheduleAtFixedRate(new ReconnectTask(), RECONNECT_INTERVAL,
-            RECONNECT_INTERVAL, TimeUnit.SECONDS);
+                RECONNECT_INTERVAL, TimeUnit.SECONDS);
     }
 
     private void initCustomer() {
         AbstractServiceCustomer abstractServiceCustomer = null;
         try {
             abstractServiceCustomer = (AbstractServiceCustomer) Class
-                .forName(RegistryConfig.getInstance().getCustomer()).newInstance();
+                    .forName(RegistryConfig.getInstance().getCustomer()).newInstance();
         } catch (Exception e) {
             logger.error("", e);
             throw new RPCRunTimeException("Init customer failed");
@@ -127,10 +131,11 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
 
     /**
      * 关闭连接则从连接中去除这个客户端的连接
+     *
+     * @return
      * @author keyhunter
      * 2016年6月6日 下午3:01:24
      * @see com.dolphin.core.protocle.ConnectionCloseListenser#close(com.dolphin.core.protocle.Connection)
-     * @return
      */
     @Override
     public void close(Connection connection) {
@@ -139,7 +144,7 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
             try {
                 String serviceKey;
                 if (connection != null
-                    && (serviceKey = (String) connection.getAttribute(SERVICE_KEY)) != null) {
+                        && (serviceKey = (String) connection.getAttribute(SERVICE_KEY)) != null) {
                     if (StringUtils.isNotBlank(serviceKey)) {
                         List<Long> connIds = serviceConnections.get(serviceKey);
                         for (Long connId : connIds) {
@@ -168,10 +173,11 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
 
     /**
      * 重置Service服务的链接
-     * @author keyhunter
-     * 2016年6月6日 下午3:24:54
+     *
      * @param group
      * @param serviceName
+     * @author keyhunter
+     * 2016年6月6日 下午3:24:54
      */
     private void resetServiceConnection(String group, String serviceName) {
         connectionLock.lock();
@@ -203,7 +209,7 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
                     boolean exist = false;
                     for (ServiceInfo newServiceInfo : targets) {
                         ServiceInfo oldServiceInfo = (ServiceInfo) connection
-                            .getAttribute(SERVICE_INFO);
+                                .getAttribute(SERVICE_INFO);
                         if (oldServiceInfo != null && oldServiceInfo.equals(newServiceInfo)) {
                             exist = true;
                             break;
@@ -221,7 +227,7 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
                     boolean exist = false;
                     for (Connection connection : connections) {
                         ServiceInfo oldServiceInfo = (ServiceInfo) connection
-                            .getAttribute(SERVICE_INFO);
+                                .getAttribute(SERVICE_INFO);
                         if (oldServiceInfo != null && oldServiceInfo.equals(newServiceInfo)) {
                             exist = true;
                             break;
@@ -255,11 +261,12 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
 
     /**
      * 从一个ServiceInfo数组serviceInfos中随机出targetSize个ServiceInfo
-     * @author keyhunter
-     * 2016年7月6日 上午10:57:16
+     *
      * @param serviceInfos
      * @param targetSize
      * @return
+     * @author keyhunter
+     * 2016年7月6日 上午10:57:16
      */
     private ServiceInfo[] random(ServiceInfo[] serviceInfos, int targetSize) {
         int length = 0;
@@ -284,6 +291,7 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
 
     /**
      * 重连任务
+     *
      * @author keyhunter
      * @version $Id: ServiceConnectionSelector.java, v 0.1 2016年7月6日 上午11:56:32 keyhunter Exp $
      */
@@ -309,7 +317,7 @@ public class ServiceConnectionSelector implements ConnectionSelector, Connection
                         boolean exist = false;
                         for (Connection connection : connections) {
                             if (serviceInfo != null
-                                && serviceInfo.equals(connection.getAttribute(SERVICE_INFO))) {
+                                    && serviceInfo.equals(connection.getAttribute(SERVICE_INFO))) {
                                 exist = true;
                                 break;
                             }

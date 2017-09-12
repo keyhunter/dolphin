@@ -1,5 +1,8 @@
 package com.dolphin.core.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -8,19 +11,24 @@ import java.util.Properties;
 
 /**
  * 加载外部资源和获取外部绝对路径工具类
+ *
  * @author nero
  * @version $Id: ClassLoaderUtil.java, v 0.1 2013年8月30日 上午11:26:31 nero Exp $
  */
 public class ClassLoaderUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(ClassLoaderUtil.class);
+
+
     /**
-    *Thread.currentThread().getContextClassLoader().getResource("")
-    */
+     *Thread.currentThread().getContextClassLoader().getResource("")
+     */
     /**
-    *加载Java类。 使用全限定类名
-    *@paramclassName
-    *@return
-    */
+     * 加载Java类。 使用全限定类名
+     *
+     * @return
+     * @paramclassName
+     */
     public static Class<?> loadClass(String className) {
         try {
             return getClassLoader().loadClass(className);
@@ -30,24 +38,26 @@ public class ClassLoaderUtil {
     }
 
     /**
-    *得到类加载器
-    *@return
-    */
+     * 得到类加载器
+     *
+     * @return
+     */
     public static ClassLoader getClassLoader() {
         return ClassLoaderUtil.class.getClassLoader();
     }
 
     /**
-    *提供相对于classpath的资源路径，返回文件的输入流
-    *@paramrelativePath必须传递资源的相对路径。
-    *@是相对于classpath的路径。
-    *@如果需要查找classpath外部的资源，需要使用../来查找
-    *@return 文件输入流
-    *@throwsIOException
-    *@throwsMalformedURLException
-    */
+     * 提供相对于classpath的资源路径，返回文件的输入流
+     *
+     * @return 文件输入流
+     * @paramrelativePath必须传递资源的相对路径。
+     * @是相对于classpath的路径。
+     * @如果需要查找classpath外部的资源，需要使用../来查找
+     * @throwsIOException
+     * @throwsMalformedURLException
+     */
     public static InputStream getStream(String relativePath) throws MalformedURLException,
-                                                            IOException {
+            IOException {
         if (!relativePath.contains("../")) {
             return getClassLoader().getResourceAsStream(relativePath);
         } else {
@@ -56,11 +66,10 @@ public class ClassLoaderUtil {
     }
 
     /**
-    *
-    *@paramurl
-    *@return
-    *@throwsIOException
-    */
+     * @return
+     * @paramurl
+     * @throwsIOException
+     */
     public static InputStream getStream(URL url) throws IOException {
         if (url != null) {
             return url.openStream();
@@ -70,24 +79,24 @@ public class ClassLoaderUtil {
     }
 
     /**
-    *
-    *@paramrelativePath必须传递资源的相对路径。是相对于classpath的路径。
-    *@如果需要查找classpath外部的资源，需要使用../来查找
-    *@return
-    *@throwsMalformedURLException
-    *@throwsIOException
-    */
+     * @return
+     * @paramrelativePath必须传递资源的相对路径。是相对于classpath的路径。
+     * @如果需要查找classpath外部的资源，需要使用../来查找
+     * @throwsMalformedURLException
+     * @throwsIOException
+     */
     public static InputStream getStreamByExtendResource(String relativePath)
-                                                                            throws MalformedURLException,
-                                                                            IOException {
+            throws MalformedURLException,
+            IOException {
         return ClassLoaderUtil.getStream(ClassLoaderUtil.getExtendResource(relativePath));
     }
 
     /**
-    *提供相对于classpath的资源路径，返回属性对象，它是一个散列表
-    *@paramresource
-    *@return
-    */
+     * 提供相对于classpath的资源路径，返回属性对象，它是一个散列表
+     *
+     * @return
+     * @paramresource
+     */
     public static Properties getProperties(String resource) {
         Properties properties = new Properties();
         try {
@@ -99,22 +108,22 @@ public class ClassLoaderUtil {
     }
 
     /**
-    *得到本Class所在的ClassLoader的Classpat的绝对路径。
-    *URL形式的
-    *@return
-    */
+     * 得到本Class所在的ClassLoader的Classpat的绝对路径。
+     * URL形式的
+     *
+     * @return
+     */
     public static String getAbsolutePathOfClassLoaderClassPath() {
         //        ClassLoaderUtil.log.info(ClassLoaderUtil.getClassLoader().getResource("").toString());
         return ClassLoaderUtil.getClassLoader().getResource("").toString();
     }
 
     /**
-    *
-    *@paramrelativePath 必须传递资源的相对路径。是相对于classpath的路径。
-    *@如果需要查找classpath外部的资源，需要使用../来查找
-    *@return资源的绝对URL
-    *@throwsMalformedURLException
-    */
+     * @paramrelativePath 必须传递资源的相对路径。是相对于classpath的路径。
+     * @如果需要查找classpath外部的资源，需要使用../来查找
+     * @return资源的绝对URL
+     * @throwsMalformedURLException
+     */
     public static URL getExtendResource(String relativePath) throws MalformedURLException {
         //ClassLoaderUtil.log.info("传入的相对路径："+relativePath) ;
         //ClassLoaderUtil.log.info(Integer.valueOf(relativePath.indexOf("../"))) ;
@@ -130,7 +139,7 @@ public class ClassLoaderUtil {
         relativePath = relativePath.substring(relativePath.lastIndexOf("../") + 3);
         int containSum = ClassLoaderUtil.containSum(wildcardString, "../");
         classPathAbsolutePath = ClassLoaderUtil.cutLastString(classPathAbsolutePath, "/",
-            containSum);
+                containSum);
         String resourceAbsolutePath = classPathAbsolutePath + relativePath;
         //        ClassLoaderUtil.log.info("绝对路径：" + resourceAbsolutePath);
         URL resourceAbsoluteURL = new URL(resourceAbsolutePath);
@@ -139,6 +148,7 @@ public class ClassLoaderUtil {
 
     /**
      * 通过相对路径获取绝对路径
+     *
      * @param relativePath
      * @return
      * @throws MalformedURLException
@@ -161,18 +171,17 @@ public class ClassLoaderUtil {
         relativePath = relativePath.substring(relativePath.lastIndexOf("../") + 3);
         int containSum = ClassLoaderUtil.containSum(wildcardString, "../");
         classPathAbsolutePath = ClassLoaderUtil.cutLastString(classPathAbsolutePath, "/",
-            containSum);
+                containSum);
         String resourceAbsolutePath = classPathAbsolutePath + relativePath;
         resourceAbsolutePath = resourceAbsolutePath.substring(5);
         return resourceAbsolutePath;
     }
 
     /**
-    *
-    *@paramsource
-    *@paramdest
-    *@return
-    */
+     * @return
+     * @paramsource
+     * @paramdest
+     */
     private static int containSum(String source, String dest) {
         int containSum = 0;
         int destLength = dest.length();
@@ -184,12 +193,11 @@ public class ClassLoaderUtil {
     }
 
     /**
-    *
-    *@paramsource
-    *@paramdest
-    *@paramnum
-    *@return
-    */
+     * @return
+     * @paramsource
+     * @paramdest
+     * @paramnum
+     */
     private static String cutLastString(String source, String dest, int num) {
         // String cutSource=null;
         for (int i = 0; i < num; i++) {
@@ -199,21 +207,20 @@ public class ClassLoaderUtil {
     }
 
     /**
-    *
-    *@paramresource
-    *@return
-    */
+     * @return
+     * @paramresource
+     */
     public static URL getResource(String resource) {
         //ClassLoaderUtil.log.info("传入的相对于classpath的路径："+resource) ;
         return ClassLoaderUtil.getClassLoader().getResource(resource);
     }
 
     /**
-    *@paramargs
-    *@throwsMalformedURLException
-    */
+     * @paramargs
+     * @throwsMalformedURLException
+     */
     public static void main(String[] args) throws MalformedURLException {
 
-        System.out.println(getAbsolutePath("../../"));
+        logger.info(getAbsolutePath("../../"));
     }
 }

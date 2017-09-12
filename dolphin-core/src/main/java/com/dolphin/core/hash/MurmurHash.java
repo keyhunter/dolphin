@@ -1,38 +1,37 @@
 package com.dolphin.core.hash;
 
-/** 
+/**
  * murmur hash 2.0.
- * 
+ * <p>
  * The murmur hash is a relatively fast hash function from
  * http://murmurhash.googlepages.com/ for platforms with efficient
  * multiplication.
- * 
+ * <p>
  * MurMurHash算法，是非加密HASH算法，性能很高， 现已应用到Hadoop、libstdc++、nginx、libmemcached等开源系统
- * 比传统的CRC32,MD5，SHA-1（这两个算法都是加密HASH算法，复杂度本身就很高，带来的性能上的损害也不可避免） 
- * 等HASH算法要快很多，而且据说这个算法的碰撞率很低. 
- * http://murmurhash.googlepages.com/ 
- *  
+ * 比传统的CRC32,MD5，SHA-1（这两个算法都是加密HASH算法，复杂度本身就很高，带来的性能上的损害也不可避免）
+ * 等HASH算法要快很多，而且据说这个算法的碰撞率很低.
+ * http://murmurhash.googlepages.com/
+ * <p>
  * This is a re-implementation of the original C code plus some
  * additional features.
- * 
+ * <p>
  * Public domain.
- * 
+ *
  * @author Viliam Holub
  * @version 1.0.2
- *
  */
 public final class MurmurHash {
     // all methods static; private constructor. 
     private MurmurHash() {
     }
 
-    /** 
+    /**
      * Generates 32 bit hash from byte array of the given length and
      * seed.
-     * 
-     * @param data byte array to hash
+     *
+     * @param data   byte array to hash
      * @param length length of the array to hash
-     * @param seed initial seed value
+     * @param seed   initial seed value
      * @return 32 bit hash of the given array
      */
     public static int hash32(final byte[] data, int length, int seed) {
@@ -74,10 +73,10 @@ public final class MurmurHash {
         return h;
     }
 
-    /** 
+    /**
      * Generates 32 bit hash from byte array with default seed value.
-     * 
-     * @param data byte array to hash
+     *
+     * @param data   byte array to hash
      * @param length length of the array to hash
      * @return 32 bit hash of the given array
      */
@@ -85,9 +84,9 @@ public final class MurmurHash {
         return hash32(data, length, 0x9747b28c);
     }
 
-    /** 
+    /**
      * Generates 32 bit hash from a string.
-     * 
+     *
      * @param text string to hash
      * @return 32 bit hash of the given string
      */
@@ -96,11 +95,11 @@ public final class MurmurHash {
         return hash32(bytes, bytes.length);
     }
 
-    /** 
+    /**
      * Generates 32 bit hash from a substring.
-     * 
-     * @param text string to hash
-     * @param from starting index
+     *
+     * @param text   string to hash
+     * @param from   starting index
      * @param length length of the substring to hash
      * @return 32 bit hash of the given string
      */
@@ -108,12 +107,12 @@ public final class MurmurHash {
         return hash32(text.substring(from, from + length));
     }
 
-    /** 
+    /**
      * Generates 64 bit hash from byte array of the given length and seed.
-     * 
-     * @param data byte array to hash
+     *
+     * @param data   byte array to hash
      * @param length length of the array to hash
-     * @param seed initial seed value
+     * @param seed   initial seed value
      * @return 64 bit hash of the given array
      */
     public static long hash64(final byte[] data, int length, int seed) {
@@ -127,9 +126,9 @@ public final class MurmurHash {
         for (int i = 0; i < length8; i++) {
             final int i8 = i * 8;
             long k = ((long) data[i8 + 0] & 0xff) + (((long) data[i8 + 1] & 0xff) << 8)
-                     + (((long) data[i8 + 2] & 0xff) << 16) + (((long) data[i8 + 3] & 0xff) << 24)
-                     + (((long) data[i8 + 4] & 0xff) << 32) + (((long) data[i8 + 5] & 0xff) << 40)
-                     + (((long) data[i8 + 6] & 0xff) << 48) + (((long) data[i8 + 7] & 0xff) << 56);
+                    + (((long) data[i8 + 2] & 0xff) << 16) + (((long) data[i8 + 3] & 0xff) << 24)
+                    + (((long) data[i8 + 4] & 0xff) << 32) + (((long) data[i8 + 5] & 0xff) << 40)
+                    + (((long) data[i8 + 6] & 0xff) << 48) + (((long) data[i8 + 7] & 0xff) << 56);
 
             k *= m;
             k ^= k >>> r;
@@ -165,10 +164,10 @@ public final class MurmurHash {
         return h;
     }
 
-    /** 
+    /**
      * Generates 64 bit hash from byte array with default seed value.
-     * 
-     * @param data byte array to hash
+     *
+     * @param data   byte array to hash
      * @param length length of the array to hash
      * @return 64 bit hash of the given string
      */
@@ -176,9 +175,9 @@ public final class MurmurHash {
         return hash64(data, length, 0xe17a1465);
     }
 
-    /** 
+    /**
      * Generates 64 bit hash from a string.
-     * 
+     *
      * @param text string to hash
      * @return 64 bit hash of the given string
      */
@@ -187,11 +186,11 @@ public final class MurmurHash {
         return hash64(bytes, bytes.length);
     }
 
-    /** 
+    /**
      * Generates 64 bit hash from a substring.
-     * 
-     * @param text string to hash
-     * @param from starting index
+     *
+     * @param text   string to hash
+     * @param from   starting index
      * @param length length of the substring to hash
      * @return 64 bit hash of the given array
      */

@@ -1,28 +1,27 @@
 package com.dolphin.registry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
 public class SecurityAES {
+
+    private static final Logger logger = LoggerFactory.getLogger(SecurityAES.class);
+
     private final static String encoding = "UTF-8";
 
     /**
      * AES\u52A0\u5BC6
-     * 
+     *
      * @param content
      * @param password
      * @return
@@ -37,7 +36,7 @@ public class SecurityAES {
 
     /**
      * AES\u89E3\u5BC6
-     * 
+     *
      * @param encryptResultStr
      * @param password
      * @return
@@ -51,8 +50,8 @@ public class SecurityAES {
     }
 
     /**
-    * \u52A0\u5BC6\u5B57\u7B26\u4E32
-    */
+     * \u52A0\u5BC6\u5B57\u7B26\u4E32
+     */
     public static String ebotongEncrypto(String str) {
         BASE64Encoder base64encoder = new BASE64Encoder();
         String result = str;
@@ -61,7 +60,7 @@ public class SecurityAES {
                 byte[] encodeByte = str.getBytes(encoding);
                 result = base64encoder.encode(encodeByte);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("encode error", e);
             }
         }
         //base64\u52A0\u5BC6\u8D85\u8FC7\u4E00\u5B9A\u957F\u5EA6\u4F1A\u81EA\u52A8\u6362\u884C \u9700\u8981\u53BB\u9664\u6362\u884C\u7B26
@@ -77,17 +76,17 @@ public class SecurityAES {
             byte[] encodeByte = base64decoder.decodeBuffer(str);
             return new String(encodeByte);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("ebotongDecrypto error", e);
             return str;
         }
     }
 
-    /**  
-     * \u52A0\u5BC6  
-     *   
-     * @param content \u9700\u8981\u52A0\u5BC6\u7684\u5185\u5BB9  
-     * @param password  \u52A0\u5BC6\u5BC6\u7801  
-     * @return  
+    /**
+     * \u52A0\u5BC6
+     *
+     * @param content  \u9700\u8981\u52A0\u5BC6\u7684\u5185\u5BB9
+     * @param password \u52A0\u5BC6\u5BC6\u7801
+     * @return
      */
     private static byte[] encrypt(String content, String password) {
         try {
@@ -106,25 +105,27 @@ public class SecurityAES {
             byte[] result = cipher.doFinal(byteContent);
             return result; // \u52A0\u5BC6   
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            logger.error("encrypt error", e);
         } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
+            logger.error("encrypt error", e);
         } catch (InvalidKeyException e) {
-            e.printStackTrace();
+            logger.error("encrypt error", e);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error("encrypt error", e);
         } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
+            logger.error("encrypt error", e);
         } catch (BadPaddingException e) {
-            e.printStackTrace();
+            logger.error("encrypt error", e);
         }
         return null;
     }
 
-    /**\u89E3\u5BC6  
-     * @param content  \u5F85\u89E3\u5BC6\u5185\u5BB9  
-     * @param password \u89E3\u5BC6\u5BC6\u94A5  
-     * @return  
+    /**
+     * \u89E3\u5BC6
+     *
+     * @param content  \u5F85\u89E3\u5BC6\u5185\u5BB9
+     * @param password \u89E3\u5BC6\u5BC6\u94A5
+     * @return
      */
     private static byte[] decrypt(byte[] content, String password) {
         try {
@@ -142,22 +143,24 @@ public class SecurityAES {
             byte[] result = cipher.doFinal(content);
             return result; // \u52A0\u5BC6   
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            logger.error("decrypt error", e);
         } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
+            logger.error("decrypt error", e);
         } catch (InvalidKeyException e) {
-            e.printStackTrace();
+            logger.error("decrypt error", e);
         } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
+            logger.error("decrypt error", e);
         } catch (BadPaddingException e) {
-            e.printStackTrace();
+            logger.error("decrypt error", e);
         }
         return null;
     }
 
-    /**\u5C06\u4E8C\u8FDB\u5236\u8F6C\u6362\u621016\u8FDB\u5236  
-     * @param buf  
-     * @return  
+    /**
+     * \u5C06\u4E8C\u8FDB\u5236\u8F6C\u6362\u621016\u8FDB\u5236
+     *
+     * @param buf
+     * @return
      */
     public static String parseByte2HexStr(byte buf[]) {
         StringBuffer sb = new StringBuffer();
@@ -171,9 +174,11 @@ public class SecurityAES {
         return sb.toString();
     }
 
-    /**\u5C0616\u8FDB\u5236\u8F6C\u6362\u4E3A\u4E8C\u8FDB\u5236  
-     * @param hexStr  
-     * @return  
+    /**
+     * \u5C0616\u8FDB\u5236\u8F6C\u6362\u4E3A\u4E8C\u8FDB\u5236
+     *
+     * @param hexStr
+     * @return
      */
     public static byte[] parseHexStr2Byte(String hexStr) {
         if (hexStr.length() < 1)
@@ -188,7 +193,7 @@ public class SecurityAES {
     }
 
     public static void main(String[] args) {
-        System.out.println(encrypt("yunjee0515ueopro1234", "yunjee"));
+        logger.info(new String(encrypt("234243242", "dolphi")));
     }
 
 }

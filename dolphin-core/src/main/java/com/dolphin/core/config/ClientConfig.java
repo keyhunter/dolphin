@@ -6,22 +6,27 @@ import java.util.Map;
 
 /**
  * RPC客户端配置
+ *
  * @author keyhunter
  * @version $Id: ClientConfig.java, v 0.1 2016年7月11日 下午4:11:20 keyhunter Exp $
  */
 public class ClientConfig extends DolphinConfig {
 
-    /** 全局RpcService的分组 @author keyhunter 2016年7月11日 下午4:11:34 */
-    private String                    globalGroup;
+    /**
+     * 全局RpcService的分组 @author keyhunter 2016年7月11日 下午4:11:34
+     */
+    private String globalGroup;
 
-    /** RPC请求超时时间 @author keyhunter 2016年7月11日 下午4:11:54 */
-    private int                       timeOut;
+    /**
+     * RPC请求超时时间 @author keyhunter 2016年7月11日 下午4:11:54
+     */
+    private int timeOut;
 
-    private int                       retryTimes;
+    private int retryTimes;
 
     private final Map<String, String> serviceGroups;
 
-    private static ClientConfig       clientConfig;
+    private static ClientConfig clientConfig;
 
     public static ClientConfig getInstance() {
         if (clientConfig == null) {

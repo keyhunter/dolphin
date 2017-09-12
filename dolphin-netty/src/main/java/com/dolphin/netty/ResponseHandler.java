@@ -3,10 +3,9 @@ package com.dolphin.netty;
 import com.dolphin.core.protocle.MessageReadListener;
 import com.dolphin.core.protocle.ResponseListener;
 import com.dolphin.core.protocle.transport.Message;
-
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.ChannelHandler.Sharable;
 
 @Sharable
 public class ResponseHandler extends SimpleChannelInboundHandler<Message> {

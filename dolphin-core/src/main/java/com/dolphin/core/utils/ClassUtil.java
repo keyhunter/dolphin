@@ -1,22 +1,24 @@
 package com.dolphin.core.utils;
 
-import java.sql.Timestamp;
-
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.Loader;
-import javassist.Modifier;
+import javassist.*;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.Timestamp;
 
 /**
  * 此类操作反射，现在不可用，请不要尝试
+ *
  * @author keyhunter
  * @version $Id: ClassUtil.java, v 0.1 2016年7月20日 下午1:09:21 keyhunter Exp $
  */
 @Deprecated
 public class ClassUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
+
 
     public static Object newInstance(Class<?> clazz) {
         ClassPool pool = ClassPool.getDefault();
@@ -36,14 +38,14 @@ public class ClassUtil {
             Class<?> newClazz = cc.toClass();
             return newClazz.newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("newInstance error", e);
             return null;
         }
     }
-    
+
     public static void main(String[] args) {
         Object newInstance = newInstance(Timestamp.class);
-        System.out.println(newInstance);
+        logger.info(newInstance + "");
     }
 
     //    public static void addAnnotation() {
@@ -75,7 +77,7 @@ public class ClassUtil {
     //            // length is zero
     //            java.lang.annotation.Annotation[] annots = clazz.getAnnotations();
     //            Method[] methods = clazz.getMethods();
-    //            System.out.println();
+    //            logger.info();
     //        } catch (Exception e) {
     //            e.printStackTrace();
     //        }
